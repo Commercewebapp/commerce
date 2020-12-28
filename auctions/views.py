@@ -74,6 +74,6 @@ def create_listing(request):
     categories = ["Fashion", "Toys", "Electronics", "Furniture"]
     form = EditForm()
     return render(request, "auctions/createlisting.html", {
-            "form": form,
-            "categories": categories
-        })
+        "form": form,
+        "categories": categories
+    })
