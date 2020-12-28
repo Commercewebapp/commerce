@@ -2,11 +2,14 @@
 
 {% block body %}
     <h2>Create Listing</h2>
-    <div class="form-group">
-        <form action="{% url 'createlisting' %}" method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit">
-        </form>
-    </div>
+    <form action="{% url 'createlisting' %}" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <select name="categories">
+            {% for category in categories %}
+                <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit">
+    </form>
 {% endblock %}
