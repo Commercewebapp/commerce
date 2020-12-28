@@ -6,13 +6,13 @@ class User(AbstractUser):
     pass
 
 
-class listings:
-    pass
+class listings(models.Model):
+    title = models.CharField(max_length=150)
 
 
-class bids:
-    pass
+class bids(models.Model):
+    bid = models.IntegerField()
 
 
-class comments:
-    pass
+class comments(models.Model):
+    description = models.CharField(max_length=500)
