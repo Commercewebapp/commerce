@@ -10,8 +10,8 @@ from .models import User
 
 class EditForm(forms.Form):
     title = forms.CharField(label="Title", max_length=60, widget=forms.TextInput(attrs={'class': 'form-control col-md-8 col-lg-8'}))
-    bid = forms.CharField(label="Bid", widget=forms.TextInput(attrs={'class': 'form-control col-md-1 col-lg-1', 'type': 'number'}))
     description = forms.CharField(label="Description", max_length=500, widget=forms.Textarea(attrs={'class': 'form-control col-md-8 col-lg-8', 'rows': 10}))
+    bid = forms.CharField(label="Bid", widget=forms.TextInput(attrs={'class': 'form-control col-md-1 col-lg-1', 'type': 'number'}))
 
 
 def index(request):
@@ -74,5 +74,6 @@ def create_listing(request):
     categories = ["Fashion", "Toys", "Electronics", "Furniture"]
     form = EditForm()
     return render(request, "auctions/createlisting.html", {
-            "form": form
+            "form": form,
+            "categories": categories
         })
