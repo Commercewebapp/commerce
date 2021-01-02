@@ -3,9 +3,21 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
 
 from .models import User
-from .forms import CreateListing
+
+
+class CreateListing(forms.Form):
+    title = forms.CharField(label="Title", max_length=100,
+                            widget=forms.TextInput(attrs={
+                                "class": "form-control col-md-8 col-md-lg-8"
+                            }))
+    description = forms.CharField(label="Description", max_length=200,
+                                  widget=forms.Textarea(attrs={
+                                      "class": "form-control col-md-8 col-lg-8",
+                                      "rows": 10
+                                  }))
 
 
 def index(request):
