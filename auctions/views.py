@@ -15,6 +15,12 @@ def index(request):
 def create_listing(request):
     if request.method == "POST":
         form = CreateListing(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            description = form.cleaned_data["description"]
+            print(title)
+            print(description)
+            return HttpResponseRedirect(reverse("index"))
     else:
         form = CreateListing()
     return render(request, "auctions/create_listing.html", {
