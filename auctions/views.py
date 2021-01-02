@@ -18,8 +18,6 @@ def create_listing(request):
         if form.is_valid():
             title = form.cleaned_data["title"]
             description = form.cleaned_data["description"]
-            print(title)
-            print(description)
             return HttpResponseRedirect(reverse("index"))
     else:
         form = CreateListing()
