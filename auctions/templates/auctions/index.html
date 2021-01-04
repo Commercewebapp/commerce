@@ -4,6 +4,6 @@
     <h2>Active Listings</h2>
 
     {% for listing in listings %}
-      <img src="{{ listing.listing_images.url }}">
+      <img src="{{ listing.listing_images.url }}" alt="{{ listing.title }}">
     {% endfor %}
 {% endblock %}
