@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 
-from .models import User
+from .models import User, Listing
 
 
 class CreateListing(forms.Form):
@@ -21,7 +21,13 @@ class CreateListing(forms.Form):
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    if request.user.is_authenticated:
+        listings = Listing.objects.all()
+    else:
+        listings = Listing.objects.all()
+    return render(request, "auctions/index.html", {
+        "listings": listings
+    })
 
 
 def create_listing(request):
