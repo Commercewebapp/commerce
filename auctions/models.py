@@ -16,12 +16,12 @@ class Category(models.Model):
 class Listing(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField()
-    image = models.ImageField(upload_to='listing_images', default=None, null=True)
+    image = models.ImageField(upload_to="listing_images", default=None, null=True)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     create_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
     listing_open = models.BooleanField(default=True)
-    listing_owener = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    listing_owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     starting_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     listing_final_price = models.DecimalField(decimal_places=2, max_digits=10)
 
