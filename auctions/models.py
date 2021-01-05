@@ -20,10 +20,10 @@ class Listing(models.Model):
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     create_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
-    listing_open = models.BooleanField(default=True)
-    listing_owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    open_at = models.BooleanField(default=True)
+    owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     starting_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    listing_final_price = models.DecimalField(decimal_places=2, max_digits=10)
+    final_price = models.DecimalField(decimal_places=2, max_digits=10)
 
     def __str__(self):
         return f"Title: {self.title}, Category: {self.category_id}"
