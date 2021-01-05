@@ -22,9 +22,9 @@ class CreateListing(forms.Form):
 
 def index(request):
     if request.user.is_authenticated:
-        listings = Listing.objects.all().filter(listing_open=True)
+        listings = Listing.objects.all().filter(open_at=True)
     else:
-        listings = Listing.objects.all().filter(listing_open=True)
+        listings = Listing.objects.all().filter(open_at=True)
     return render(request, "auctions/index.html", {
         "listings": listings
     })
