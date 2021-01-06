@@ -18,6 +18,7 @@ class CreateListing(forms.Form):
                                       "class": "form-control col-md-8 col-lg-8",
                                       "rows": 10
                                   }))
+    category = forms.ChoiceField(label="Category")
 
 
 def index(request):
@@ -36,6 +37,8 @@ def create_listing(request):
         if form.is_valid():
             title = form.cleaned_data["title"]
             description = form.cleaned_data["description"]
+            p = Listing(title=title, description=description)
+            p.save()
             return HttpResponseRedirect(reverse("index"))
     else:
         form = CreateListing()
