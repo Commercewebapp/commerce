@@ -17,6 +17,8 @@ class CreateListing(forms.Form):
     }))
     image = forms.ImageField()
     category = forms.ModelChoiceField(queryset=Category.objects.all())
+    starting_price = forms.IntegerField()
+    final_price = forms.IntegerField()
 
 
 def index(request):
@@ -37,8 +39,11 @@ def create_listing(request):
             description = form.cleaned_data["description"]
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
+            final_price = form.cleaned_data["final_price"]
+            starting_price = form.cleaned_data["starting_price"]
             p = Listing(title=title, description=description,
-                        category_id=category, image=image, owner=request.user)
+                        category_id=category, image=image, owner=request.user,
+                        final_price=final_price, starting_price=starting_price)
             p.save()
             return HttpResponseRedirect(reverse("index"))
     else:
