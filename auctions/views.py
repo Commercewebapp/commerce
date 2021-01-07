@@ -31,13 +31,14 @@ def index(request):
 
 def create_listing(request):
     if request.method == "POST":
-        form = CreateListing(request.POST)
+        form = CreateListing(request.POST, request.FILES)
         if form.is_valid():
             title = form.cleaned_data["title"]
             description = form.cleaned_data["description"]
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
-            p = Listing(title=title, description=description, category_id=category, image=image, owner=request.user)
+            p = Listing(title=title, description=description,
+                        category_id=category, image=image, owner=request.user)
             p.save()
             return HttpResponseRedirect(reverse("index"))
     else:
