@@ -1,1 +1,1 @@
-web: gunicorn newyear.wsgi
+web: gunicorn commerce.wsgi
