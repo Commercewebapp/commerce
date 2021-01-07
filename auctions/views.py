@@ -5,20 +5,18 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 
-from .models import User, Listing
+from .models import User, Listing, Category
 
 
 class CreateListing(forms.Form):
-    title = forms.CharField(label="Title", max_length=100,
-                            widget=forms.TextInput(attrs={
-                                "class": "form-control col-md-8 col-md-lg-8"
-                            }))
-    description = forms.CharField(label="Description", max_length=200,
-                                  widget=forms.Textarea(attrs={
-                                      "class": "form-control col-md-8 col-lg-8",
-                                      "rows": 10
-                                  }))
-    category = forms.ChoiceField(label="Category")
+    title = forms.CharField(max_length=64, widget=forms.TextInput(attrs={
+        "class": "form-control col-md-8 col-md-lg-8"
+    }))
+    description = forms.CharField(max_length=200, widget=forms.Textarea(attrs={
+        "class": "form-control col-md-8 col-lg-8", "rows": 10
+    }))
+    image = forms.ImageField()
+    category = forms.ModelChoiceField(queryset=Category.objects.all())
 
 
 def index(request):
@@ -37,7 +35,9 @@ def create_listing(request):
         if form.is_valid():
             title = form.cleaned_data["title"]
             description = form.cleaned_data["description"]
-            p = Listing(title=title, description=description)
+            category = form.cleaned_data["category"]
+            image = form.cleaned_data["image"]
+            p = Listing(title=title, description=description, category_id=category, image=image, owner=request.user)
             p.save()
             return HttpResponseRedirect(reverse("index"))
     else:
