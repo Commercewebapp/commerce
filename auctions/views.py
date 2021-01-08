@@ -31,6 +31,13 @@ def index(request):
     })
 
 
+def bid(request, listing_id):
+    listing = Listing.objects.get(pk=listing_id)
+    return render(request, "auctions/bid.html", {
+        "listing": listing
+    })
+
+
 def create_listing(request):
     if request.method == "POST":
         form = CreateListing(request.POST, request.FILES)
