@@ -1,0 +1,19 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h1>{{ listing.title }}</h1>
+    <div class="card-deck" style="width: 18rem; padding: 2px;">
+        <div class="card">
+            <img class="card-img-top" src="{{ listing.image.url }}" alt="{{ listing.title }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ listing.title }}</h5>
+                <p class="card-text">{{ listing.description }}</p>
+                <p class="card-text"><strong>Price: ${{ listing.starting_price }}</strong></p>
+                <a href="{% url 'bid' listing.id %}" class="btn btn-primary">Show listing</a>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner }}</small>
+            </div>
+        </div>
+    </div>
+{% endblock %}
