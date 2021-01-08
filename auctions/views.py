@@ -40,8 +40,7 @@ def bid(request, listing_id):
         form = Bid(request.POST)
         if form.is_valid():
             bid = form.cleaned_data["bid"]
-            p = Listing(starting_price=bid)
-            p.save()
+            Listing.objects.filter(id=listing_id).update(starting_price=bid)
     else:
         form = Bid()
     return render(request, "auctions/bid.html", {
