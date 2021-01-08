@@ -18,7 +18,6 @@ class CreateListing(forms.Form):
     image = forms.ImageField()
     category = forms.ModelChoiceField(queryset=Category.objects.all())
     starting_price = forms.IntegerField()
-    final_price = forms.IntegerField()
 
 
 class Bid(forms.Form):
@@ -41,7 +40,8 @@ def bid(request, listing_id):
         form = Bid(request.POST)
         if form.is_valid():
             bid = form.cleaned_data["bid"]
-            print(f"price: {bid}")
+            p = Listing(starting_price=bid)
+            p.save()
     else:
         form = Bid()
     return render(request, "auctions/bid.html", {
