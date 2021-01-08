@@ -9,8 +9,11 @@
                 <h5 class="card-title">{{ listing.title }}</h5>
                 <p class="card-text">{{ listing.description }}</p>
                 <p class="card-text"><strong>Price: ${{ listing.starting_price }}</strong></p>
-                {{ form.as_p }}
-                <a class="btn btn-primary" type="submit">Bid</a>
+                <form action="{% url 'bid' listing.id %}" method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input class="btn btn-primary" type="submit" value="Bid">
+                <form>
             </div>
             <div class="card-footer">
                 <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner }}</small>
