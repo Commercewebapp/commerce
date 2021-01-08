@@ -23,7 +23,6 @@ class Listing(models.Model):
     open_at = models.BooleanField(default=True)
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     starting_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    final_price = models.DecimalField(decimal_places=2, max_digits=10)
 
     def __str__(self):
         return f"Title: {self.title}, Category: {self.category_id}"
