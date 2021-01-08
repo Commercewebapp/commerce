@@ -21,6 +21,10 @@ class CreateListing(forms.Form):
     final_price = forms.IntegerField()
 
 
+class Bid(forms.Form):
+    bid = forms.IntegerField()
+
+
 def index(request):
     if request.user.is_authenticated:
         listings = Listing.objects.all().filter(open_at=True)
@@ -33,8 +37,16 @@ def index(request):
 
 def bid(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
+    if request.method == "POST":
+        form = Bid(request.POST)
+        if form.is_valid():
+            bid = form.cleaned_data["bid"]
+            print(f"price: {bid}")
+    else:
+        form = Bid()
     return render(request, "auctions/bid.html", {
-        "listing": listing
+        "listing": listing,
+        "form": form
     })
 
 
