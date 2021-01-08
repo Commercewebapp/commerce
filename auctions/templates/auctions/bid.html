@@ -9,7 +9,8 @@
                 <h5 class="card-title">{{ listing.title }}</h5>
                 <p class="card-text">{{ listing.description }}</p>
                 <p class="card-text"><strong>Price: ${{ listing.starting_price }}</strong></p>
-                <a href="{% url 'bid' listing.id %}" class="btn btn-primary">Show listing</a>
+                {{ form.as_p }}
+                <a class="btn btn-primary" type="submit">Bid</a>
             </div>
             <div class="card-footer">
                 <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner }}</small>
