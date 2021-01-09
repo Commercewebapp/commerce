@@ -56,6 +56,10 @@ def bid(request, listing_id):
     })
 
 
+def watchlist(request):
+    return render(request, "auctions/watchlist.html")
+
+
 def create_listing(request):
     if request.method == "POST":
         form = CreateListing(request.POST, request.FILES)
