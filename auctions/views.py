@@ -43,7 +43,7 @@ def bid(request, listing_id):
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
             if clean_bid > price_from_database:
-                Listing.objects.filter(id=listing_id).update(starting_price=clean_bid)
+                listing.update(starting_price=clean_bid)
             else:
                 error_clean_bid = True
     else:
