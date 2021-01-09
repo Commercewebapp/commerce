@@ -16,11 +16,11 @@
                         <p>Can't be lower than the number of price</p>
                     {% endif %}
                     <input class="btn btn-primary" type="submit" value="Bid">
-                <form>
+                </form>
                 <form method="POST">
                     {% csrf_token %}
                     <input class="btn btn-primary" type="submit" value="Add watch list">
-                <form>
+                </form>
             </div>
             <div class="card-footer">
                 <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner }}</small>
