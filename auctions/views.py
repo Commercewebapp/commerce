@@ -35,6 +35,7 @@ def index(request):
 
 
 def bid(request, listing_id):
+    error_clean_bid = False
     listing = Listing.objects.get(pk=listing_id)
     if request.method == "POST":
         form = Bid(request.POST)
@@ -43,11 +44,14 @@ def bid(request, listing_id):
             price_from_database = listing.starting_price
             if clean_bid > price_from_database:
                 Listing.objects.filter(id=listing_id).update(starting_price=clean_bid)
+            else:
+                error_clean_bid = True
     else:
         form = Bid()
     return render(request, "auctions/bid.html", {
         "listing": listing,
-        "form": form
+        "form": form,
+        "error_clean_bid": error_clean_bid
     })
 
 
