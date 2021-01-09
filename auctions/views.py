@@ -21,7 +21,7 @@ class CreateListing(forms.Form):
 
 
 class Bid(forms.Form):
-    bid = forms.IntegerField()
+    bid_form = forms.IntegerField()
 
 
 def index(request):
@@ -39,10 +39,10 @@ def bid(request, listing_id):
     if request.method == "POST":
         form = Bid(request.POST)
         if form.is_valid():
-            bid = form.cleaned_data["bid"]
+            clean_bid = form.cleaned_data["bid"]
             price_from_database = listing.starting_price
             if bid > price_from_database:
-                Listing.objects.filter(id=listing_id).update(starting_price=bid)
+                Listing.objects.filter(id=listing_id).update(starting_price=clean_bid)
     else:
         form = Bid()
     return render(request, "auctions/bid.html", {
