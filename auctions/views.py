@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 
-from .models import User, Listing, Category
+from .models import User, Listing, Category, WatchList
 
 
 class CreateListing(forms.Form):
@@ -57,10 +57,18 @@ def bid(request, listing_id):
 
 
 def watchlist(request):
+    show_watch_listing = WatchList.objects.all()
     if request.method == "POST":
-        print("Add to watch list")
-        return render(request, "auctions/watchlist.html")
-    return render(request, "auctions/watchlist.html")
+        p = WatchList(user=request.user)
+        p.save()
+        p.watch_listing.add()
+        return render(request, "auctions/watchlist.html", {
+            "show_listings": show_watch_listing
+        })
+    else:
+        return render(request, "auctions/watchlist.html", {
+            "show_listings": show_watch_listing
+        })
 
 
 def create_listing(request):
