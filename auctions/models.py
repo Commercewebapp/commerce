@@ -28,6 +28,14 @@ class Listing(models.Model):
         return f"Title: {self.title}, Category: {self.category_id}"
 
 
+class WatchList(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    watch_listing = models.ManyToManyField(Listing)
+
+    def __str__(self):
+        return f"User: {self.user}, Listing: {self.watch_listing}"
+
+
 class Bid(models.Model):
     listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
