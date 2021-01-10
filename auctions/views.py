@@ -57,7 +57,9 @@ def bid(request, listing_id):
 
 
 def watchlist(request):
-    return render(request, "auctions/watchlist.html")
+    if request.method == "POST":
+        print("Add to watch list")
+        return render(request, "auctions/watchlist.html")
 
 
 def create_listing(request):
