@@ -60,6 +60,7 @@ def watchlist(request):
     if request.method == "POST":
         print("Add to watch list")
         return render(request, "auctions/watchlist.html")
+    return render(request, "auctions/watchlist.html")
 
 
 def create_listing(request):
