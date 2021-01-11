@@ -47,16 +47,18 @@ def watchlist(request, listing_id):
         p = WatchList(user=request.user)
         p.save()
         p.watch_listing.add(listing)
+        # if p.watch_listing.filter(pk=listing_id).exists():
+        #     p.watch_listing.remove(listing)
+        # else:
+        #     p.watch_listing.add(listing)
         return HttpResponseRedirect(reverse("watchlistview"))
-
     else:
         return render(request, "auctions/watchlist.html")
 
 
 def watchlistview(request):
-    show_watch_listing = WatchList.objects.all()
     return render(request, "auctions/watchlist.html", {
-        "show_listings": show_watch_listing
+        "listings": WatchList.objects.all()
     })
 
 
