@@ -18,7 +18,7 @@
                     <input class="btn btn-primary" type="submit" value="Bid">
                 </form>
                 <br>
-                <form action="{% url 'watchlist' %}" method="POST">
+                <form action="{% url 'watchlist' listing.id %}" method="POST">
                     {% csrf_token %}
                     <input class="btn btn-primary" type="submit" value="Add watch list">
                 </form>
