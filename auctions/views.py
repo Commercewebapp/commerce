@@ -3,25 +3,10 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django import forms
+from django.contrib.auth.decorators import login_required
 
-from .models import User, Listing, Category, WatchList
-
-
-class CreateListing(forms.Form):
-    title = forms.CharField(max_length=64, widget=forms.TextInput(attrs={
-        "class": "form-control col-md-8 col-md-lg-8"
-    }))
-    description = forms.CharField(max_length=200, widget=forms.Textarea(attrs={
-        "class": "form-control col-md-8 col-lg-8", "rows": 10
-    }))
-    image = forms.ImageField()
-    category = forms.ModelChoiceField(queryset=Category.objects.all())
-    starting_price = forms.IntegerField()
-
-
-class Bid(forms.Form):
-    bid_form = forms.IntegerField()
+from .models import User, Listing, WatchList
+from .form import CreateListing, Bid
 
 
 def index(request):
@@ -56,21 +41,26 @@ def bid(request, listing_id):
     })
 
 
-def watchlist(request):
-    show_watch_listing = WatchList.objects.all()
+def watchlist(request, listing_id):
     if request.method == "POST":
+        listing = Listing.objects.get(pk=listing_id)
         p = WatchList(user=request.user)
         p.save()
-        p.watch_listing.add()
-        return render(request, "auctions/watchlist.html", {
-            "show_listings": show_watch_listing
-        })
+        p.watch_listing.add(listing)
+        return HttpResponseRedirect(reverse("watchlistview"))
+
     else:
-        return render(request, "auctions/watchlist.html", {
-            "show_listings": show_watch_listing
-        })
+        return render(request, "auctions/watchlist.html")
 
 
+def watchlistview(request):
+    show_watch_listing = WatchList.objects.all()
+    return render(request, "auctions/watchlist.html", {
+        "show_listings": show_watch_listing
+    })
+
+
+@login_required
 def create_listing(request):
     if request.method == "POST":
         form = CreateListing(request.POST, request.FILES)
@@ -79,11 +69,10 @@ def create_listing(request):
             description = form.cleaned_data["description"]
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
-            final_price = form.cleaned_data["final_price"]
             starting_price = form.cleaned_data["starting_price"]
             p = Listing(title=title, description=description,
                         category_id=category, image=image, owner=request.user,
-                        final_price=final_price, starting_price=starting_price)
+                        starting_price=starting_price)
             p.save()
             return HttpResponseRedirect(reverse("index"))
     else:
@@ -111,6 +100,7 @@ def login_view(request):
         return render(request, "auctions/login.html")
 
 
+@login_required
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
