@@ -33,7 +33,7 @@ class WatchList(models.Model):
     watch_listing = models.ManyToManyField(Listing)
 
     def __str__(self):
-        return f"User: {self.user}, Listing: {self.watch_listing}"
+        return f"User: {self.user}, Listing: {self.watch_listing.all()}"
 
 
 class Bid(models.Model):
