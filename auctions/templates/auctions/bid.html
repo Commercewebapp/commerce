@@ -19,7 +19,7 @@
                         <input class="btn btn-primary" type="submit" value="Bid">
                     </form>
                 {% else %}
-                    <p>Log in to bid on the listing!</p>
+                    <p><a href={% url 'login' %}>Login</a> to bid on the listing!</p>
                 {% endif %}
                 <br>
                 {% if user.is_authenticated %}
@@ -28,7 +28,7 @@
                         <input class="btn btn-primary" type="submit" value="Add watch list">
                     </form>
                 {% else %}
-                    <p>Log in to add item to your watchlist!</p>
+                    <p><a href={% url 'login' %}>Login</a> to add in watch list!</p>
                 {% endif %}
             </div>
             <div class="card-footer">
