@@ -3,25 +3,21 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
 
 from .models import User, Listing, WatchList
 from .form import CreateListing, Bid
 
 
 def index(request):
-    if request.user.is_authenticated:
-        listings = Listing.objects.all().filter(open_at=True)
-    else:
-        listings = Listing.objects.all().filter(open_at=True)
+    listings = Listing.objects.all().filter(open_at=True)
     return render(request, "auctions/index.html", {
         "listings": listings
     })
 
 
 def bid(request, listing_id):
-    error_clean_bid = False
     listing = Listing.objects.get(pk=listing_id)
+    error_clean_bid = False
     if request.method == "POST":
         form = Bid(request.POST)
         if form.is_valid():
@@ -46,41 +42,43 @@ def watchlist(request, listing_id):
         listing = Listing.objects.get(pk=listing_id)
         p = WatchList(user=request.user)
         p.save()
-        if p.watch_listing.filter(pk=listing_id).exists():
-            p.watch_listing.remove(listing)
-        else:
-            p.watch_listing.add(listing)
+        p.watch_listing.add(listing)
         return HttpResponseRedirect(reverse("watchlistview"))
     else:
         return render(request, "auctions/watchlist.html")
 
 
 def watchlistview(request):
-    return render(request, "auctions/watchlist.html", {
-        "user_watchlisting": request.user.watchlist_set.all()
-    })
-
-
-@login_required
-def create_listing(request):
-    if request.method == "POST":
-        form = CreateListing(request.POST, request.FILES)
-        if form.is_valid():
-            title = form.cleaned_data["title"]
-            description = form.cleaned_data["description"]
-            category = form.cleaned_data["category"]
-            image = form.cleaned_data["image"]
-            starting_price = form.cleaned_data["starting_price"]
-            p = Listing(title=title, description=description,
-                        category_id=category, image=image, owner=request.user,
-                        starting_price=starting_price)
-            p.save()
-            return HttpResponseRedirect(reverse("index"))
+    if request.user.is_authenticated:
+        return render(request, "auctions/watchlist.html", {
+            "user_watchlisting": request.user.watchlist_set.all()
+        })
     else:
-        form = CreateListing()
-    return render(request, "auctions/create_listing.html", {
-        "form": form
-    })
+        return render(request, "auctions/watchlist.html")
+
+
+def create_listing(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form = CreateListing(request.POST, request.FILES)
+            if form.is_valid():
+                title = form.cleaned_data["title"]
+                description = form.cleaned_data["description"]
+                category = form.cleaned_data["category"]
+                image = form.cleaned_data["image"]
+                starting_price = form.cleaned_data["starting_price"]
+                p = Listing(title=title, description=description,
+                            category_id=category, image=image, owner=request.user,
+                            starting_price=starting_price)
+                p.save()
+                return HttpResponseRedirect(reverse("index"))
+        else:
+            form = CreateListing()
+        return render(request, "auctions/create_listing.html", {
+            "form": form
+        })
+    else:
+        return render(request, "auctions/create_listing.html")
 
 
 def login_view(request):
@@ -101,7 +99,6 @@ def login_view(request):
         return render(request, "auctions/login.html")
 
 
-@login_required
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
