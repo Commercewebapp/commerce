@@ -1,9 +1,25 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h1>Watch list</h1>
+    <h2>Watch list</h2>
 
-    {% for listing in listings %}
-        {{ listing }}
-    {% endfor %}
+    <div style="display: flex;">
+        {% for wlisting in user_watchlisting %}
+            <div class="card-deck" style="width: 18rem; padding: 2px;">
+                <div class="card">
+                    <img class="card-img-top" src="{{ wlisting.watch_listing.first.image.url }}" alt="{{ wlisting.watch_listing.first.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ wlisting.watch_listing.first.title }}</h5>
+                        <p class="card-text">{{ wlisting.watch_listing.first.description }}</p>
+                        <p class="card-text"><strong>Price: ${{ wlisting.watch_listing.first.starting_price }}</strong></p>
+                        <a href="{% url 'bid' wlisting.watch_listing.first.id %}" class="btn btn-info">Show listing</a>
+                    </div>
+                    <a href="{% url 'watchlist' wlisting.watch_listing.first.id %}" class="btn btn-danger">Remove watch listing</a>
+                    <div class="card-footer">
+                        <small class="text-muted">{{ wlisting.watch_listing.first.create_at }} by: {{ wlisting.watch_listing.first.owner }}</small>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
