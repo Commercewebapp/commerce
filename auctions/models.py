@@ -19,7 +19,6 @@ class Listing(models.Model):
     image = models.ImageField(upload_to="listing_images", default=None, null=True)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     create_at = models.DateTimeField(auto_now_add=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True)
     open_at = models.BooleanField(default=True)
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     starting_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
@@ -34,13 +33,3 @@ class WatchList(models.Model):
 
     def __str__(self):
         return f"User: {self.user}, Listing: {self.watch_listing.all()}"
-
-
-class Bid(models.Model):
-    listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    bid = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    bid_at = models.DateTimeField(auto_now_add=True, null=True)
-
-    def __str__(self):
-        return f"ID: {self.listing_id}, User: {self.user}, Bid: {self.bid}"
