@@ -62,25 +62,25 @@ def watchlistview(request):
 
 
 @login_required
-# def create_listing(request):
-#     if request.method == "POST":
-#         form = CreateListing(request.POST, request.FILES)
-#         if form.is_valid():
-#             title = form.cleaned_data["title"]
-#             description = form.cleaned_data["description"]
-#             category = form.cleaned_data["category"]
-#             image = form.cleaned_data["image"]
-#             starting_price = form.cleaned_data["starting_price"]
-#             p = Listing(title=title, description=description,
-#                         category_id=category, image=image, owner=request.user,
-#                         starting_price=starting_price)
-#             p.save()
-#             return HttpResponseRedirect(reverse("index"))
-#     else:
-#         form = CreateListing()
-#     return render(request, "auctions/create_listing.html", {
-#         "form": form
-#     })
+def create_listing(request):
+    if request.method == "POST":
+        form = CreateListing(request.POST, request.FILES)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            description = form.cleaned_data["description"]
+            category = form.cleaned_data["category"]
+            image = form.cleaned_data["image"]
+            starting_price = form.cleaned_data["starting_price"]
+            p = Listing(title=title, description=description,
+                        category_id=category, image=image, owner=request.user,
+                        starting_price=starting_price)
+            p.save()
+            return HttpResponseRedirect(reverse("index"))
+    else:
+        form = CreateListing()
+    return render(request, "auctions/create_listing.html", {
+        "form": form
+    })
 
 
 def login_view(request):
