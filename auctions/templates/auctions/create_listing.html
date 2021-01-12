@@ -3,11 +3,15 @@
 {% block body %}
     <h2>Create Listing</h2>
 
-    <form method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit">
-        <div>
-    <form>
+    {% if request.user.is_authenticated %}
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit">
+            <div>
+        <form>
+    {% else %}
+        <p>You need to <a href="{% url 'login' %}">login</p>
+    {% endif %}
 {% endblock %}
