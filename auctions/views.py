@@ -64,6 +64,19 @@ def watchlistview(request):
         return render(request, "auctions/watchlist.html")
 
 
+def closebid(request, listing_id):
+    if Listing.objects.get(listing_id).owner.username == request.user:
+        close_bid_button = True
+        return render(request, "auctions/bid.html", {
+            "matches_user": close_bid_button
+        })
+    else:
+        close_bid_button = False
+        return render(request, "auctions/bid.html", {
+            "matches_user": close_bid_button
+        })
+
+
 def create_listing(request):
     if request.user.is_authenticated:
         if request.method == "POST":

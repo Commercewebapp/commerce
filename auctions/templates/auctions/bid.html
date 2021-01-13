@@ -27,6 +27,16 @@
                         {% csrf_token %}
                         <input class="btn btn-primary" type="submit" value="Add watch list">
                     </form>
+                    <br>
+                    {% if matches_user %}
+                        <form action="{% url 'closebid' listing.id %}" method="POST">
+                            {% csrf_token %}
+                            <input class="btn btn-warning" type="submit" value="Close bid">
+                        </form>
+                    {% else %}
+                        <!-- @@@ Testing -->
+                        <p>no button</p>
+                    {% endif %}
                 {% else %}
                     <p><a href={% url 'login' %}>Login</a> to add in watch list!</p>
                 {% endif %}
