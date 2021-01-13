@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing, WatchList
+from .models import User, Listing
 from .form import CreateListing, Bid
 
 
@@ -40,7 +40,7 @@ def bid(request, listing_id):
 def watchlist(request, listing_id):
     if request.method == "POST":
         listing = Listing.objects.get(pk=listing_id)
-        p = WatchList(user=request.user)
+        p = User()
         p.save()
         p.watch_listing.add(listing)
         return HttpResponseRedirect(reverse("watchlistview"))
@@ -52,15 +52,16 @@ def removewatchlist(request, listing_id):
     if request.method == "POST":
         listing = Listing.objects.get(pk=listing_id)
         request.user.watch_listing.remove(listing)
-        return HttpResponseRedirect(reverse("watchlistview"))
     else:
         return render(request, "auctions/watchlist.html")
 
 
 def watchlistview(request):
+    # @@@ for i in User.objects.first().watch_listing.all():
+    # print(i.title)
     if request.user.is_authenticated:
         return render(request, "auctions/watchlist.html", {
-            "user_watchlisting": request.user.watchlist_set.all()
+            "user_watchlisting": User.objects.first().watch_listing.all()
         })
     else:
         return render(request, "auctions/watchlist.html")
