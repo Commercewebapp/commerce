@@ -16,7 +16,7 @@ class Listing(models.Model):
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     create_at = models.DateTimeField(auto_now_add=True, null=True)
     open_at = models.BooleanField(default=True)
-    owner = models.ForeignKey("User", null=True, on_delete=models.CASCADE)
+    owner = models.ForeignKey("User", null=True, on_delete=models.DO_NOTHING)
     starting_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
 
     def __str__(self):
