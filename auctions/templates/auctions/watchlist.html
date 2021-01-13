@@ -17,7 +17,7 @@
                             {% if user.is_authenticated %}
                                 <form action="{% url 'removewatchlist' wlisting.id %}" method="POST">
                                     {% csrf_token %}
-                                    <input class="btn btn-primary" type="submit" value="Add watch list">
+                                    <input class="btn btn-danger" type="submit" value="Remove list">
                                 </form>
                             {% else %}
                                 <p><a href={% url 'login' %}>Login</a> to add in watch list!</p>
