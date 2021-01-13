@@ -27,4 +27,4 @@ class User(AbstractUser):
     watch_listing = models.ManyToManyField(Listing)
 
     def __str__(self):
-        return f"User: {self.username}, Watch listing: {self.watch_listing}"
+        return f"User: {self.username}, Watch listing: {self.watch_listing.all()}"

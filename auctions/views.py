@@ -40,7 +40,7 @@ def bid(request, listing_id):
 def watchlist(request, listing_id):
     if request.method == "POST":
         listing = Listing.objects.get(pk=listing_id)
-        p = User()
+        p = User(watch_listing=listing)
         p.save()
         p.watch_listing.add(listing)
         return HttpResponseRedirect(reverse("watchlistview"))
