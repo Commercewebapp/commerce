@@ -27,6 +27,7 @@
                         {% csrf_token %}
                         <input class="btn btn-primary" type="submit" value="Add watch list">
                     </form>
+                    <p>{{ matches_user }}<p>
                     <br>
                     {% if matches_user %}
                         <form action="{% url 'closebid' listing.id %}" method="POST">
