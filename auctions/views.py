@@ -48,6 +48,15 @@ def watchlist(request, listing_id):
         return render(request, "auctions/watchlist.html")
 
 
+def removewatchlist(request, listing_id):
+    if request.method == "POST":
+        listing = Listing.objects.get(pk=listing_id)
+        request.user.watch_listing.remove(listing)
+        return HttpResponseRedirect(reverse("watchlistview"))
+    else:
+        return render(request, "auctions/watchlist.html")
+
+
 def watchlistview(request):
     if request.user.is_authenticated:
         return render(request, "auctions/watchlist.html", {

@@ -14,7 +14,14 @@
                             <p class="card-text">{{ wlisting.watch_listing.first.description }}</p>
                             <p class="card-text"><strong>Price: ${{ wlisting.watch_listing.first.starting_price }}</strong></p>
                             <p><a href="{% url 'bid' wlisting.watch_listing.first.id %}" class="btn btn-info">Show listing</a></p>
-                            <a href="{% url 'watchlist' wlisting.watch_listing.first.id %}" class="btn btn-danger">Remove listing</a>
+                            {% if user.is_authenticated %}
+                                <form action="{% url 'removewatchlist' wlisting.watch_listing.first.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <input class="btn btn-primary" type="submit" value="Add watch list">
+                                </form>
+                            {% else %}
+                                <p><a href={% url 'login' %}>Login</a> to add in watch list!</p>
+                            {% endif %}
                         </div>
                         <div class="card-footer">
                             <small class="text-muted">{{ wlisting.watch_listing.first.create_at }} by: {{ wlisting.watch_listing.first.owner }}</small>
