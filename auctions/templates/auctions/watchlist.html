@@ -8,14 +8,14 @@
             {% for wlisting in user_watchlisting %}
                 <div class="card-deck" style="width: 18rem; padding: 2px;">
                     <div class="card">
-                        <img class="card-img-top" src="{{ wlisting.watch_listing.first.image.url }}" alt="{{ wlisting.watch_listing.first.title }}">
+                        <img class="card-img-top" src="{{ wlisting.image.url }}" alt="{{ wlisting.title }}">
                         <div class="card-body">
-                            <h5 class="card-title">{{ wlisting.watch_listing.first.title }}</h5>
-                            <p class="card-text">{{ wlisting.watch_listing.first.description }}</p>
-                            <p class="card-text"><strong>Price: ${{ wlisting.watch_listing.first.starting_price }}</strong></p>
-                            <p><a href="{% url 'bid' wlisting.watch_listing.first.id %}" class="btn btn-info">Show listing</a></p>
+                            <h5 class="card-title">{{ wlisting.title }}</h5>
+                            <p class="card-text">{{ wlisting.description }}</p>
+                            <p class="card-text"><strong>Price: ${{ wlisting.starting_price }}</strong></p>
+                            <p><a href="{% url 'bid' wlisting.id %}" class="btn btn-info">Show listing</a></p>
                             {% if user.is_authenticated %}
-                                <form action="{% url 'removewatchlist' wlisting.watch_listing.first.id %}" method="POST">
+                                <form action="{% url 'removewatchlist' wlisting.id %}" method="POST">
                                     {% csrf_token %}
                                     <input class="btn btn-primary" type="submit" value="Add watch list">
                                 </form>
@@ -24,7 +24,7 @@
                             {% endif %}
                         </div>
                         <div class="card-footer">
-                            <small class="text-muted">{{ wlisting.watch_listing.first.create_at }} by: {{ wlisting.watch_listing.first.owner }}</small>
+                            <small class="text-muted">{{ wlisting.create_at }} by: {{ wlisting.owner.username }}</small>
                         </div>
                     </div>
                 </div>
