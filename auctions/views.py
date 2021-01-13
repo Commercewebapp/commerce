@@ -40,9 +40,7 @@ def bid(request, listing_id):
 def watchlist(request, listing_id):
     if request.method == "POST":
         listing = Listing.objects.get(pk=listing_id)
-        p = User(watch_listing=listing)
-        p.save()
-        p.watch_listing.add(listing)
+        request.user.watch_listing.add(listing)
         return HttpResponseRedirect(reverse("watchlistview"))
     else:
         return render(request, "auctions/watchlist.html")
@@ -57,11 +55,9 @@ def removewatchlist(request, listing_id):
 
 
 def watchlistview(request):
-    # @@@ for i in User.objects.first().watch_listing.all():
-    # print(i.title)
     if request.user.is_authenticated:
         return render(request, "auctions/watchlist.html", {
-            "user_watchlisting": User.objects.first().watch_listing.all()
+            "user_watchlisting": request.user.watch_listing.all()
         })
     else:
         return render(request, "auctions/watchlist.html")
