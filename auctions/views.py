@@ -65,16 +65,12 @@ def watchlistview(request):
 
 
 def closebid(request, listing_id):
-    if Listing.objects.get(listing_id).owner.username == request.user.username:
-        close_bid_button = True
-        return render(request, "auctions/bid.html", {
-            "matches_user": close_bid_button
-        })
-    else:
-        close_bid_button = False
-        return render(request, "auctions/bid.html", {
-            "matches_user": close_bid_button
-        })
+    username = request.user.username
+    # TODO(jan): matches_user doesn't show up in html
+    matches_user = Listing.objects.filter(pk=listing_id, owner__user__username=username).exists()
+    return render(request, "auctions/bid.html", {
+        "matches_user": matches_user
+    })
 
 
 def create_listing(request):
