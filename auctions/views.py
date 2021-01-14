@@ -30,7 +30,10 @@ def bid(request, listing_id):
                 error_clean_bid = True
     else:
         form = Bid()
+        username = request.user.username
+        matches_user = Listing.objects.get(pk=listing_id).owner.username == username
     return render(request, "auctions/bid.html", {
+        "matches_user": matches_user,
         "listing": listing,
         "form": form,
         "error_clean_bid": error_clean_bid
