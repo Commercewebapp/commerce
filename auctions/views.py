@@ -31,7 +31,7 @@ def bid(request, listing_id):
     else:
         form = Bid()
         username = request.user.username
-        matches_user = Listing.objects.get(pk=listing_id).owner.username == username
+        matches_user = Listing.objects.filter(pk=listing_id, owner__username=username).exists()
     return render(request, "auctions/bid.html", {
         "matches_user": matches_user,
         "listing": listing,
