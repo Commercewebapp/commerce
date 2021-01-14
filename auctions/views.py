@@ -68,12 +68,8 @@ def watchlistview(request):
 
 
 def closebid(request, listing_id):
-    username = request.user.username
-    # TODO(jan): matches_user doesn't show up in html
-    matches_user = Listing.objects.filter(pk=listing_id, owner__user__username=username).exists()
-    return render(request, "auctions/bid.html", {
-        "matches_user": matches_user
-    })
+    Listing.objects.filter(pk=listing_id).update(open_at=False)
+    return HttpResponseRedirect(reverse(index))
 
 
 def create_listing(request):
