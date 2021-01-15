@@ -15,6 +15,10 @@ def index(request):
     })
 
 
+def category(request):
+    return render(request, "auctions/category.html")
+
+
 def bid(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
     error_clean_bid = False
