@@ -82,8 +82,9 @@ def watchlistview(request):
 
 
 def closebid(request, listing_id):
-    Listing.objects.filter(pk=listing_id).update(open_at=False)
-    return HttpResponseRedirect(reverse(index))
+    if request.user.is_authenticated:
+        Listing.objects.filter(pk=listing_id).update(open_at=False)
+        return HttpResponseRedirect(reverse(index))
 
 
 def create_listing(request):
