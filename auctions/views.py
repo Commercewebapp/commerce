@@ -22,15 +22,21 @@ def category_view(request):
     })
 
 
-def category_add(request, name):
-    # @@@ Category.objects.get(pk=1).name == Listing.objects.get(pk=1).category_id.name
+def category_add(request, cate_id):
+    # @@@ Bug: the cate_id is a id and how find the listing we need listing id and listing id should matches with the same number
+    # if Category.objects.get(pk=category_name).name == Listing.objects.get(pk=category_name).category_id.name:
+        # listings = Listing.objects.get(pk=category_name)
+    matches = Category.objects.get(pk=cate_id).name == Listing.objects.get(pk=cate_id).category_id.name
     return render(request, "auctions/each_category.html", {
-        "title": name
+        # "listing": listings,
+        "matches": matches
     })
 
 
 def bid(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
+    username = request.user.username
+    matches_user = Listing.objects.filter(pk=listing_id, owner__username=username).exists()
     error_clean_bid = False
     if request.method == "POST":
         form = Bid(request.POST)
@@ -44,8 +50,6 @@ def bid(request, listing_id):
                 error_clean_bid = True
     else:
         form = Bid()
-        username = request.user.username
-        matches_user = Listing.objects.filter(pk=listing_id, owner__username=username).exists()
     return render(request, "auctions/bid.html", {
         "matches_user": matches_user,
         "listing": listing,

@@ -1,6 +1,11 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h1>{{ title }}</h1>
+    {% for listing in listings %}
+        <h1>{{ listing.title }}</h1>
+    {% endfor %}
 
+    {{ matches }}
+
+    Listing should appear here
 {% endblock %}

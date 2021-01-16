@@ -15,6 +15,6 @@ urlpatterns = [
     path("watchlist/<int:listing_id>", views.watchlist, name="watchlist"),
     path("closebid/<int:listing_id>", views.closebid, name="closebid"),
     path("category_view", views.category_view, name="category_view"),
-    path("category_add/<str:name>", views.category_add, name="category_add"),
+    path("category_add/<int:cate_id>", views.category_add, name="category_add"),
     path("watchlistview", views.watchlistview, name="watchlistview")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
