@@ -23,9 +23,8 @@ def category_view(request):
 
 
 def category_add(request, name):
-    show_category = Category.objects.all()
-    return render(request, "auctions/category.html", {
-        "show_category": show_category
+    return render(request, "auctions/each_category.html", {
+        "title": name
     })
 
 
