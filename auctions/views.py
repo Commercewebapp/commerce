@@ -23,13 +23,9 @@ def category_view(request):
 
 
 def category_add(request, cate_id):
-    # @@@ Bug: the cate_id is a id and how find the listing we need listing id and listing id should matches with the same number
-    # if Category.objects.get(pk=category_name).name == Listing.objects.get(pk=category_name).category_id.name:
-        # listings = Listing.objects.get(pk=category_name)
-    matches = Category.objects.get(pk=cate_id).name == Listing.objects.get(pk=cate_id).category_id.name
+    listings = Listing.objects.filter(category_id=cate_id)
     return render(request, "auctions/each_category.html", {
-        # "listing": listings,
-        "matches": matches
+        "listings": listings
     })
 
 
