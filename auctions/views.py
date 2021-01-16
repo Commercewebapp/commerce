@@ -83,7 +83,9 @@ def watchlistview(request):
 
 def closebid(request, listing_id):
     if request.user.is_authenticated:
-        Listing.objects.filter(pk=listing_id).update(open_at=False)
+        username = request.user.username
+        if Listing.objects.filter(pk=listing_id, owner__username=username).exists():
+            Listing.objects.filter(pk=listing_id).update(open_at=False)
         return HttpResponseRedirect(reverse(index))
 
 
