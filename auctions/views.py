@@ -23,6 +23,7 @@ def category_view(request):
 
 
 def category_add(request, name):
+    # @@@ Category.objects.get(pk=1).name == Listing.objects.get(pk=1).category_id.name
     return render(request, "auctions/each_category.html", {
         "title": name
     })
