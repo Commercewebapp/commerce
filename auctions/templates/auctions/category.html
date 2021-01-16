@@ -3,5 +3,9 @@
 {% block body %}
     <h1>Category</h1>
 
-    TODO
+    {% for i in show_category %}
+        <ul>
+            <h2><li><a href="{% url 'category_add' i.name %}">{{ i.name }}</a></li></h2>
+        </ul>
+    {% endfor %}
 {% endblock %}

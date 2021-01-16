@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing
+from .models import User, Listing, Category
 from .form import CreateListing, Bid
 
 
@@ -15,8 +15,18 @@ def index(request):
     })
 
 
-def category(request):
-    return render(request, "auctions/category.html")
+def category_view(request):
+    show_category = Category.objects.all()
+    return render(request, "auctions/category.html", {
+        "show_category": show_category
+    })
+
+
+def category_add(request, name):
+    show_category = Category.objects.all()
+    return render(request, "auctions/category.html", {
+        "show_category": show_category
+    })
 
 
 def bid(request, listing_id):
