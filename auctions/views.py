@@ -75,7 +75,7 @@ def removewatchlist(request, listing_id):
 def watchlistview(request):
     if request.user.is_authenticated:
         return render(request, "auctions/watchlist.html", {
-            "user_watchlisting": request.user.watch_listing.all()
+            "user_watchlisting": request.user.watch_listing.all().filter(open_at=True)
         })
     else:
         return render(request, "auctions/watchlist.html")
