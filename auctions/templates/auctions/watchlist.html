@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Watch list</h2>
+    <h2>Watch list {{ request.user.username }}</h2>
 
     {% if request.user.is_authenticated %}
         <div style="display: flex;">
