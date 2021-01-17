@@ -91,10 +91,12 @@ def closebid(request, listing_id):
 
 def closebidview(request):
     if request.user.is_authenticated:
-        listings = Listing.objects.all().filter(open_at=False)
+        listings = request.user.listing_set.all().filter(open_at=False)
         return render(request, "auctions/closebid.html", {
             "listings": listings
         })
+    else:
+        return render(request, "auctions/closebid.html")
 
 
 def create_listing(request):
