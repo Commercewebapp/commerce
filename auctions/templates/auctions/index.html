@@ -3,7 +3,7 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-    <div style="display: flex;">
+    <div style="display: flex; flex-wrap: wrap;">
         {% for listing in listings %}
             <div class="card-deck" style="width: 18rem; padding: 2px;">
                 <div class="card">
