@@ -86,7 +86,15 @@ def closebid(request, listing_id):
         username = request.user.username
         if Listing.objects.filter(pk=listing_id, owner__username=username).exists():
             Listing.objects.filter(pk=listing_id).update(open_at=False)
-        return HttpResponseRedirect(reverse(index))
+        return render(request, "auctions/closebid.html")
+
+
+def closebidview(request):
+    if request.user.is_authenticated:
+        listings = Listing.objects.all().filter(open_at=False)
+        return render(request, "auctions/closebid.html", {
+            "listings": listings
+        })
 
 
 def create_listing(request):
