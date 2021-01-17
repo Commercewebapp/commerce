@@ -87,6 +87,8 @@ def closebid(request, listing_id):
         if Listing.objects.filter(pk=listing_id, owner__username=username).exists():
             Listing.objects.filter(pk=listing_id).update(open_at=False)
         return render(request, "auctions/closebid.html")
+    else:
+        return render(request, "auctions/closebid.html")
 
 
 def closebidview(request):
