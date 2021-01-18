@@ -29,6 +29,21 @@ def category_add(request, cate_id):
     })
 
 
+def comment(request, listing_id):
+    if request.user.is_authenticated:
+        listing = Listing.objects.get(pk=listing_id)
+        if request.method == "POST":
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                clean_comment = form.cleaned_data["comment_box"]
+                p = Comment(user=request.user, comment=clean_comment,
+                            listing_title=listing)
+                p.save()
+                return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
+        else:
+            form = CommentForm()
+
+
 def bid(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
     username = request.user.username
