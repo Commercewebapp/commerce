@@ -16,3 +16,9 @@ class CreateListing(forms.Form):
 
 class Bid(forms.Form):
     bid_form = forms.IntegerField()
+
+
+class CommentForm(forms.Form):
+    comment_box = forms.CharField(max_length=200, widget=forms.Textarea(attrs={
+        "class": "form-control col-md-5 col-lg-5", "rows": 5
+    }))
