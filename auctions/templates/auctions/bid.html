@@ -49,5 +49,9 @@
             <p>{{ i.user }} -> {{ i.comment }}</p>
         {% endfor %}
     </div>
-    {{ comment_form.as_p }}
+    <form action="{% url 'comment' listing.id %}" method="POST">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <input type="submit">
+    </form>
 {% endblock %}
