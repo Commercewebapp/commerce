@@ -47,9 +47,7 @@ def bid(request, listing_id):
     else:
         form = Bid()
         comment_form = CommentForm()
-        # comment_message = Comment.objects.all()
-        # listings = request.user.listing_set.all().filter(open_at=False)
-        comment_message = Comment.objects.get(pk=listing_id).listing_title.listing_com.all()
+        comment_message = Listing.objects.get(pk=listing_id).listing_com.all()
     return render(request, "auctions/bid.html", {
         "matches_user": matches_user,
         "listing": listing,
