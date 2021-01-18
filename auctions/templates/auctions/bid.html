@@ -43,4 +43,11 @@
             </div>
         </div>
     </div>
+    <br>
+    <div class="bd-example" style="border: 1px solid rgba(0,0,0,.125)">
+        {% for i in comment_message %}
+            <p>{{ i.user }} -> {{ i.comment }}</p>
+        {% endfor %}
+    </div>
+    {{ comment_form.as_p }}
 {% endblock %}
