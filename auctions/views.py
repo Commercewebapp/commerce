@@ -50,21 +50,23 @@ def bid(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
     username = request.user.username
     matches_user = Listing.objects.filter(pk=listing_id, owner__username=username).exists()
+    comment_message = Listing.objects.get(pk=listing_id).listing_com.all()
     error_clean_bid = False
     if request.method == "POST":
+        comment_form = CommentForm()
         form = Bid(request.POST)
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
             if clean_bid > price_from_database:
                 listing.starting_price = clean_bid
+                Listing.objects.filter(pk=listing_id).update(track_user=request.user)
                 listing.save()
             else:
                 error_clean_bid = True
     else:
         form = Bid()
         comment_form = CommentForm()
-        comment_message = Listing.objects.get(pk=listing_id).listing_com.all()
     return render(request, "auctions/bid.html", {
         "matches_user": matches_user,
         "listing": listing,
