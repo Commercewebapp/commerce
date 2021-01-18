@@ -34,8 +34,6 @@
                             <input class="btn btn-warning" type="submit" value="Close bid">
                         </form>
                     {% endif %}
-                {% else %}
-                    <p><a href={% url 'login' %}>Login</a> to add in watch list!</p>
                 {% endif %}
             </div>
             <div class="card-footer">
@@ -49,9 +47,11 @@
             <p>{{ i.user }} -> {{ i.comment }}</p>
         {% endfor %}
     </div>
-    <form action="{% url 'comment' listing.id %}" method="POST">
-        {% csrf_token %}
-        {{ comment_form.as_p }}
-        <input type="submit">
-    </form>
+    {% if user.is_authenticated %}
+        <form action="{% url 'comment' listing.id %}" method="POST">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <input type="submit">
+        </form>
+    {% endif %}
 {% endblock %}

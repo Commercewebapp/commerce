@@ -42,6 +42,8 @@ def comment(request, listing_id):
                 return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
         else:
             form = CommentForm()
+    else:
+        return render(request, "auctions/bid.html")
 
 
 def bid(request, listing_id):
