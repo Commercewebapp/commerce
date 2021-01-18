@@ -4,8 +4,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing, Category
-from .form import CreateListing, Bid
+from .models import User, Listing, Category, Comment
+from .form import CreateListing, Bid, CommentForm
 
 
 def index(request):
@@ -46,11 +46,17 @@ def bid(request, listing_id):
                 error_clean_bid = True
     else:
         form = Bid()
+        comment_form = CommentForm()
+        # comment_message = Comment.objects.all()
+        # listings = request.user.listing_set.all().filter(open_at=False)
+        comment_message = Comment.objects.get(pk=listing_id).listing_title.listing_com.all()
     return render(request, "auctions/bid.html", {
         "matches_user": matches_user,
         "listing": listing,
         "form": form,
-        "error_clean_bid": error_clean_bid
+        "error_clean_bid": error_clean_bid,
+        "comment_form": comment_form,
+        "comment_message": comment_message
     })
 
 
@@ -86,7 +92,7 @@ def closebid(request, listing_id):
         username = request.user.username
         if Listing.objects.filter(pk=listing_id, owner__username=username).exists():
             Listing.objects.filter(pk=listing_id).update(open_at=False)
-        return render(request, "auctions/closebid.html")
+            return HttpResponseRedirect(reverse(closebidview))
     else:
         return render(request, "auctions/closebid.html")
 
