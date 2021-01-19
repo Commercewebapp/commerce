@@ -105,12 +105,9 @@ def watchlistview(request):
 
 
 def closebid(request, listing_id):
-    if request.user.is_authenticated:
-        username = request.user.username
-        if Listing.objects.filter(pk=listing_id, owner__username=username).exists():
-            Listing.objects.filter(pk=listing_id).update(open_at=False)
-            # @@@ winning_user = Listing.objects.get(pk=listing_id).track_user
-            return HttpResponseRedirect(reverse(closebidview))
+    if request.user.is_authenticated and request.method == "POST":
+        Listing.objects.filter(pk=listing_id, owner=request.user).update(open_at=False)
+        return HttpResponseRedirect(reverse("closebidview"))
     else:
         return render(request, "auctions/closebid.html")
 
