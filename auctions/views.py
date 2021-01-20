@@ -52,6 +52,7 @@ def bid(request, listing_id):
     matches_user = Listing.objects.filter(pk=listing_id, owner__username=username).exists()
     comment_message = Listing.objects.get(pk=listing_id).listing_com.all()
     error_clean_bid = False
+    cant_bid = False
     if request.method == "POST":
         comment_form = CommentForm()
         form = Bid(request.POST)
@@ -65,14 +66,20 @@ def bid(request, listing_id):
             else:
                 error_clean_bid = True
     else:
-        form = Bid()
-        comment_form = CommentForm()
+        if matches_user:
+            cant_bid = True
+            form = Bid()
+            comment_form = CommentForm()
+        else:
+            form = Bid()
+            comment_form = CommentForm()
     return render(request, "auctions/bid.html", {
         "matches_user": matches_user,
         "listing": listing,
         "form": form,
         "error_clean_bid": error_clean_bid,
         "comment_form": comment_form,
+        "cant_bid": cant_bid,
         "comment_message": comment_message
     })
 
