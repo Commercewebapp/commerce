@@ -49,7 +49,8 @@ def comment(request, listing_id):
 def bid(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
     username = request.user.username
-    matches_user = Listing.objects.filter(pk=listing_id, owner__username=username).exists()
+    matches_user = Listing.objects.filter(pk=listing_id,
+                                          owner__username=username).exists()
     comment_message = Listing.objects.get(pk=listing_id).listing_com.all()
     error_clean_bid = False
     cant_bid = False
