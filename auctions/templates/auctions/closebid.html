@@ -14,7 +14,7 @@
                             <p class="card-text">{{ listing.description }}</p>
                             <p class="card-text"><strong>Price: ${{ listing.starting_price }}</strong></p>
                             {% if user.is_authenticated %}
-                                <p>{{ winning_user.username }} is the winner</p>
+                                <p>{{ winner_user.username }} is the winner</p>
                                 <p>Contact:</p>
                                 <ul>
                                     <li>$email</li>
