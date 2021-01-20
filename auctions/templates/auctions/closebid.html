@@ -14,10 +14,10 @@
                             <p class="card-text">{{ listing.description }}</p>
                             <p class="card-text"><strong>Price: ${{ listing.starting_price }}</strong></p>
                             {% if user.is_authenticated %}
-                                <p>{{ winner_user.username }} is the winner</p>
+                                <p>{{ listing.track_user.username }} is the winner</p>
                                 <p>Contact:</p>
                                 <ul>
-                                    <li>$email</li>
+                                    <li>{{ listing.track_user.email }}</li>
                                 </ul>
                             {% else %}
                                 <p><a href={% url 'login' %}>Login</a> to see the winner!</p>

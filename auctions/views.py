@@ -110,10 +110,7 @@ def closebid(request, listing_id):
         # @@@ winner_user = Listing.objects.get(pk=listing_id).track_user
         return HttpResponseRedirect(reverse("closebidview"))
     else:
-        winner_user = Listing.objects.get(pk=listing_id).track_user
-        return render(request, "auctions/closebid.html", {
-            "winner_user": winner_user
-        })
+        return render(request, "auctions/closebid.html")
 
 
 def closebidview(request):
