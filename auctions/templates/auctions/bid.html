@@ -10,6 +10,8 @@
                 <p class="card-text">{{ listing.description }}</p>
                 <p class="card-text"><strong>Price: ${{ listing.starting_price }}</strong></p>
                 {% if user.is_authenticated %}
+                    <!-- @@@ {{ listing.track_user }}
+                        {{ bid_at }} -->
                     {% if not cant_bid %}
                         <form action="{% url 'bid' listing.id %}" method="POST">
                             {% csrf_token %}

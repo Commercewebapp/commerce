@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+import datetime
 
 from .models import User, Listing, Category, Comment
 from .form import CreateListing, Bid, CommentForm
@@ -64,6 +65,8 @@ def bid(request, listing_id):
                 listing.starting_price = clean_bid
                 listing.save()
                 Listing.objects.filter(pk=listing_id).update(track_user=request.user)
+                bid_at = datetime.datetime.now()
+                # @@@ print(f"Time: {bid_at}")
             else:
                 error_clean_bid = True
     else:
