@@ -31,8 +31,6 @@ class Listing(models.Model):
     starting_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     track_user = models.ForeignKey("User", null=True, on_delete=models.DO_NOTHING,
                                    related_name="track")
-    user_place_at_bid = models.DecimalField(decimal_places=0, max_digits=2,
-                                            null=True)
 
     def __str__(self):
         return f"{self.title}"
@@ -40,3 +38,11 @@ class Listing(models.Model):
 
 class User(AbstractUser):
     watch_listing = models.ManyToManyField(Listing)
+
+
+class BidTimer(models.Model):
+    user_place_at_bid = models.DecimalField(decimal_places=0, max_digits=2)
+    listing = models.ForeignKey(Listing, null=True, on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return f"{self.user_place_at_bid}"

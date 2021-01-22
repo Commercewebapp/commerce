@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 import datetime
 
-from .models import User, Listing, Category, Comment
+from .models import User, Listing, Category, Comment, BidTimer
 from .form import CreateListing, Bid, CommentForm
 
 
@@ -51,6 +51,7 @@ def bid(request, listing_id):
     current_time = str(datetime.datetime.now())
     current_time = int(current_time[14:16])
     listing = Listing.objects.get(pk=listing_id)
+    time_listing = BidTimer.objects.get(pk=listing_id)
     username = request.user.username
     matches_user = Listing.objects.filter(pk=listing_id,
                                           owner__username=username).exists()
@@ -61,7 +62,7 @@ def bid(request, listing_id):
     if request.method == "POST":
         comment_form = CommentForm()
         form = Bid(request.POST)
-        time_in_database = listing.user_place_at_bid
+        time_in_database = time_listing.user_place_at_bid
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
@@ -69,7 +70,8 @@ def bid(request, listing_id):
                 if clean_bid - price_from_database >= 2:
                     user_place = str(datetime.datetime.now())
                     user_place = int(user_place[14:16])
-                    listing.user_place_at_bid = user_place
+                    time_listing.user_place_at_bid = user_place
+                    time_listing.save()
                     listing.starting_price = clean_bid
                     listing.save()
                     Listing.objects.filter(pk=listing_id).update(track_user=request.user)
