@@ -68,7 +68,7 @@ def bid(request, listing_id):
             if current_time - time_in_database >= 1:
                 if clean_bid - price_from_database >= 2:
                     user_place = 26
-                    listing.user_place_bid_time = user_place
+                    listing.user_place_at_bid = user_place
                     listing.starting_price = clean_bid
                     listing.save()
                     Listing.objects.filter(pk=listing_id).update(track_user=request.user)
