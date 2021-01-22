@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+import datetime
 
 from .models import User, Listing, Category, Comment
 from .form import CreateListing, Bid, CommentForm
@@ -47,6 +48,8 @@ def comment(request, listing_id):
 
 
 def bid(request, listing_id):
+    current_time = str(datetime.datetime.now())
+    current_time = int(current_time[14:16])
     listing = Listing.objects.get(pk=listing_id)
     username = request.user.username
     matches_user = Listing.objects.filter(pk=listing_id,
@@ -60,12 +63,18 @@ def bid(request, listing_id):
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
-            if clean_bid - price_from_database >= 5:
-                listing.starting_price = clean_bid
-                listing.save()
-                Listing.objects.filter(pk=listing_id).update(track_user=request.user)
+            time_in_database = listing.user_place_at_bid
+            if current_time - time_in_database >= 1:
+                if clean_bid - price_from_database >= 2:
+                    user_place = 26
+                    listing.user_place_bid_time = user_place
+                    listing.starting_price = clean_bid
+                    listing.save()
+                    Listing.objects.filter(pk=listing_id).update(track_user=request.user)
+                else:
+                    error_clean_bid = True
             else:
-                error_clean_bid = True
+                print("less than 3")
     else:
         if matches_user:
             cant_bid = True
