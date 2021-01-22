@@ -57,13 +57,14 @@ def bid(request, listing_id):
     comment_message = Listing.objects.get(pk=listing_id).listing_com.all()
     error_clean_bid = False
     cant_bid = False
+    wait_for_three_min = False
     if request.method == "POST":
         comment_form = CommentForm()
         form = Bid(request.POST)
+        time_in_database = listing.user_place_at_bid
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
-            time_in_database = listing.user_place_at_bid
             if current_time - time_in_database >= 1:
                 if clean_bid - price_from_database >= 2:
                     user_place = 26
@@ -74,7 +75,7 @@ def bid(request, listing_id):
                 else:
                     error_clean_bid = True
             else:
-                print("less than 3")
+                wait_for_three_min = True
     else:
         if matches_user:
             cant_bid = True
@@ -86,6 +87,7 @@ def bid(request, listing_id):
     return render(request, "auctions/bid.html", {
         "matches_user": matches_user,
         "listing": listing,
+        "wait_for_three_min": wait_for_three_min,
         "form": form,
         "error_clean_bid": error_clean_bid,
         "comment_form": comment_form,

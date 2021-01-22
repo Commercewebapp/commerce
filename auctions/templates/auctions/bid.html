@@ -19,6 +19,9 @@
                             {% if error_clean_bid %}
                                 <p>Can't be lower than the number of price</p>
                             {% endif %}
+                            {% if wait_for_three_min%}
+                                <p>You can bid again after 3 minutes</p>
+                            {% endif %}
                             <input class="btn btn-primary" type="submit" value="Bid">
                         </form>
                     {% endif %}
