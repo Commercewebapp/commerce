@@ -28,9 +28,7 @@ class Listing(models.Model):
     create_at = models.DateTimeField(auto_now_add=True, null=True)
     open_at = models.BooleanField(default=True)
     owner = models.ForeignKey("User", null=True, on_delete=models.DO_NOTHING)
-    starting_price = models.DecimalField(decimal_places=2, max_digits=10, null=True)
-    track_user = models.ForeignKey("User", null=True, on_delete=models.DO_NOTHING,
-                                   related_name="track")
+    starting_price = models.DecimalField(decimal_places=2, max_digits=8, null=True)
 
     def __str__(self):
         return f"{self.title}"
@@ -40,9 +38,12 @@ class User(AbstractUser):
     watch_listing = models.ManyToManyField(Listing)
 
 
-class BidTimer(models.Model):
-    user_place_at_bid = models.DecimalField(decimal_places=0, max_digits=2)
-    listing = models.ForeignKey(Listing, null=True, on_delete=models.DO_NOTHING)
+class Bid(models.Model):
+    bid_hour = models.DecimalField(decimal_places=0, max_digits=2, null=True)
+    bid_minute = models.DecimalField(decimal_places=0, max_digits=2, null=True)
+    listing = models.ForeignKey(Listing, null=True, on_delete=models.DO_NOTHING,
+                                related_name="listing_bid")
+    track_user = models.ForeignKey("User", null=True, on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return f"{self.user_place_at_bid}"
+        return f"{self.bid_hour}:{self.bid_minute}"
