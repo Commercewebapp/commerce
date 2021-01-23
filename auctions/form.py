@@ -14,7 +14,7 @@ class CreateListing(forms.Form):
     starting_price = forms.IntegerField()
 
 
-class Bid(forms.Form):
+class BidForm(forms.Form):
     bid_form = forms.IntegerField()
 
 

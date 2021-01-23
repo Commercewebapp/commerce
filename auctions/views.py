@@ -5,8 +5,8 @@ from django.shortcuts import render
 from django.urls import reverse
 import datetime
 
-from .models import User, Listing, Category, Comment, BidTimer
-from .form import CreateListing, Bid, CommentForm
+from .models import User, Listing, Category, Comment, Bid
+from .form import CreateListing, BidForm, CommentForm
 
 
 def index(request):
@@ -48,10 +48,14 @@ def comment(request, listing_id):
 
 
 def bid(request, listing_id):
-    current_time = str(datetime.datetime.now())
-    current_time = int(current_time[14:16])
+    current_time = datetime.datetime.now()
+    current_time_min = current_time.minute
+    current_time_hour = current_time.hour
     listing = Listing.objects.get(pk=listing_id)
-    time_listing = BidTimer.objects.get(pk=listing_id)
+    # @@@ time_listing = listing.listing_bid.all()
+    # @@@ time_listing = listing.listing_bid.filter()
+    # @@@ listing.listing_bid.filter().update(bid_minute=32)
+    time_listing = listing.listing_bid.get()
     username = request.user.username
     matches_user = Listing.objects.filter(pk=listing_id,
                                           owner__username=username).exists()
@@ -59,36 +63,42 @@ def bid(request, listing_id):
     error_clean_bid = False
     cant_bid = False
     wait_for_three_min = False
+    time_in_database_min = time_listing.bid_minute
+    time_in_database_hr = time_listing.bid_hour
     if request.method == "POST":
         comment_form = CommentForm()
-        form = Bid(request.POST)
-        time_in_database = time_listing.user_place_at_bid
+        form = BidForm(request.POST)
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
-            if current_time - time_in_database >= 3:
-                if clean_bid - price_from_database >= 2:
-                    user_place = str(datetime.datetime.now())
-                    user_place = int(user_place[14:16])
-                    time_listing.user_place_at_bid = user_place
-                    time_listing.save()
-                    listing.starting_price = clean_bid
-                    listing.save()
-                    Listing.objects.filter(pk=listing_id).update(track_user=request.user)
+            if current_time_hour - time_in_database_hr != 0:
+                if current_time_min - time_in_database_min >= 3:
+                    if clean_bid - price_from_database >= 2:
+                        user_place = datetime.datetime.now()
+                        user_place_min = user_place.minute
+                        user_place_hour = user_place.hour
+                        time_listing.bid_minute = user_place_min
+                        time_listing.bid_hour = user_place_hour
+                        time_listing.save()
+                        listing.starting_price = clean_bid
+                        listing.save()
+                        Bid.objects.filter(pk=listing_id).update(track_user=request.user)
+                    else:
+                        error_clean_bid = True
                 else:
-                    error_clean_bid = True
-            else:
-                wait_for_three_min = True
+                    wait_for_three_min = True
     else:
         if matches_user:
             cant_bid = True
-            form = Bid()
+            form = BidForm()
             comment_form = CommentForm()
         else:
-            form = Bid()
+            form = BidForm()
             comment_form = CommentForm()
     return render(request, "auctions/bid.html", {
         "matches_user": matches_user,
+        "time_in_database_min": time_in_database_min,
+        "time_in_database_hr": time_in_database_hr,
         "listing": listing,
         "wait_for_three_min": wait_for_three_min,
         "form": form,

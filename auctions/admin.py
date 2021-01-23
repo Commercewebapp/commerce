@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Listing, Category, User, Comment, BidTimer
+from .models import Listing, Category, User, Comment, Bid
 
 
 class ListingAdmin(admin.ModelAdmin):
@@ -8,7 +8,7 @@ class ListingAdmin(admin.ModelAdmin):
 
 
 class BidAdmin(admin.ModelAdmin):
-    list_display = ("id", "listing_id", "bid", "user")
+    list_display = ("id", "bid_hour", "bid_minute", "listing", "track_user")
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -19,12 +19,8 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "comment", "listing_title")
 
 
-class BidTimerAdmin(admin.ModelAdmin):
-    list_display = ("id", "user_place_at_bid", "listing")
-
-
 admin.site.register(Listing, ListingAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(User)
 admin.site.register(Comment, CommentAdmin)
-admin.site.register(BidTimer, BidTimerAdmin)
+admin.site.register(Bid, BidAdmin)
