@@ -48,9 +48,6 @@ def comment(request, listing_id):
 
 
 def bid(request, listing_id):
-    current_time = datetime.datetime.now()
-    current_time_min = current_time.minute
-    current_time_hour = current_time.hour
     listing = Listing.objects.get(pk=listing_id)
     # @@@ time_listing = listing.listing_bid.all()
     # @@@ time_listing = listing.listing_bid.filter()
@@ -71,12 +68,11 @@ def bid(request, listing_id):
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
-            if current_time_hour - time_in_database_hr != 0:
-                if current_time_min - time_in_database_min >= 3:
+            if datetime.datetime.now().hour - time_in_database_hr != 0:
+                if datetime.datetime.now().minute - time_in_database_min >= 3:
                     if clean_bid - price_from_database >= 2:
-                        user_place = datetime.datetime.now()
-                        user_place_min = user_place.minute
-                        user_place_hour = user_place.hour
+                        user_place_min = datetime.datetime.now().minute
+                        user_place_hour = datetime.datetime.now().hour
                         time_listing.bid_minute = user_place_min
                         time_listing.bid_hour = user_place_hour
                         time_listing.save()
