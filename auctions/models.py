@@ -23,12 +23,12 @@ class Category(models.Model):
 class Listing(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField()
-    image = models.ImageField(upload_to="listing_images", default=None, null=True)
+    image = models.ImageField(upload_to="listing_images", default=None)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
-    create_at = models.DateTimeField(auto_now_add=True, null=True)
-    open_at = models.BooleanField(default=True)
-    owner = models.ForeignKey("User", null=True, on_delete=models.DO_NOTHING)
-    starting_price = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    open_at = models.BooleanField()
+    owner = models.ForeignKey("User", on_delete=models.DO_NOTHING)
+    starting_price = models.DecimalField(decimal_places=2, max_digits=8)
 
     def __str__(self):
         return f"{self.title}"
@@ -39,11 +39,10 @@ class User(AbstractUser):
 
 
 class Bid(models.Model):
-    bid_hour = models.DecimalField(decimal_places=0, max_digits=2, null=True)
-    bid_minute = models.DecimalField(decimal_places=0, max_digits=2, null=True)
-    listing = models.ForeignKey(Listing, null=True, on_delete=models.DO_NOTHING,
+    date = models.DateTimeField(null=True)
+    listing = models.ForeignKey(Listing, on_delete=models.DO_NOTHING,
                                 related_name="listing_bid")
-    track_user = models.ForeignKey("User", null=True, on_delete=models.DO_NOTHING)
+    track_user = models.ForeignKey("User", on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return f"{self.bid_hour}:{self.bid_minute}"
+        return f"{self.date}"
