@@ -49,12 +49,12 @@ def comment(request, listing_id):
 
 def bid(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
-    date = listing.listing_bid.get().date
+    date = listing.listing_bid.filter(track_user=request.user).order_by("-date").first().date
     current_time = datetime.now(timezone.utc)
     username = request.user.username
     matches_user = Listing.objects.filter(pk=listing_id,
                                           owner__username=username).exists()
-    comment_message = Listing.objects.get(pk=listing_id).listing_com.all()
+    comment_message = listing.listing_com.all()
     error_clean_bid = False
     cant_bid = False
     wait_for_three_min = False
@@ -64,8 +64,12 @@ def bid(request, listing_id):
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
+            print(f"Recored Time {date}")
+            print(f"Current Time {current_time}")
             delta = current_time - date
-            if delta < timedelta(minutes=3):
+            print(f"Delta {delta}")
+            print(delta > timedelta(minutes=3))
+            if delta > timedelta(minutes=3):
                 if clean_bid - price_from_database >= 2:
                     listing.listing_bid.filter().update(date=current_time)
                     listing.starting_price = clean_bid
