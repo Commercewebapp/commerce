@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from .models import User, Listing, Category, Comment, Bid
 from .form import CreateListing, BidForm, CommentForm
@@ -64,7 +64,8 @@ def bid(request, listing_id):
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
-            if current_time.minute - date.minute >= 3:
+            delta = current_time - date
+            if delta < timedelta(minutes=3):
                 if clean_bid - price_from_database >= 2:
                     listing.listing_bid.filter().update(date=current_time)
                     listing.starting_price = clean_bid
