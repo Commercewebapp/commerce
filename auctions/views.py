@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-import datetime
+from datetime import datetime, timezone
 
 from .models import User, Listing, Category, Comment, Bid
 from .form import CreateListing, BidForm, CommentForm
@@ -49,7 +49,8 @@ def comment(request, listing_id):
 
 def bid(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
-    # @@@ date =
+    date = listing.listing_bid.get().date
+    current_time = datetime.now(timezone.utc)
     username = request.user.username
     matches_user = Listing.objects.filter(pk=listing_id,
                                           owner__username=username).exists()
@@ -58,13 +59,14 @@ def bid(request, listing_id):
     cant_bid = False
     wait_for_three_min = False
     if request.method == "POST":
-        comment_form = CommentForm(request.POST)
+        comment_form = CommentForm()
         form = BidForm(request.POST)
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
-            if datetime.datetime.now() - date >= 3:
+            if current_time.minute - date.minute >= 3:
                 if clean_bid - price_from_database >= 2:
+                    listing.listing_bid.filter().update(date=current_time)
                     listing.starting_price = clean_bid
                     listing.save()
                     Bid.objects.filter(pk=listing_id).update(track_user=request.user)
@@ -82,8 +84,6 @@ def bid(request, listing_id):
             comment_form = CommentForm()
     return render(request, "auctions/bid.html", {
         "matches_user": matches_user,
-        "time_in_database_min": time_in_database_min,
-        "time_in_database_hr": time_in_database_hr,
         "listing": listing,
         "wait_for_three_min": wait_for_three_min,
         "form": form,
