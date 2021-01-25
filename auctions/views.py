@@ -63,7 +63,7 @@ def bid(request, listing_id):
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
-            if datetime.datetime.now() - >= 3:
+            if datetime.datetime.now() - date >= 3:
                 if clean_bid - price_from_database >= 2:
                     listing.starting_price = clean_bid
                     listing.save()
