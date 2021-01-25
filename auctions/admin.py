@@ -8,7 +8,7 @@ class ListingAdmin(admin.ModelAdmin):
 
 
 class BidAdmin(admin.ModelAdmin):
-    list_display = ("id", "bid_hour", "bid_minute", "listing", "track_user")
+    list_display = ("id", "date", "listing", "track_user")
 
 
 class CategoryAdmin(admin.ModelAdmin):
