@@ -49,10 +49,7 @@ def comment(request, listing_id):
 
 def bid(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
-    # @@@ time_listing = listing.listing_bid.all()
-    # @@@ time_listing = listing.listing_bid.filter()
-    # @@@ listing.listing_bid.filter().update(bid_minute=32)
-    time_listing = listing.listing_bid.get()
+    # @@@ date =
     username = request.user.username
     matches_user = Listing.objects.filter(pk=listing_id,
                                           owner__username=username).exists()
@@ -60,29 +57,21 @@ def bid(request, listing_id):
     error_clean_bid = False
     cant_bid = False
     wait_for_three_min = False
-    time_in_database_min = time_listing.bid_minute
-    time_in_database_hr = time_listing.bid_hour
     if request.method == "POST":
-        comment_form = CommentForm()
+        comment_form = CommentForm(request.POST)
         form = BidForm(request.POST)
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
-            if datetime.datetime.now().hour - time_in_database_hr != 0:
-                if datetime.datetime.now().minute - time_in_database_min >= 3:
-                    if clean_bid - price_from_database >= 2:
-                        user_place_min = datetime.datetime.now().minute
-                        user_place_hour = datetime.datetime.now().hour
-                        time_listing.bid_minute = user_place_min
-                        time_listing.bid_hour = user_place_hour
-                        time_listing.save()
-                        listing.starting_price = clean_bid
-                        listing.save()
-                        Bid.objects.filter(pk=listing_id).update(track_user=request.user)
-                    else:
-                        error_clean_bid = True
+            if datetime.datetime.now() - >= 3:
+                if clean_bid - price_from_database >= 2:
+                    listing.starting_price = clean_bid
+                    listing.save()
+                    Bid.objects.filter(pk=listing_id).update(track_user=request.user)
                 else:
-                    wait_for_three_min = True
+                    error_clean_bid = True
+            else:
+                wait_for_three_min = True
     else:
         if matches_user:
             cant_bid = True
