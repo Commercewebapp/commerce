@@ -17,7 +17,8 @@
                             {% csrf_token %}
                             {{ form.as_p }}
                             {% if error_clean_bid %}
-                                <p>Can't be lower than the number of price</p>
+                                <p>Can't be lower than the number of price and
+                                must bid greater than $2</p>
                             {% endif %}
                             {% if wait_for_three_min%}
                                 <p>You can bid again after 3 minutes</p>
