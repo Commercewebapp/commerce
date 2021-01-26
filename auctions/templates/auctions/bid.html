@@ -10,7 +10,7 @@
                 <p class="card-text">{{ listing.description }}</p>
                 <p class="card-text"><strong>Price: ${{ listing.starting_price }}</strong></p>
                 {% if user.is_authenticated %}
-                    {% if not cant_bid %}
+                    {% if not owner_cant_bid %}
                         <form action="{% url 'bid' listing.id %}" method="POST">
                             {% csrf_token %}
                             {{ form.as_p }}
@@ -49,8 +49,8 @@
     </div>
     <br>
     <div class="bd-example" style="border: 1px solid rgba(0,0,0,.125)">
-        {% for i in comment_message %}
-            <p>{{ i.user }} -> {{ i.comment }}</p>
+        {% for name in listing.comment.all %}
+            <p>{{ name.user }} -> {{ name.comment }}</p>
         {% endfor %}
     </div>
     {% if user.is_authenticated %}
