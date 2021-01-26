@@ -50,20 +50,20 @@ def comment(request, listing_id):
 def bid(request, listing_id):
     if request.user.is_authenticated:
         listing = Listing.objects.get(pk=listing_id)
-        bid = listing.listing_bid.filter(track_user=request.user).first()
+        bid = listing.bid.filter(user=request.user).first()
         current_time = datetime.now(timezone.utc)
         username = request.user.username
         matches_user = Listing.objects.filter(pk=listing_id,
                                               owner__username=username).exists()
-        comment_message = listing.listing_com.all()
+        comment_message = listing.comment.all()
         error_clean_bid = False
         cant_bid = False
         wait_for_three_min = False
         if bid is None:
             p = Bid(date=current_time, listing=listing,
-                    track_user=request.user)
+                    user=request.user)
             p.save()
-        record_date = listing.listing_bid.filter(track_user=request.user).first().date
+        record_date = listing.bid.filter(user=request.user).first().date
         if request.method == "POST":
             comment_form = CommentForm()
             form = BidForm(request.POST)
@@ -72,10 +72,10 @@ def bid(request, listing_id):
                 delta = current_time - record_date
                 if delta > timedelta(minutes=3):
                     if clean_bid - listing.starting_price >= 2:
-                        listing.listing_bid.filter().update(date=current_time)
+                        listing.bid.filter().update(date=current_time)
                         listing.starting_price = clean_bid
                         listing.save()
-                        Bid.objects.filter(pk=listing_id).update(track_user=request.user)
+                        Bid.objects.filter(pk=listing_id).update(user=request.user)
                     else:
                         error_clean_bid = True
                 else:

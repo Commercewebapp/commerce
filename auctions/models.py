@@ -7,7 +7,7 @@ class Comment(models.Model):
     comment = models.TextField()
     listing = models.ForeignKey("Listing", default=None,
                                 on_delete=models.DO_NOTHING,
-                                related_name="listing_com")
+                                related_name="comment")
 
     def __str__(self):
         return f"{self.user}, Comment: {self.comment}"
@@ -28,8 +28,7 @@ class Listing(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
     open_at = models.BooleanField()
     owner = models.ForeignKey("User", on_delete=models.DO_NOTHING)
-    starting_price = models.DecimalField(decimal_places=2, max_digits=8,
-                                         null=True)
+    starting_price = models.DecimalField(decimal_places=2, max_digits=8)
 
     def __str__(self):
         return f"{self.title}"
@@ -42,8 +41,8 @@ class User(AbstractUser):
 class Bid(models.Model):
     date = models.DateTimeField(null=True)
     listing = models.ForeignKey(Listing, on_delete=models.DO_NOTHING,
-                                related_name="listing_bid")
-    track_user = models.ForeignKey("User", on_delete=models.DO_NOTHING)
+                                related_name="bid")
+    user = models.ForeignKey("User", on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return f"{self.date}"
