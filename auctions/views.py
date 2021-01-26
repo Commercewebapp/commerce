@@ -50,9 +50,14 @@ def comment(request, listing_id):
 def bid(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
     bid = listing.listing_bid.filter(track_user=request.user).first()
-    if bid is not None:
-        date = listing.listing_bid.filter(track_user=request.user).first().date
     current_time = datetime.now(timezone.utc)
+    if bid is None:
+        p = Bid(date=current_time, listing=listing,
+                track_user=request.user)
+        p.save()
+        date = listing.listing_bid.filter(track_user=request.user).first().date
+    else:
+        date = listing.listing_bid.filter(track_user=request.user).first().date
     username = request.user.username
     matches_user = Listing.objects.filter(pk=listing_id,
                                           owner__username=username).exists()
@@ -66,11 +71,6 @@ def bid(request, listing_id):
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
-            if bid is None:
-                p = Bid(date=current_time, listing=listing,
-                        track_user=request.user)
-                p.save()
-                date = listing.listing_bid.filter(track_user=request.user).first().date
             delta = current_time - date
             if delta > timedelta(minutes=3):
                 if clean_bid - price_from_database >= 2:
