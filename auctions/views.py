@@ -38,7 +38,7 @@ def comment(request, listing_id):
             if form.is_valid():
                 clean_comment = form.cleaned_data["comment_box"]
                 p = Comment(user=request.user, comment=clean_comment,
-                            listing_title=listing)
+                            listing=listing)
                 p.save()
                 return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
         else:

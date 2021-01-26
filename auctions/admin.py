@@ -16,7 +16,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "comment", "listing_title")
+    list_display = ("id", "user", "comment", "listing")
 
 
 admin.site.register(Listing, ListingAdmin)

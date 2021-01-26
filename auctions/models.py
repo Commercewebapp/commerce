@@ -5,9 +5,9 @@ from django.db import models
 class Comment(models.Model):
     user = models.ForeignKey("User", on_delete=models.DO_NOTHING)
     comment = models.TextField()
-    listing_title = models.ForeignKey("Listing", default=None,
-                                      on_delete=models.DO_NOTHING,
-                                      related_name="listing_com")
+    listing = models.ForeignKey("Listing", default=None,
+                                on_delete=models.DO_NOTHING,
+                                related_name="listing_com")
 
     def __str__(self):
         return f"{self.user}, Comment: {self.comment}"
