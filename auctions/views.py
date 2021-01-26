@@ -67,9 +67,11 @@ def bid(request, listing_id):
             clean_bid = form.cleaned_data["bid_form"]
             price_from_database = listing.starting_price
             if bid is None:
-                listing.listing_bid.filter(track_user=request.user).update(date=current_time)
-            else:
-                delta = current_time - date
+                p = Bid(date=current_time, listing=listing,
+                        track_user=request.user)
+                p.save()
+                date = listing.listing_bid.filter(track_user=request.user).first().date
+            delta = current_time - date
             if delta > timedelta(minutes=3):
                 if clean_bid - price_from_database >= 2:
                     listing.listing_bid.filter().update(date=current_time)
