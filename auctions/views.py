@@ -49,8 +49,10 @@ def comment(request, listing_id):
 
 def bid(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
-    Bid.objects.filter(pk=listing_id).update(track_user=request.user)
-    date = listing.listing_bid.filter(track_user=request.user).order_by("-date").first().date
+    if None:
+        Bid.objects.filter(pk=listing_id).update(track_user=request.user)
+    else:
+        date = listing.listing_bid.filter(track_user=request.user).order_by("-date").first().date
     current_time = datetime.now(timezone.utc)
     username = request.user.username
     matches_user = Listing.objects.filter(pk=listing_id,

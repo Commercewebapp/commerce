@@ -28,7 +28,8 @@ class Listing(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
     open_at = models.BooleanField()
     owner = models.ForeignKey("User", on_delete=models.DO_NOTHING)
-    starting_price = models.DecimalField(decimal_places=2, max_digits=8)
+    starting_price = models.DecimalField(decimal_places=2, max_digits=8,
+                                         null=True)
 
     def __str__(self):
         return f"{self.title}"
