@@ -10,8 +10,6 @@
                 <p class="card-text">{{ listing.description }}</p>
                 <p class="card-text"><strong>Price: ${{ listing.starting_price }}</strong></p>
                 {% if user.is_authenticated %}
-                    <!-- @@@ {{ listing.track_user }}
-                        {{ bid_at }} -->
                     {% if not cant_bid %}
                         <form action="{% url 'bid' listing.id %}" method="POST">
                             {% csrf_token %}
@@ -44,8 +42,6 @@
                     {% endif %}
                 {% endif %}
             </div>
-            <! -- @@@ -->
-            {{ time_in_database_hr }}:{{ time_in_database_min }}
             <div class="card-footer">
                 <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner.username }}</small>
             </div>
