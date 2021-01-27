@@ -15,10 +15,10 @@ Instructions:
 
 1. Run:
 
-        $ pip install -r requirements.txt
-        $ python manage.py makemigrations auctions
-        $ python manage.py migrate
-        $ python manage.py runserver
+        $ pip3 install -r requirements.txt
+        $ python3 manage.py makemigrations auctions
+        $ python3 manage.py migrate
+        $ python3 manage.py runserver
 
 [Django-download]: https://www.djangoproject.com/download/
 [Python-download]: https://www.python.org/downloads/
