@@ -48,54 +48,54 @@ def comment(request, listing_id):
 
 
 def bid(request, listing_id):
-    if request.user.is_authenticated:
-        listing = Listing.objects.get(pk=listing_id)
-        bid = listing.bid.filter(user=request.user).first()
-        current_time = datetime.now(timezone.utc)
-        matches_user = listing.owner == request.user
-        error_clean_bid = False
-        owner_cant_bid = False
-        wait_for_three_min = False
-        if request.method == "POST":
-            comment_form = CommentForm()
-            form = BidForm(request.POST)
-            if form.is_valid():
-                clean_bid = form.cleaned_data["bid_form"]
-                if bid is None:
-                    p = Bid(date=current_time, listing=listing,
-                            user=request.user)
-                    p.save()
+    listing = Listing.objects.get(pk=listing_id)
+    current_time = datetime.now(timezone.utc)
+    matches_user = listing.owner == request.user
+    error_clean_bid = False
+    owner_cant_bid = False
+    wait_for_three_min = False
+    if request.method == "POST":
+        comment_form = CommentForm()
+        form = BidForm(request.POST)
+        if form.is_valid():
+            clean_bid = form.cleaned_data["bid_form"]
+            bid = listing.bid.filter(user=request.user).first()
+            if bid is None:
+                p = Bid(date=current_time, listing=listing,
+                        user=request.user)
+                p.save()
+                can_place_bid = True
+            else:
                 record_date = listing.bid.filter(user=request.user).first().date
                 delta = current_time - record_date
-                if delta > timedelta(minutes=3):
-                    if clean_bid - listing.starting_price >= 2:
-                        listing.bid.filter().update(date=current_time)
-                        listing.starting_price = clean_bid
-                        listing.save()
-                        Bid.objects.filter(pk=listing_id).update(user=request.user)
-                    else:
-                        error_clean_bid = True
+                can_place_bid = delta > timedelta(minutes=3)
+            if can_place_bid:
+                if clean_bid - listing.starting_price >= 2:
+                    listing.bid.filter().update(date=current_time)
+                    listing.starting_price = clean_bid
+                    listing.save()
+                    Bid.objects.filter(pk=listing_id).update(user=request.user)
                 else:
-                    wait_for_three_min = True
-        else:
-            if matches_user:
-                owner_cant_bid = True
-                form = BidForm()
-                comment_form = CommentForm()
+                    error_clean_bid = True
             else:
-                form = BidForm()
-                comment_form = CommentForm()
-        return render(request, "auctions/bid.html", {
-            "matches_user": matches_user,
-            "listing": listing,
-            "wait_for_three_min": wait_for_three_min,
-            "form": form,
-            "error_clean_bid": error_clean_bid,
-            "comment_form": comment_form,
-            "owner_cant_bid": owner_cant_bid,
-        })
+                wait_for_three_min = True
     else:
-        return render(request, "auctions/bid.html")
+        if matches_user:
+            owner_cant_bid = True
+            form = BidForm()
+            comment_form = CommentForm()
+        else:
+            form = BidForm()
+            comment_form = CommentForm()
+    return render(request, "auctions/bid.html", {
+        "matches_user": matches_user,
+        "listing": listing,
+        "wait_for_three_min": wait_for_three_min,
+        "form": form,
+        "error_clean_bid": error_clean_bid,
+        "comment_form": comment_form,
+        "owner_cant_bid": owner_cant_bid,
+    })
 
 
 def watchlist(request, listing_id):
