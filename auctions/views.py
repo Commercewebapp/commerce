@@ -145,6 +145,12 @@ def closebidview(request):
 
 def create_listing(request):
     if request.user.is_authenticated:
+        default_category = ["Programming", "Fashion", "Christmas",
+                            "Electronics", "Property", "Sport"]
+        if Category.objects.exists() is False:
+            for category in default_category:
+                p = Category(name=category)
+                p.save()
         if request.method == "POST":
             form = CreateListing(request.POST, request.FILES)
             if form.is_valid():
