@@ -128,6 +128,7 @@ def watchlistview(request):
 def closebid(request, listing_id):
     if request.user.is_authenticated and request.method == "POST":
         Listing.objects.filter(pk=listing_id, owner=request.user).update(open_at=False)
+        # @@@ bid = Bid.objects.filter(listing=Listing.objects.get(pk=listing_id)).order_by("-date").first()
         return HttpResponseRedirect(reverse("closebidview"))
     else:
         return render(request, "auctions/closebid.html")
