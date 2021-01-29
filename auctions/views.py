@@ -129,16 +129,14 @@ def closebid(request, listing_id):
     if request.user.is_authenticated and request.method == "POST":
         Listing.objects.filter(pk=listing_id, owner=request.user).update(open_at=False)
         bid = Bid.objects.filter(listing=Listing.objects.get(pk=listing_id)).order_by("-date").first()
-        return HttpResponseRedirect(reverse("closebidview", kwargs={"bid": bid}))
+        return HttpResponseRedirect(reverse("closebidview", bid=bid))
     else:
         return render(request, "auctions/closebid.html")
 
 
-def closebidview(request, bid=bid):
+def closebidview(request):
     if request.user.is_authenticated:
         listings = request.user.listing_set.all().filter(open_at=False)
-        bid = bid
-        print(f"YO: {bid}")
         return render(request, "auctions/closebid.html", {
             "listings": listings,
             "bid": bid
