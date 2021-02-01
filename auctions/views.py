@@ -74,6 +74,7 @@ def bid(request, listing_id):
                 if clean_bid - listing.starting_price >= 2:
                     listing.bid.filter().update(date=current_time)
                     # @@@ listing.starting_price = clean_bid
+                    listing.bids.order_by("-bid").first().bid = clean_bid
                     listing.save()
                     Bid.objects.filter(pk=listing_id).update(user=request.user)
                 else:
