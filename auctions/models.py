@@ -10,7 +10,7 @@ class Comment(models.Model):
                                 related_name="comment")
 
     def __str__(self):
-        return f"{self.user}, Comment: {self.comment}"
+        return f"{self.user} ({self.comment})"
 
 
 class Category(models.Model):
@@ -29,12 +29,11 @@ class Listing(models.Model):
     open_at = models.BooleanField(null=True, default=True)
     owner = models.ForeignKey("User", on_delete=models.CASCADE)
     starting_price = models.DecimalField(decimal_places=2, max_digits=8)
-
-    def winning_bid(self):
-        return self.bid.order_by("-date").first()
+    winning_bid = models.ForeignKey("Bid", on_delete=models.CASCADE,
+                                    related_name="won", null=True)
 
     def __str__(self):
-        return f"{self.title}"
+        return f"{self.title} ({self.owner})"
 
 
 class User(AbstractUser):
@@ -46,6 +45,7 @@ class Bid(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE,
                                 related_name="bid")
     user = models.ForeignKey("User", on_delete=models.CASCADE)
+    bid = models.DecimalField(decimal_places=2, max_digits=8, null=True)
 
     def __str__(self):
-        return f"{self.date}"
+        return f"{self.date} ({self.user})"
