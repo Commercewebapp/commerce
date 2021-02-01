@@ -30,6 +30,9 @@ class Listing(models.Model):
     owner = models.ForeignKey("User", on_delete=models.CASCADE)
     starting_price = models.DecimalField(decimal_places=2, max_digits=8)
 
+    def winning_bid(self):
+        return self.bid.order_by("-date").first()
+
     def __str__(self):
         return f"{self.title}"
 
