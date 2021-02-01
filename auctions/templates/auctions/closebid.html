@@ -14,11 +14,14 @@
                             <p class="card-text">{{ listing.description }}</p>
                             <p class="card-text"><strong>Price: ${{ listing.starting_price }}</strong></p>
                             {% if user.is_authenticated %}
-                                <p>{{ bid.user.username }} is the winner</p>
-                                <p>Contact:</p>
-                                <ul>
-                                    <li>{{ bid.user.email }}</li>
-                                </ul>
+                                {% for bid in bids %}
+                                    {{ bid.user }}
+                                    <p>{{ bid.user.username }} is the winner</p>
+                                    <p>Contact:</p>
+                                    <ul>
+                                        <li>{{ bid.user.email }}</li>
+                                    </ul>
+                                {% endfor %}
                             {% else %}
                                 <p><a href={% url 'login' %}>Login</a> to see the winner!</p>
                             {% endif %}
