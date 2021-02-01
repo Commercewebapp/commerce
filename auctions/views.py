@@ -135,13 +135,8 @@ def closebid(request, listing_id):
 
 def closebidview(request):
     if request.user.is_authenticated:
-        listings = request.user.listing_set.all().filter(open_at=False)
-        bid_data = []
-        for i in request.user.listing_set.all().filter(open_at=False):
-            bid_data.append(i.bid.order_by("-date").first())
         return render(request, "auctions/closebid.html", {
-            "listings": listings,
-            "bids": bid_data
+            "listings": request.user.listing_set.all().filter(open_at=False)
         })
     else:
         return render(request, "auctions/closebid.html")
