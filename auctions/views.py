@@ -60,21 +60,22 @@ def bid(request, listing_id):
         form = BidForm(request.POST)
         if form.is_valid():
             clean_bid = form.cleaned_data["bid_form"]
-            bid = listing.bid.filter(user=request.user).first()
+            bid = listing.bids.filter(user=request.user).first()
             if bid is None:
                 p = Bid(date=current_time, listing=listing,
                         user=request.user)
                 p.save()
                 can_place_bid = True
             else:
-                record_date = listing.bid.filter(user=request.user).first().date
+                record_date = listing.bids.filter(user=request.user).first().date
                 delta = current_time - record_date
                 can_place_bid = delta > timedelta(minutes=3)
             if can_place_bid:
                 if clean_bid - listing.starting_price >= 2:
-                    listing.bid.filter().update(date=current_time)
+                    listing.bids.filter().update(date=current_time)
                     # @@@ listing.starting_price = clean_bid
-                    listing.bids.order_by("-bid").first().bid = clean_bid
+                    Bid.objects.create(listing=listing, bid=clean_bid,
+                                       user=request.user)
                     listing.save()
                     Bid.objects.filter(pk=listing_id).update(user=request.user)
                 else:

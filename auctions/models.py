@@ -30,7 +30,7 @@ class Listing(models.Model):
     owner = models.ForeignKey("User", on_delete=models.CASCADE)
     starting_price = models.DecimalField(decimal_places=2, max_digits=8)
     winning_bid = models.ForeignKey("Bid", on_delete=models.CASCADE,
-                                    related_name="won", null=True)
+                                    related_name="won")
 
     def current_price(self):
         highest = self.bid.order_by("-bid").first()
@@ -51,7 +51,7 @@ class Bid(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE,
                                 related_name="bids")
     user = models.ForeignKey("User", on_delete=models.CASCADE)
-    bid = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    bid = models.DecimalField(decimal_places=2, max_digits=8)
 
     def __str__(self):
         return f"{self.date} ({self.user})"
