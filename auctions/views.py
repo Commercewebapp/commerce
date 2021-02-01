@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from datetime import datetime, timezone, timedelta
+from django.shortcuts import get_object_or_404
 
 from .models import User, Listing, Category, Comment, Bid
 from .form import CreateListing, BidForm, CommentForm
@@ -48,7 +49,7 @@ def comment(request, listing_id):
 
 
 def bid(request, listing_id):
-    listing = Listing.objects.get(pk=listing_id)
+    listing = get_object_or_404(Listing, pk=listing_id)
     current_time = datetime.now(timezone.utc)
     matches_user = listing.owner == request.user
     error_clean_bid = False
