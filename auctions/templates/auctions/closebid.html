@@ -12,7 +12,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ listing.title }}</h5>
                             <p class="card-text">{{ listing.description }}</p>
-                            <p class="card-text"><strong>Price: ${{ listing.starting_price }}</strong></p>
+                            <p class="card-text"><strong>Price: ${{ listing.current_price }}</strong></p>
                             {% if user.is_authenticated %}
                                 <p>{{ listing.winning_bid.user.username }} is the winner</p>
                                 <p>Contact:</p>

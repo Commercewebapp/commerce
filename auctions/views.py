@@ -73,7 +73,6 @@ def bid(request, listing_id):
                     Bid.objects.create(date=current_time, listing=listing,
                                        bid=clean_bid, user=request.user)
                     listing.save()
-                    Bid.objects.filter(pk=listing_id).update(user=request.user)
                     Listing.objects.filter(pk=listing_id).update(winning_bid=listing.bids.order_by("-bid").first().id)
                 else:
                     error_clean_bid = True
