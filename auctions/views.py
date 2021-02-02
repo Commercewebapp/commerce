@@ -11,21 +11,21 @@ from .form import CreateListing, BidForm, CommentForm
 
 
 def index(request):
-    listings = Listing.objects.all().filter(open_at=True)
+    listings = Listing.objects.filter(open_at=True)
     return render(request, "auctions/index.html", {
         "listings": listings
     })
 
 
 def category_view(request):
-    show_category = Category.objects.all()
+    categories = Category.objects.all()
     return render(request, "auctions/category.html", {
-        "show_category": show_category
+        "categories": categories
     })
 
 
-def category_add(request, cate_id):
-    listings = Listing.objects.filter(category_id=cate_id)
+def each_category_listing(request, category_id):
+    listings = Listing.objects.filter(category_id=category_id)
     return render(request, "auctions/each_category.html", {
         "listings": listings
     })
