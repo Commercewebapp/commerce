@@ -9,37 +9,31 @@
                 <h5 class="card-title">{{ listing.title }}</h5>
                 <p class="card-text">{{ listing.description }}</p>
                 <p class="card-text"><strong>Price: ${{ listing.current_price }}</strong></p>
-                {% if user.is_authenticated %}
-                    {% if not owner_cant_bid %}
-                        <form action="{% url 'bid' listing.id %}" method="POST">
-                            {% csrf_token %}
-                            {{ form.as_p }}
-                            {% if error_clean_bid %}
-                                <p>Can't be lower than the number of price and
-                                you must bid at least ${{listing.current_price|add:"2"}}</p>
-                            {% endif %}
-                            {% if wait_for_three_min%}
-                                <p>You can bid again after 3 minutes</p>
-                            {% endif %}
-                            <input class="btn btn-primary" type="submit" value="Bid">
-                        </form>
-                    {% endif %}
-                {% else %}
-                    <p><a href={% url 'login' %}>Login</a> to bid on the listing!</p>
+                {% if not owner_cant_bid %}
+                    <form action="{% url 'bid' listing.id %}" method="POST">
+                        {% csrf_token %}
+                        {{ bid_form.as_p }}
+                        {% if error_clean_bid %}
+                            <p>Can't be lower than the number of price and
+                            you must bid at least ${{listing.current_price|add:"2"}}</p>
+                        {% endif %}
+                        {% if wait_for_three_min %}
+                            <p>You can bid again after 3 minutes</p>
+                        {% endif %}
+                        <input class="btn btn-primary" type="submit" value="Bid">
+                    </form>
                 {% endif %}
                 <br>
-                {% if user.is_authenticated %}
-                    <form action="{% url 'watchlist' listing.id %}" method="POST">
+                <form action="{% url 'watchlist' listing.id %}" method="POST">
+                    {% csrf_token %}
+                    <input class="btn btn-primary" type="submit" value="Add watch list">
+                </form>
+                <br>
+                {% if matches_user %}
+                    <form action="{% url 'close_bid' listing.id %}" method="POST">
                         {% csrf_token %}
-                        <input class="btn btn-primary" type="submit" value="Add watch list">
+                        <input class="btn btn-warning" type="submit" value="Close bid">
                     </form>
-                    <br>
-                    {% if matches_user %}
-                        <form action="{% url 'closebid' listing.id %}" method="POST">
-                            {% csrf_token %}
-                            <input class="btn btn-warning" type="submit" value="Close bid">
-                        </form>
-                    {% endif %}
                 {% endif %}
             </div>
             <div class="card-footer">
@@ -47,17 +41,17 @@
             </div>
         </div>
     </div>
+
     <br>
+    <h2>Comments</h2>
     <div class="bd-example" style="border: 1px solid rgba(0,0,0,.125)">
         {% for name in listing.comment.all %}
             <p>{{ name.user }} -> {{ name.comment }}</p>
         {% endfor %}
     </div>
-    {% if user.is_authenticated %}
-        <form action="{% url 'comment' listing.id %}" method="POST">
-            {% csrf_token %}
-            {{ comment_form.as_p }}
-            <input type="submit">
-        </form>
-    {% endif %}
-{% endblock %}
+    <form action="{% url 'comment' listing.id %}" method="POST">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <input type="submit">
+    </form>
+ {% endblock %}
