@@ -8,7 +8,7 @@
             <div class="card-body">
                 <h5 class="card-title">{{ listing.title }}</h5>
                 <p class="card-text">{{ listing.description }}</p>
-                <p class="card-text"><strong>Price: ${{ listing.starting_price }}</strong></p>
+                <p class="card-text"><strong>Price: ${{ listing.current_price }}</strong></p>
                 {% if user.is_authenticated %}
                     {% if not owner_cant_bid %}
                         <form action="{% url 'bid' listing.id %}" method="POST">
@@ -16,7 +16,7 @@
                             {{ form.as_p }}
                             {% if error_clean_bid %}
                                 <p>Can't be lower than the number of price and
-                                you must bid at least ${{listing.starting_price|add:"2"}}</p>
+                                you must bid at least ${{listing.current_price|add:"2"}}</p>
                             {% endif %}
                             {% if wait_for_three_min%}
                                 <p>You can bid again after 3 minutes</p>
