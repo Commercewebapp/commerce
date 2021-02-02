@@ -126,7 +126,7 @@ def watchlist_view(request):
 
 @login_required(login_url='/login')
 def close_bid(request, listing_id):
-    if request.user.is_authenticated and request.method == "POST":
+    if request.method == "POST":
         Listing.objects.filter(pk=listing_id, owner=request.user).update(open_at=False)
         return HttpResponseRedirect(reverse("close_bid_view"))
     else:
@@ -135,12 +135,9 @@ def close_bid(request, listing_id):
 
 @login_required(login_url='/login')
 def close_bid_view(request):
-    if request.user.is_authenticated:
-        return render(request, "auctions/close_bid.html", {
-            "listings": request.user.listing_set.all().filter(open_at=False),
-        })
-    else:
-        return render(request, "auctions/close_bid.html")
+    return render(request, "auctions/close_bid.html", {
+        "listings": request.user.listing_set.all().filter(open_at=False),
+    })
 
 
 @login_required(login_url='/login')
