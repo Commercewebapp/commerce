@@ -34,11 +34,11 @@ def each_category_listing(request, category_id):
 
 @login_required(login_url='/login')
 def comment(request, listing_id):
-    listing = Listing.objects.get(pk=listing_id)
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
             clean_comment = form.cleaned_data["comment_box"]
+            listing = Listing.objects.get(pk=listing_id)
             p = Comment(user=request.user, comment=clean_comment,
                         listing=listing)
             p.save()
@@ -145,33 +145,30 @@ def close_bid_view(request):
 
 @login_required(login_url='/login')
 def create_listing(request):
-    if request.user.is_authenticated:
+    if Category.objects.exists() is False:
         default_category = ["Programming", "Fashion", "Christmas",
                             "Electronics", "Property", "Sport"]
-        if Category.objects.exists() is False:
-            for category in default_category:
-                p = Category(name=category)
-                p.save()
-        if request.method == "POST":
-            form = CreateListing(request.POST, request.FILES)
-            if form.is_valid():
-                title = form.cleaned_data["title"]
-                description = form.cleaned_data["description"]
-                category = form.cleaned_data["category"]
-                image = form.cleaned_data["image"]
-                starting_price = form.cleaned_data["starting_price"]
-                p = Listing(title=title, description=description,
-                            category_id=category, image=image, owner=request.user,
-                            starting_price=starting_price)
-                p.save()
-                return HttpResponseRedirect(reverse("index"))
-        else:
-            form = CreateListing()
-        return render(request, "auctions/create_listing.html", {
-            "form": form
-        })
+        for category in default_category:
+            p = Category(name=category)
+            p.save()
+    if request.method == "POST":
+        form = CreateListing(request.POST, request.FILES)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            description = form.cleaned_data["description"]
+            category = form.cleaned_data["category"]
+            image = form.cleaned_data["image"]
+            starting_price = form.cleaned_data["starting_price"]
+            p = Listing(title=title, description=description,
+                        category_id=category, image=image, owner=request.user,
+                        starting_price=starting_price)
+            p.save()
+            return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "auctions/create_listing.html")
+        form = CreateListing()
+    return render(request, "auctions/create_listing.html", {
+        "form": form
+    })
 
 
 def login_view(request):
