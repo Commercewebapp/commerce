@@ -54,7 +54,6 @@ class BidView(View):
                 if can_place_bid:
                     if clean_bid - listing.current_price() >= 2:
                         listing.bids.update(date=current_time)
-                        listing.save()
                         Bid.objects.create(date=current_time, listing=listing,
                                            bid=clean_bid, user=request.user)
                         Listing.objects.filter(pk=self.kwargs["listing_id"]).update(
@@ -93,9 +92,8 @@ def comment(request, listing_id):
         if form.is_valid():
             clean_comment = form.cleaned_data["comment_box"]
             listing = Listing.objects.get(pk=listing_id)
-            p = Comment(user=request.user, comment=clean_comment,
-                        listing=listing)
-            p.save()
+            Comment.objects.create(user=request.user, comment=clean_comment,
+                                   listing=listing)
     return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
 
@@ -143,8 +141,7 @@ def create_listing(request):
         default_category = ["Programming", "Fashion", "Christmas", "Electronics",
                             "Property", "Sport"]
         for category in default_category:
-            p = Category(name=category)
-            p.save()
+            Category.objects.create(name=category)
     if request.method == "POST":
         form = CreateListing(request.POST, request.FILES)
         if form.is_valid():
@@ -153,10 +150,9 @@ def create_listing(request):
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
             starting_price = form.cleaned_data["starting_price"]
-            p = Listing(title=title, description=description,
-                        category_id=category, image=image, owner=request.user,
-                        starting_price=starting_price)
-            p.save()
+            Listing.objects.create(title=title, description=description,
+                                   category_id=category, image=image, owner=request.user,
+                                   starting_price=starting_price)
             return HttpResponseRedirect(reverse("index"))
     else:
         form = CreateListing()
