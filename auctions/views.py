@@ -14,23 +14,17 @@ from .form import CreateListing, BidForm, CommentForm
 
 def index(request):
     listings = Listing.objects.filter(open_at=True)
-    return render(request, "auctions/index.html", {
-        "listings": listings
-    })
+    return render(request, "auctions/index.html", {"listings": listings})
 
 
 def category_view(request):
     categories = Category.objects.all()
-    return render(request, "auctions/category.html", {
-        "categories": categories
-    })
+    return render(request, "auctions/category.html", {"categories": categories})
 
 
 def each_category_listing(request, category_id):
     listings = Listing.objects.filter(category_id=category_id)
-    return render(request, "auctions/each_category.html", {
-        "listings": listings
-    })
+    return render(request, "auctions/each_category.html", {"listings": listings})
 
 
 @login_required(login_url='/login')
@@ -49,52 +43,55 @@ def comment(request, listing_id):
 
 
 class BidView(View):
-    def bid(self, request, listing_id):
-        error_clean_bid = False
-        wait_for_three_min = False
-        owner_cant_bid = False
-        listing = get_object_or_404(Listing, pk=listing_id)
+    error_clean_bid = False
+    wait_for_three_min = False
+    owner_cant_bid = False
+
+    def get(self, request, **kwargs):
+        listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         matches_user = listing.owner == request.user
-        if request.method == "POST":
-            comment_form = CommentForm()
-            bid_form = BidForm(request.POST)
-            if bid_form.is_valid():
-                clean_bid = bid_form.cleaned_data["bid_form"]
-                bid_from_user = listing.bids.filter(user=request.user).first()
-                if bid_from_user is None:
-                    can_place_bid = True
-                else:
-                    current_time = datetime.now(timezone.utc)
-                    record_date = listing.bids.filter(user=request.user).first().date
-                    delta = current_time - record_date
-                    can_place_bid = delta > timedelta(minutes=3)
+        bid_form = BidForm(request.POST)
+        if matches_user:
+            self.owner_cant_bid = True
+        else:
+            bid_form = BidForm()
+        return render(request, "auctions/bid.html", {
+            "listing": listing,
+            "bid_form": bid_form,
+            "matches_user": matches_user,
+            "owner_cant_bid": self.owner_cant_bid
+        })
+
+    def post(self, request, **kwargs):
+        bid_form = BidForm(request.POST)
+        if bid_form.is_valid():
+            clean_bid = bid_form.cleaned_data["bid_form"]
+            listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
+            bid_from_user = listing.bids.filter(user=request.user).first()
+            if bid_from_user is None:
+                can_place_bid = True
+            else:
+                current_time = datetime.now(timezone.utc)
+                record_date = listing.bids.filter(user=request.user).first().date
+                delta = current_time - record_date
+                can_place_bid = delta > timedelta(minutes=3)
                 if can_place_bid:
                     if clean_bid - listing.current_price() >= 2:
                         listing.bids.filter().update(date=current_time)
                         listing.save()
                         Bid.objects.create(date=current_time, listing=listing,
                                            bid=clean_bid, user=request.user)
-                        Listing.objects.filter(pk=listing_id).update(winning_bid=listing.bids.order_by("-bid").first().id)
+                        Listing.objects.filter(pk=self.kwargs["listing_id"]).update(
+                                winning_bid=listing.bids.order_by("-bid").first().id)
                     else:
-                        error_clean_bid = True
+                        self.error_clean_bid = True
                 else:
-                    wait_for_three_min = True
-        else:
-            if matches_user:
-                owner_cant_bid = True
-                bid_form = BidForm()
-                comment_form = CommentForm()
-            else:
-                bid_form = BidForm()
-                comment_form = CommentForm()
+                    self.wait_for_three_min = True
         return render(request, "auctions/bid.html", {
-            "matches_user": matches_user,
             "listing": listing,
-            "wait_for_three_min": wait_for_three_min,
             "bid_form": bid_form,
-            "error_clean_bid": error_clean_bid,
-            "comment_form": comment_form,
-            "owner_cant_bid": owner_cant_bid,
+            "wait_for_three_min": self.wait_for_three_min,
+            "error_clean_bid": self.error_clean_bid,
         })
 
 
@@ -120,9 +117,8 @@ def remove_watchlist(request, listing_id):
 
 @login_required(login_url='/login')
 def watchlist_view(request):
-    return render(request, "auctions/watchlist.html", {
-        "user_watch_listing": request.user.watch_listing.all().filter(open_at=True)
-    })
+    user_watch_listing = request.user.watch_listing.all().filter(open_at=True)
+    return render(request, "auctions/watchlist.html", {"user_watch_listing": user_watch_listing})
 
 
 @login_required(login_url='/login')
@@ -136,16 +132,15 @@ def close_bid(request, listing_id):
 
 @login_required(login_url='/login')
 def close_bid_view(request):
-    return render(request, "auctions/close_bid.html", {
-        "listings": request.user.listing_set.all().filter(open_at=False),
-    })
+    listings = request.user.listing_set.all().filter(open_at=False)
+    return render(request, "auctions/close_bid.html", {"listings": listings})
 
 
 @login_required(login_url='/login')
 def create_listing(request):
     if Category.objects.exists() is False:
-        default_category = ["Programming", "Fashion", "Christmas",
-                            "Electronics", "Property", "Sport"]
+        default_category = ["Programming", "Fashion", "Christmas", "Electronics",
+                            "Property", "Sport"]
         for category in default_category:
             p = Category(name=category)
             p.save()
@@ -164,9 +159,7 @@ def create_listing(request):
             return HttpResponseRedirect(reverse("index"))
     else:
         form = CreateListing()
-    return render(request, "auctions/create_listing.html", {
-        "form": form
-    })
+    return render(request, "auctions/create_listing.html", {"form": form})
 
 
 def login_view(request):
