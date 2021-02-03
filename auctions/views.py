@@ -12,36 +12,6 @@ from .models import User, Listing, Category, Comment, Bid
 from .form import CreateListing, BidForm, CommentForm
 
 
-def index(request):
-    listings = Listing.objects.filter(open_at=True)
-    return render(request, "auctions/index.html", {"listings": listings})
-
-
-def category_view(request):
-    categories = Category.objects.all()
-    return render(request, "auctions/category.html", {"categories": categories})
-
-
-def each_category_listing(request, category_id):
-    listings = Listing.objects.filter(category_id=category_id)
-    return render(request, "auctions/each_category.html", {"listings": listings})
-
-
-@login_required(login_url='/login')
-def comment(request, listing_id):
-    if request.method == "POST":
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            clean_comment = form.cleaned_data["comment_box"]
-            listing = Listing.objects.get(pk=listing_id)
-            p = Comment(user=request.user, comment=clean_comment,
-                        listing=listing)
-            p.save()
-            return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
-    else:
-        CommentForm()
-
-
 class BidView(View):
     error_clean_bid = False
     wait_for_three_min = False
@@ -51,13 +21,16 @@ class BidView(View):
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         matches_user = listing.owner == request.user
         bid_form = BidForm(request.POST)
+        comment_form = CommentForm()
         if matches_user:
             self.owner_cant_bid = True
         else:
             bid_form = BidForm()
+            comment_form = CommentForm()
         return render(request, "auctions/bid.html", {
             "listing": listing,
             "bid_form": bid_form,
+            "comment_form": comment_form,
             "matches_user": matches_user,
             "owner_cant_bid": self.owner_cant_bid
         })
@@ -93,6 +66,36 @@ class BidView(View):
             "wait_for_three_min": self.wait_for_three_min,
             "error_clean_bid": self.error_clean_bid,
         })
+
+
+def index(request):
+    listings = Listing.objects.filter(open_at=True)
+    return render(request, "auctions/index.html", {"listings": listings})
+
+
+def category_view(request):
+    categories = Category.objects.all()
+    return render(request, "auctions/category.html", {"categories": categories})
+
+
+def each_category_listing(request, category_id):
+    listings = Listing.objects.filter(category_id=category_id)
+    return render(request, "auctions/each_category.html", {"listings": listings})
+
+
+@login_required(login_url='/login')
+def comment(request, listing_id):
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            clean_comment = form.cleaned_data["comment_box"]
+            listing = Listing.objects.get(pk=listing_id)
+            p = Comment(user=request.user, comment=clean_comment,
+                        listing=listing)
+            p.save()
+            return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
+    else:
+        CommentForm()
 
 
 @login_required(login_url='/login')
