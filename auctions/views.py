@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 
 from .models import User, Listing, Category, Comment, Bid
-from .form import CreateListing, BidForm, CommentForm
+from .forms import CreateListing, BidForm, CommentForm
 
 
 class BidView(View):
