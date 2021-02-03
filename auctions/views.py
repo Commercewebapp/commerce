@@ -6,6 +6,7 @@ from django.urls import reverse
 from datetime import datetime, timezone, timedelta
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.views import View
 
 from .models import User, Listing, Category, Comment, Bid
 from .form import CreateListing, BidForm, CommentForm
@@ -47,54 +48,54 @@ def comment(request, listing_id):
         CommentForm()
 
 
-@login_required(login_url='/login')
-def bid(request, listing_id):
-    error_clean_bid = False
-    wait_for_three_min = False
-    owner_cant_bid = False
-    listing = get_object_or_404(Listing, pk=listing_id)
-    matches_user = listing.owner == request.user
-    if request.method == "POST":
-        comment_form = CommentForm()
-        bid_form = BidForm(request.POST)
-        if bid_form.is_valid():
-            clean_bid = bid_form.cleaned_data["bid_form"]
-            bid_from_user = listing.bids.filter(user=request.user).first()
-            if bid_from_user is None:
-                can_place_bid = True
-            else:
-                current_time = datetime.now(timezone.utc)
-                record_date = listing.bids.filter(user=request.user).first().date
-                delta = current_time - record_date
-                can_place_bid = delta > timedelta(minutes=3)
-            if can_place_bid:
-                if clean_bid - listing.current_price() >= 2:
-                    listing.bids.filter().update(date=current_time)
-                    listing.save()
-                    Bid.objects.create(date=current_time, listing=listing,
-                                       bid=clean_bid, user=request.user)
-                    Listing.objects.filter(pk=listing_id).update(winning_bid=listing.bids.order_by("-bid").first().id)
+class BidView(View):
+    def bid(self, request, listing_id):
+        error_clean_bid = False
+        wait_for_three_min = False
+        owner_cant_bid = False
+        listing = get_object_or_404(Listing, pk=listing_id)
+        matches_user = listing.owner == request.user
+        if request.method == "POST":
+            comment_form = CommentForm()
+            bid_form = BidForm(request.POST)
+            if bid_form.is_valid():
+                clean_bid = bid_form.cleaned_data["bid_form"]
+                bid_from_user = listing.bids.filter(user=request.user).first()
+                if bid_from_user is None:
+                    can_place_bid = True
                 else:
-                    error_clean_bid = True
-            else:
-                wait_for_three_min = True
-    else:
-        if matches_user:
-            owner_cant_bid = True
-            bid_form = BidForm()
-            comment_form = CommentForm()
+                    current_time = datetime.now(timezone.utc)
+                    record_date = listing.bids.filter(user=request.user).first().date
+                    delta = current_time - record_date
+                    can_place_bid = delta > timedelta(minutes=3)
+                if can_place_bid:
+                    if clean_bid - listing.current_price() >= 2:
+                        listing.bids.filter().update(date=current_time)
+                        listing.save()
+                        Bid.objects.create(date=current_time, listing=listing,
+                                           bid=clean_bid, user=request.user)
+                        Listing.objects.filter(pk=listing_id).update(winning_bid=listing.bids.order_by("-bid").first().id)
+                    else:
+                        error_clean_bid = True
+                else:
+                    wait_for_three_min = True
         else:
-            bid_form = BidForm()
-            comment_form = CommentForm()
-    return render(request, "auctions/bid.html", {
-        "matches_user": matches_user,
-        "listing": listing,
-        "wait_for_three_min": wait_for_three_min,
-        "bid_form": bid_form,
-        "error_clean_bid": error_clean_bid,
-        "comment_form": comment_form,
-        "owner_cant_bid": owner_cant_bid,
-    })
+            if matches_user:
+                owner_cant_bid = True
+                bid_form = BidForm()
+                comment_form = CommentForm()
+            else:
+                bid_form = BidForm()
+                comment_form = CommentForm()
+        return render(request, "auctions/bid.html", {
+            "matches_user": matches_user,
+            "listing": listing,
+            "wait_for_three_min": wait_for_three_min,
+            "bid_form": bid_form,
+            "error_clean_bid": error_clean_bid,
+            "comment_form": comment_form,
+            "owner_cant_bid": owner_cant_bid,
+        })
 
 
 @login_required(login_url='/login')
