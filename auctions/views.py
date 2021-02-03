@@ -40,12 +40,9 @@ class BidView(View):
         if bid_form.is_valid():
             clean_bid = bid_form.cleaned_data["bid_form"]
             listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
-            self.place_bid(request, clean_bid, listing, bid_form)
-        return render(request, "auctions/bid.html", {
-            "listing": listing,
-            "bid_form": bid_form,
-        })
+            return self.place_bid(request, clean_bid, listing, bid_form)
 
+    @method_decorator(login_required(login_url='/login'))
     def place_bid(self, request, clean_bid, listing, bid_form):
         user_bid = listing.bids.filter(user=request.user).first()
         error_clean_bid = False
@@ -67,8 +64,6 @@ class BidView(View):
                     error_clean_bid = True
             else:
                 wait_for_three_min = True
-        print(f"$2 {error_clean_bid}")
-        print(f"3min {wait_for_three_min}")
         return render(request, "auctions/bid.html", {
             "listing": listing,
             "bid_form": bid_form,
