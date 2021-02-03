@@ -1,12 +1,13 @@
-from django.contrib.auth import authenticate, login, logout
+from datetime import datetime, timezone, timedelta
+from django.views import View
+from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from datetime import datetime, timezone, timedelta
-from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.views import View
+from django.contrib.auth import authenticate, login, logout
 
 from .models import User, Listing, Category, Comment, Bid
 from .form import CreateListing, BidForm, CommentForm
@@ -17,6 +18,7 @@ class BidView(View):
     wait_for_three_min = False
     owner_cant_bid = False
 
+    @method_decorator(login_required(login_url='/login'))
     def get(self, request, **kwargs):
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         matches_user = listing.owner == request.user
@@ -35,6 +37,7 @@ class BidView(View):
             "owner_cant_bid": self.owner_cant_bid
         })
 
+    @method_decorator(login_required(login_url='/login'))
     def post(self, request, **kwargs):
         bid_form = BidForm(request.POST)
         if bid_form.is_valid():
@@ -55,7 +58,7 @@ class BidView(View):
                         Bid.objects.create(date=current_time, listing=listing,
                                            bid=clean_bid, user=request.user)
                         Listing.objects.filter(pk=self.kwargs["listing_id"]).update(
-                                winning_bid=listing.bids.order_by("-bid").first().id)
+                            winning_bid=listing.bids.order_by("-bid").first().id)
                     else:
                         self.error_clean_bid = True
                 else:
@@ -93,9 +96,7 @@ def comment(request, listing_id):
             p = Comment(user=request.user, comment=clean_comment,
                         listing=listing)
             p.save()
-            return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
-    else:
-        CommentForm()
+    return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
 
 @login_required(login_url='/login')
@@ -104,8 +105,7 @@ def watchlist(request, listing_id):
         listing = Listing.objects.get(pk=listing_id)
         request.user.watch_listing.add(listing)
         return HttpResponseRedirect(reverse("watchlist_view"))
-    else:
-        return render(request, "auctions/watchlist.html")
+    return render(request, "auctions/watchlist.html")
 
 
 @login_required(login_url='/login')
@@ -114,8 +114,7 @@ def remove_watchlist(request, listing_id):
         listing = Listing.objects.get(pk=listing_id)
         request.user.watch_listing.remove(listing)
         return HttpResponseRedirect(reverse("watchlist_view"))
-    else:
-        return render(request, "auctions/watchlist.html")
+    return render(request, "auctions/watchlist.html")
 
 
 @login_required(login_url='/login')
@@ -129,8 +128,7 @@ def close_bid(request, listing_id):
     if request.method == "POST":
         Listing.objects.filter(pk=listing_id, owner=request.user).update(open_at=False)
         return HttpResponseRedirect(reverse("close_bid_view"))
-    else:
-        return render(request, "auctions/close_bid.html")
+    return render(request, "auctions/close_bid.html")
 
 
 @login_required(login_url='/login')
@@ -175,12 +173,10 @@ def login_view(request):
         if user is not None:
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
-        else:
-            return render(request, "auctions/login.html", {
-                "message": "Invalid username and/or password."
-            })
-    else:
-        return render(request, "auctions/login.html")
+        return render(request, "auctions/login.html", {
+            "message": "Invalid username and/or password."
+        })
+    return render(request, "auctions/login.html")
 
 
 def logout_view(request):
@@ -213,5 +209,4 @@ def register(request):
             })
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
-    else:
-        return render(request, "auctions/register.html")
+    return render(request, "auctions/register.html")
