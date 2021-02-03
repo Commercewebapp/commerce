@@ -49,12 +49,11 @@ def comment(request, listing_id):
 
 @login_required(login_url='/login')
 def bid(request, listing_id):
-    listing = get_object_or_404(Listing, pk=listing_id)
-    current_time = datetime.now(timezone.utc)
-    matches_user = listing.owner == request.user
     error_clean_bid = False
-    owner_cant_bid = False
     wait_for_three_min = False
+    owner_cant_bid = False
+    listing = get_object_or_404(Listing, pk=listing_id)
+    matches_user = listing.owner == request.user
     if request.method == "POST":
         comment_form = CommentForm()
         bid_form = BidForm(request.POST)
@@ -64,6 +63,7 @@ def bid(request, listing_id):
             if bid_from_user is None:
                 can_place_bid = True
             else:
+                current_time = datetime.now(timezone.utc)
                 record_date = listing.bids.filter(user=request.user).first().date
                 delta = current_time - record_date
                 can_place_bid = delta > timedelta(minutes=3)
