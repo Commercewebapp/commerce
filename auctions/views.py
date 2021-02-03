@@ -14,18 +14,15 @@ from .forms import CreateListing, BidForm, CommentForm
 
 
 class BidView(View):
-    error_clean_bid = False
-    wait_for_three_min = False
-    owner_cant_bid = False
-
     @method_decorator(login_required(login_url='/login'))
     def get(self, request, **kwargs):
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         matches_user = listing.owner == request.user
         bid_form = BidForm(request.POST)
         comment_form = CommentForm()
+        owner_cant_bid = False
         if matches_user:
-            self.owner_cant_bid = True
+            owner_cant_bid = True
         else:
             bid_form = BidForm()
             comment_form = CommentForm()
@@ -34,12 +31,14 @@ class BidView(View):
             "bid_form": bid_form,
             "comment_form": comment_form,
             "matches_user": matches_user,
-            "owner_cant_bid": self.owner_cant_bid
+            "owner_cant_bid": owner_cant_bid
         })
 
     @method_decorator(login_required(login_url='/login'))
     def post(self, request, **kwargs):
         bid_form = BidForm(request.POST)
+        error_clean_bid = False
+        wait_for_three_min = False
         if bid_form.is_valid():
             clean_bid = bid_form.cleaned_data["bid_form"]
             listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
@@ -59,14 +58,14 @@ class BidView(View):
                         Listing.objects.filter(pk=self.kwargs["listing_id"]).update(
                             winning_bid=listing.bids.order_by("-bid").first().id)
                     else:
-                        self.error_clean_bid = True
+                        error_clean_bid = True
                 else:
-                    self.wait_for_three_min = True
+                    wait_for_three_min = True
         return render(request, "auctions/bid.html", {
             "listing": listing,
             "bid_form": bid_form,
-            "wait_for_three_min": self.wait_for_three_min,
-            "error_clean_bid": self.error_clean_bid,
+            "wait_for_three_min": wait_for_three_min,
+            "error_clean_bid": error_clean_bid,
         })
 
 
