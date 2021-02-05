@@ -16,6 +16,7 @@ from .forms import CreateListing, BidForm, CommentForm
 class BidView(View):
     @method_decorator(login_required(login_url='/login'))
     def get(self, request, **kwargs):
+        """Rendering html"""
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         matches_user = listing.owner == request.user
         bid_form = BidForm(request.POST)
@@ -83,12 +84,14 @@ def category_view(request):
 
 
 def each_category_listing(request, category_id):
+    """Render category list, Category tab"""
     listings = Listing.objects.filter(category_id=category_id)
     return render(request, "auctions/each_category.html", {"listings": listings})
 
 
 @login_required(login_url='/login')
 def comment(request, listing_id):
+    """Save comment is database, when comment button is click"""
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -101,6 +104,7 @@ def comment(request, listing_id):
 
 @login_required(login_url='/login')
 def watchlist(request, listing_id):
+    """Add on watchlist, when watch list button is click"""
     if request.method == "POST":
         listing = Listing.objects.get(pk=listing_id)
         request.user.watch_listing.add(listing)
@@ -110,6 +114,7 @@ def watchlist(request, listing_id):
 
 @login_required(login_url='/login')
 def remove_watchlist(request, listing_id):
+    """Remove on watchlist, when remove watch list button is click"""
     if request.method == "POST":
         listing = Listing.objects.get(pk=listing_id)
         request.user.watch_listing.remove(listing)
@@ -119,12 +124,14 @@ def remove_watchlist(request, listing_id):
 
 @login_required(login_url='/login')
 def watchlist_view(request):
+    """Render watch listing for user, Wach List tab"""
     user_watch_listing = request.user.watch_listing.all().filter(open_at=True)
     return render(request, "auctions/watchlist.html", {"user_watch_listing": user_watch_listing})
 
 
 @login_required(login_url='/login')
 def close_bid(request, listing_id):
+    """Close the listing, when close bid button is click"""
     if request.method == "POST":
         Listing.objects.filter(pk=listing_id, owner=request.user).update(open_at=False)
         return HttpResponseRedirect(reverse("close_bid_view"))
@@ -133,17 +140,20 @@ def close_bid(request, listing_id):
 
 @login_required(login_url='/login')
 def close_bid_view(request):
+    """Render listing that have been close, Close Bid tab"""
     listings = request.user.listing_set.all().filter(open_at=False)
     return render(request, "auctions/close_bid.html", {"listings": listings})
 
 
 @login_required(login_url='/login')
 def create_listing(request):
+    # First time when user visit the page
     if Category.objects.exists() is False:
         default_category = ["Programming", "Fashion", "Christmas", "Electronics",
                             "Property", "Sport"]
         for category in default_category:
             Category.objects.create(name=category)
+    # Creating listing
     if request.method == "POST":
         form = CreateListing(request.POST, request.FILES)
         if form.is_valid():
