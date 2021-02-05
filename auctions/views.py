@@ -52,7 +52,7 @@ class BidView(View):
         else:
             current_time = datetime.now(timezone.utc)
             delta = current_time - user_bid.date
-            can_place_bid = delta > timedelta(minutes=3)
+            can_place_bid = delta > timedelta(minutes=1)
             if can_place_bid:
                 if clean_bid - listing.current_price() >= 2:
                     listing.bids.update(date=current_time)
