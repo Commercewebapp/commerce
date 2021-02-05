@@ -40,7 +40,7 @@ class BidView(View):
         if bid_form.is_valid():
             clean_bid = bid_form.cleaned_data["bid_form"]
             listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
-            return self.place_bid(request, clean_bid, listing, bid_form)
+        return self.place_bid(request, clean_bid, listing, bid_form)
 
     @method_decorator(login_required(login_url='/login'))
     def place_bid(self, request, clean_bid, listing, bid_form):
