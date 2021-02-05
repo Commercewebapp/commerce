@@ -17,7 +17,8 @@ urlpatterns = [
     path("close_bid/<int:listing_id>", views.close_bid, name="close_bid"),
     path("close_bid_view", views.close_bid_view, name="close_bid_view"),
     path("category_view", views.category_view, name="category_view"),
-    path("each_category_listing/<int:category_id>", views.each_category_listing, name="each_category_listing"),
+    path("each_category_listing/<int:category_id>", views.each_category_listing,
+         name="each_category_listing"),
     path("comment/<int:listing_id>", views.comment, name="comment"),
     path("watchlist_view", views.watchlist_view, name="watchlist_view")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
