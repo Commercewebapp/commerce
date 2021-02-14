@@ -74,11 +74,13 @@ class BidView(View):
 
 
 def index(request):
+    """Active listing tab"""
     listings = Listing.objects.filter(open_at=True)
     return render(request, "auctions/index.html", {"listings": listings})
 
 
 def category_view(request):
+    """Category tab"""
     categories = Category.objects.all()
     return render(request, "auctions/category.html", {"categories": categories})
 
