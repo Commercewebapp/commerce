@@ -31,6 +31,7 @@ class Listing(models.Model):
     starting_price = models.DecimalField(decimal_places=2, max_digits=8)
     winning_bid = models.ForeignKey("Bid", on_delete=models.CASCADE,
                                     related_name="won", null=True)
+    end_date = models.DateTimeField(null=True)
 
     def current_price(self):
         highest = self.bids.order_by("-bid").first()
