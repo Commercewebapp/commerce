@@ -65,11 +65,13 @@ class BidView(View):
                     error_clean_bid = True
             else:
                 wait_for_three_min = True
+            comment_form = CommentForm()
         return render(request, "auctions/bid.html", {
             "listing": listing,
             "bid_form": bid_form,
             "wait_for_three_min": wait_for_three_min,
             "error_clean_bid": error_clean_bid,
+            "comment_form": comment_form,
         })
 
 
