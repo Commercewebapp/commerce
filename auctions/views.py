@@ -45,6 +45,7 @@ class BidView(View):
 
     @method_decorator(login_required(login_url='/login'))
     def place_bid(self, request, clean_bid, listing, bid_form):
+        comment_form = CommentForm()
         user_bid = listing.bids.filter(user=request.user).first()
         error_clean_bid = False
         wait_for_three_min = False
@@ -65,7 +66,6 @@ class BidView(View):
                     error_clean_bid = True
             else:
                 wait_for_three_min = True
-            comment_form = CommentForm()
         return render(request, "auctions/bid.html", {
             "listing": listing,
             "bid_form": bid_form,
