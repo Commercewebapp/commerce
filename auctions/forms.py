@@ -1,24 +1,28 @@
 from django import forms
-from .models import Category
+from .models import Listing, Bid, Comment
+from django.forms import ModelForm
 
 
-class CreateListing(forms.Form):
-    title = forms.CharField(max_length=64, widget=forms.TextInput(attrs={
-        "class": "form-control col-md-8 col-md-lg-8"
-    }))
-    description = forms.CharField(max_length=200, widget=forms.Textarea(attrs={
-        "class": "form-control col-md-8 col-lg-8", "rows": 10
-    }))
-    image = forms.ImageField()
-    category = forms.ModelChoiceField(queryset=Category.objects.all())
-    starting_price = forms.IntegerField()
+class CreateListing(ModelForm):
+    class Meta:
+        model = Listing
+        fields = ["title", "description", "image", "category", "starting_price"]
+        widgets = {
+            "title": forms.TextInput(attrs={"class": "form-control col-md-8 col-md-lg-8"}),
+            "description": forms.Textarea(attrs={"class": "form-control col-md-8 col-lg-8", "rows": 10})
+        }
 
 
-class BidForm(forms.Form):
-    bid_form = forms.IntegerField()
+class BidForm(ModelForm):
+    class Meta:
+        model = Bid
+        fields = ["bid"]
 
 
-class CommentForm(forms.Form):
-    comment_box = forms.CharField(max_length=200, widget=forms.Textarea(attrs={
-        "class": "form-control col-md-5 col-lg-5", "rows": 5
-    }))
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ["comment"]
+        widgets = {
+            "comment": forms.Textarea(attrs={"class": "form-control col-md-5 col-lg-5", "rows": 5})
+        }

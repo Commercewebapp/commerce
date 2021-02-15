@@ -24,7 +24,7 @@ class Listing(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField()
     image = models.ImageField(upload_to="listing_images", default=None)
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     create_at = models.DateTimeField(auto_now_add=True)
     open_at = models.BooleanField(null=True, default=True)
     owner = models.ForeignKey("User", on_delete=models.CASCADE)

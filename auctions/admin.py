@@ -4,7 +4,7 @@ from .models import Listing, Category, User, Comment, Bid
 
 
 class ListingAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "category_id", "starting_price", "open_at", "winning_bid", "owner")
+    list_display = ("id", "title", "category", "starting_price", "open_at", "winning_bid", "owner")
 
 
 class BidAdmin(admin.ModelAdmin):

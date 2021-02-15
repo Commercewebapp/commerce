@@ -39,7 +39,7 @@ class BidView(View):
     def post(self, request, **kwargs):
         bid_form = BidForm(request.POST)
         if bid_form.is_valid():
-            clean_bid = bid_form.cleaned_data["bid_form"]
+            clean_bid = bid_form.cleaned_data["bid"]
             listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         return self.place_bid(request, clean_bid, listing, bid_form)
 
@@ -87,7 +87,7 @@ def category_view(request):
 
 def each_category_listing(request, category_id):
     """Render category list, Category tab"""
-    listings = Listing.objects.filter(category_id=category_id)
+    listings = Listing.objects.filter(category=category_id)
     return render(request, "auctions/each_category.html", {"listings": listings})
 
 
@@ -97,7 +97,7 @@ def comment(request, listing_id):
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
-            clean_comment = form.cleaned_data["comment_box"]
+            clean_comment = form.cleaned_data["comment"]
             listing = Listing.objects.get(pk=listing_id)
             Comment.objects.create(user=request.user, comment=clean_comment,
                                    listing=listing)
@@ -165,7 +165,7 @@ def create_listing(request):
             image = form.cleaned_data["image"]
             starting_price = form.cleaned_data["starting_price"]
             Listing.objects.create(title=title, description=description,
-                                   category_id=category, image=image, owner=request.user,
+                                   category=category, image=image, owner=request.user,
                                    starting_price=starting_price)
             return HttpResponseRedirect(reverse("index"))
     else:
