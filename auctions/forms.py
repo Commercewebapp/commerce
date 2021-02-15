@@ -6,8 +6,7 @@ from django.forms import ModelForm
 class CreateListing(ModelForm):
     class Meta:
         model = Listing
-        fields = ["title", "description", "image", "category", "starting_price",
-                  "end_date"]
+        fields = ["title", "description", "image", "category", "starting_price"]
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control col-md-8 col-md-lg-8"}),
             "description": forms.Textarea(attrs={"class": "form-control col-md-8 col-lg-8", "rows": 10})
