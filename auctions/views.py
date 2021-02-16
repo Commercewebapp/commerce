@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 
 from .models import User, Listing, Category, Comment, Bid
 from .forms import CreateListing, BidForm, CommentForm
+from .spam_word import spam
 
 
 class BidView(View):
@@ -159,6 +160,7 @@ def create_listing(request):
                             "Property", "Sport"]
         for category in default_category:
             Category.objects.create(name=category)
+    spam_word_error = False
     # Creating listing
     if request.method == "POST":
         form = CreateListing(request.POST, request.FILES)
@@ -168,13 +170,20 @@ def create_listing(request):
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
             starting_price = form.cleaned_data["starting_price"]
-            Listing.objects.create(title=title, description=description,
-                                   category=category, image=image, owner=request.user,
-                                   starting_price=starting_price)
-            return HttpResponseRedirect(reverse("index"))
+            if str(title) not in spam and str(description) not in spam:
+                Listing.objects.create(title=title, description=description,
+                                       category=category, image=image,
+                                       owner=request.user,
+                                       starting_price=starting_price)
+                return HttpResponseRedirect(reverse("index"))
+            else:
+                spam_word_error = True
     else:
         form = CreateListing()
-    return render(request, "auctions/create_listing.html", {"form": form})
+    return render(request, "auctions/create_listing.html", {
+        "form": form,
+        "spam_word_error": spam_word_error
+    })
 
 
 def login_view(request):

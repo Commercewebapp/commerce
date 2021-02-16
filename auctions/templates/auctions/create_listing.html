@@ -10,4 +10,7 @@
             <input type="submit">
         <div>
     <form>
+    {% if spam_word_error %}
+      <script>alert("Product not allow")</script>
+    {% endif %}
 {% endblock %}
