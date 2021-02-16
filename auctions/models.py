@@ -39,7 +39,7 @@ class Listing(models.Model):
         return highest.bid
 
     def __str__(self):
-        return f"{self.title} ({self.owner})"
+        return f"{self.title} ({self.owner}) ({self.current_price()})"
 
 
 class User(AbstractUser):
@@ -54,4 +54,4 @@ class Bid(models.Model):
     bid = models.DecimalField(decimal_places=2, max_digits=8, null=True)
 
     def __str__(self):
-        return f"{self.date} ({self.user})"
+        return f"{self.date} ({self.user}) ({self.listing.current_price()})"
