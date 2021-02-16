@@ -43,25 +43,27 @@ class BidView(View):
             listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         return self.place_bid(request, clean_bid, listing, bid_form)
 
-    @method_decorator(login_required(login_url='/login'))
+    def update_bid(self, request, clean_bid, listing, current_time):
+        listing.bids.update(date=current_time)
+        Bid.objects.create(date=current_time, listing=listing,
+                           bid=clean_bid, user=request.user)
+        Listing.objects.filter(pk=self.kwargs["listing_id"]).update(
+            winning_bid=listing.bids.order_by("-bid").first().id)
+
     def place_bid(self, request, clean_bid, listing, bid_form):
         comment_form = CommentForm()
         user_bid = listing.bids.filter(user=request.user).first()
+        current_time = datetime.now(timezone.utc)
         error_clean_bid = False
         wait_for_three_min = False
         if user_bid is None:
-            can_place_bid = True
+            self.update_bid(request, clean_bid, listing, current_time)
         else:
-            current_time = datetime.now(timezone.utc)
             delta = current_time - user_bid.date
             can_place_bid = delta > timedelta(minutes=1)
             if can_place_bid:
                 if clean_bid - listing.current_price() >= 2:
-                    listing.bids.update(date=current_time)
-                    Bid.objects.create(date=current_time, listing=listing,
-                                       bid=clean_bid, user=request.user)
-                    Listing.objects.filter(pk=self.kwargs["listing_id"]).update(
-                        winning_bid=listing.bids.order_by("-bid").first().id)
+                    self.update_bid(request, clean_bid, listing, current_time)
                 else:
                     error_clean_bid = True
             else:
