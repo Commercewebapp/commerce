@@ -42,9 +42,9 @@ class BidView(View):
         if bid_form.is_valid():
             clean_bid = bid_form.cleaned_data["bid"]
             listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
-        return self.place_bid(request, clean_bid, listing, bid_form)
+        return self.update_bid(request, clean_bid, listing, bid_form)
 
-    def update_bid(self, request, clean_bid, listing, current_time):
+    def place_bid(self, request, clean_bid, listing, current_time):
         if clean_bid - listing.current_price() >= 2:
             listing.bids.update(date=current_time)
             recent_bid = Bid.objects.create(date=current_time, listing=listing,
@@ -56,19 +56,19 @@ class BidView(View):
             error_clean_bid = True
         return error_clean_bid
 
-    def place_bid(self, request, clean_bid, listing, bid_form):
+    def update_bid(self, request, clean_bid, listing, bid_form):
         comment_form = CommentForm()
         user_bid = listing.bids.filter(user=request.user).first()
         current_time = datetime.now(timezone.utc)
         error_clean_bid = False
         wait_for_three_min = False
         if user_bid is None:
-            error_clean_bid = self.update_bid(request, clean_bid, listing, current_time)
+            error_clean_bid = self.place_bid(request, clean_bid, listing, current_time)
         else:
             delta = current_time - user_bid.date
             can_place_bid = delta > timedelta(minutes=1)
             if can_place_bid:
-                error_clean_bid = self.update_bid(request, clean_bid, listing, current_time)
+                error_clean_bid = self.place_bid(request, clean_bid, listing, current_time)
             else:
                 wait_for_three_min = True
         return render(request, "auctions/bid.html", {
