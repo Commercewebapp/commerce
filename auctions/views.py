@@ -15,6 +15,9 @@ from .spam_word import spam
 
 
 class BidView(View):
+    def __init__(self):
+        self.wait_timer = 2
+
     @method_decorator(login_required(login_url='/login'))
     def get(self, request, **kwargs):
         """Rendering html"""
@@ -40,15 +43,15 @@ class BidView(View):
     def post(self, request, **kwargs):
         bid_form = BidForm(request.POST)
         if bid_form.is_valid():
-            clean_bid = bid_form.cleaned_data["bid"]
+            bid_amount = bid_form.cleaned_data["bid"]
             listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
-        return self.update_bid(request, clean_bid, listing, bid_form)
+        return self.update_bid(request, bid_amount, listing, bid_form)
 
-    def place_bid(self, request, clean_bid, listing, current_time):
-        if clean_bid - listing.current_price() >= 2:
+    def place_bid(self, request, bid_amount, listing, current_time):
+        if bid_amount - listing.current_price() >= self.wait_timer:
             listing.bids.update(date=current_time)
             recent_bid = Bid.objects.create(date=current_time, listing=listing,
-                                            bid=clean_bid, user=request.user)
+                                            bid=bid_amount, user=request.user)
             Listing.objects.filter(pk=self.kwargs["listing_id"]).update(
                 winning_bid=recent_bid.id)
             error_clean_bid = False
@@ -56,19 +59,19 @@ class BidView(View):
             error_clean_bid = True
         return error_clean_bid
 
-    def update_bid(self, request, clean_bid, listing, bid_form):
+    def update_bid(self, request, bid_amount, listing, bid_form):
         comment_form = CommentForm()
         user_bid = listing.bids.filter(user=request.user).first()
         current_time = datetime.now(timezone.utc)
         error_clean_bid = False
         wait_for_three_min = False
         if user_bid is None:
-            error_clean_bid = self.place_bid(request, clean_bid, listing, current_time)
+            error_clean_bid = self.place_bid(request, bid_amount, listing, current_time)
         else:
             delta = current_time - user_bid.date
             can_place_bid = delta > timedelta(minutes=1)
             if can_place_bid:
-                error_clean_bid = self.place_bid(request, clean_bid, listing, current_time)
+                error_clean_bid = self.place_bid(request, bid_amount, listing, current_time)
             else:
                 wait_for_three_min = True
         return render(request, "auctions/bid.html", {
