@@ -55,3 +55,12 @@ class Bid(models.Model):
 
     def __str__(self):
         return f"{self.date} ({self.user}) ({self.listing.current_price()})"
+
+
+class Flag(models.Model):
+    flag = models.IntegerField(null=True)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE,
+                                related_name="flags", null=True)
+
+    def __str__(self):
+        return f"{self.listing}: {self.flag}"

@@ -1,9 +1,12 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body %}
     <h1>{{ listing.title }}</h1>
 
     <div style="padding: 2px; display: flex; justify-content: center">
+      <!-- https://www.flaticon.com/free-icon/finish_2164609 -->
+      <a href="{% url 'flag_listing' listing.id %}"><img style="width: 80px;" src="{% static 'favicon/flag.png' %}"></a>
         <div style="width: 18rem; border: 1px solid rgba(0,0,0,.125)">
             <img class="card-img-top" src="{{ listing.image.url }}" alt="{{ listing.title }}">
             <div class="card-body">

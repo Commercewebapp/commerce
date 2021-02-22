@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 
-from .models import User, Listing, Category, Comment, Bid
+from .models import User, Listing, Category, Comment, Bid, Flag
 from .forms import CreateListing, BidForm, CommentForm
 from .spam_word import spam
 
@@ -93,6 +93,21 @@ def category_view(request):
     """Category tab"""
     categories = Category.objects.all()
     return render(request, "auctions/category.html", {"categories": categories})
+
+
+@login_required(login_url='/login')
+def flag_listing(request, listing_id):
+    listing = Listing.objects.get(pk=listing_id)
+    if listing.flags.filter().first() is None:
+        Flag.objects.create(flag=1, listing=listing)
+    else:
+        flag_amount = listing.flags.get().flag
+        if flag_amount <= 3:
+            flag_amount += 1
+            listing.flags.update(flag=flag_amount)
+        if flag_amount >= 3:
+            Listing.objects.filter(pk=listing_id).update(open_at=False)
+    return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
 
 def each_category_listing(request, category_id):

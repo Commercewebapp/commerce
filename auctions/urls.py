@@ -20,5 +20,6 @@ urlpatterns = [
     path("each_category_listing/<int:category_id>", views.each_category_listing,
          name="each_category_listing"),
     path("comment/<int:listing_id>", views.comment, name="comment"),
-    path("watchlist_view", views.watchlist_view, name="watchlist_view")
+    path("watchlist_view", views.watchlist_view, name="watchlist_view"),
+    path("flag/<int:listing_id>", views.flag_listing, name="flag_listing")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
