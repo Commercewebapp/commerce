@@ -15,9 +15,6 @@ from .spam_word import spam
 
 
 class BidView(View):
-    def __init__(self):
-        self.wait_timer = 2
-
     @method_decorator(login_required(login_url='/login'))
     def get(self, request, **kwargs):
         """Rendering html"""
@@ -48,7 +45,7 @@ class BidView(View):
         return self.update_bid(request, bid_amount, listing, bid_form)
 
     def place_bid(self, request, bid_amount, listing, current_time):
-        if bid_amount - listing.current_price() >= self.wait_timer:
+        if bid_amount - listing.current_price() >= 1:
             listing.bids.update(date=current_time)
             recent_bid = Bid.objects.create(date=current_time, listing=listing,
                                             bid=bid_amount, user=request.user)
