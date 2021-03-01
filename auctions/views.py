@@ -100,13 +100,17 @@ def each_category_listing(request, category_id):
 
 @login_required(login_url='/login')
 def flag_listing(request, listing_id):
+    """Report button on listing"""
     listing = Listing.objects.get(pk=listing_id)
-    if listing.flags.filter().first() is None:
-        Flag.objects.create(flag=1, listing=listing, user=request.user)
+    listing_flagged = listing.flags.filter().first()
+    if listing_flagged is None:
+        default = 1
+        Flag.objects.create(flag=default, listing=listing, user=request.user)
     else:
-        user_flag = User.objects.get(pk=request.user.id).flags_user.first()
+        user_flagged = User.objects.get(pk=request.user.id).flags_user.first()
         flag_amount = listing.flags.get().flag
-        if flag_amount <= 3 and user_flag is None:
+        max_flag = 3
+        if flag_amount <= max_flag and user_flagged is None:
             flag_amount += 1
             listing.flags.update(flag=flag_amount, user=request.user)
         else:
@@ -115,7 +119,7 @@ def flag_listing(request, listing_id):
                 "cannot_flag": cannot_flag,
                 "listing": listing
             })
-        if flag_amount >= 3:
+        if flag_amount >= max_flag:
             Listing.objects.filter(pk=listing_id).update(open_at=False)
     return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 

@@ -6,7 +6,7 @@
 
     <div style="padding: 2px; display: flex; justify-content: center">
       {% if cannot_flag %}
-        <script>alert("You report this listing already")</script>
+        <script>alert("You flagged this listing already")</script>
       {% endif %}
       <form action="{% url 'flag_listing' listing.id %}" method="POST">
         {% csrf_token %}
