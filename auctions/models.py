@@ -50,7 +50,7 @@ class Bid(models.Model):
     date = models.DateTimeField(null=True)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE,
                                 related_name="bids")
-    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     bid = models.DecimalField(decimal_places=2, max_digits=8, null=True)
 
     def __str__(self):
@@ -61,6 +61,8 @@ class Flag(models.Model):
     flag = models.IntegerField(null=True)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE,
                                 related_name="flags", null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True,
+                             related_name="flags_user")
 
     def __str__(self):
-        return f"{self.listing}: {self.flag}"
+        return f"{self.listing}: {self.flag} {self.user}"

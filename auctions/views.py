@@ -76,7 +76,7 @@ class BidView(View):
             "bid_form": bid_form,
             "wait_for_three_min": wait_for_three_min,
             "error_clean_bid": error_clean_bid,
-            "comment_form": comment_form,
+            "comment_form": comment_form
         })
 
 
@@ -92,25 +92,32 @@ def category_view(request):
     return render(request, "auctions/category.html", {"categories": categories})
 
 
-@login_required(login_url='/login')
-def flag_listing(request, listing_id):
-    listing = Listing.objects.get(pk=listing_id)
-    if listing.flags.filter().first() is None:
-        Flag.objects.create(flag=1, listing=listing)
-    else:
-        flag_amount = listing.flags.get().flag
-        if flag_amount <= 3:
-            flag_amount += 1
-            listing.flags.update(flag=flag_amount)
-        if flag_amount >= 3:
-            Listing.objects.filter(pk=listing_id).update(open_at=False)
-    return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
-
-
 def each_category_listing(request, category_id):
     """Render category list, Category tab"""
     listings = Listing.objects.filter(category=category_id)
     return render(request, "auctions/each_category.html", {"listings": listings})
+
+
+@login_required(login_url='/login')
+def flag_listing(request, listing_id):
+    listing = Listing.objects.get(pk=listing_id)
+    if listing.flags.filter().first() is None:
+        Flag.objects.create(flag=1, listing=listing, user=request.user)
+    else:
+        user_flag = User.objects.get(pk=request.user.id).flags_user.first()
+        flag_amount = listing.flags.get().flag
+        if flag_amount <= 3 and user_flag is None:
+            flag_amount += 1
+            listing.flags.update(flag=flag_amount, user=request.user)
+        else:
+            cannot_flag = True
+            return render(request, "auctions/bid.html", {
+                "cannot_flag": cannot_flag,
+                "listing": listing
+            })
+        if flag_amount >= 3:
+            Listing.objects.filter(pk=listing_id).update(open_at=False)
+    return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
 
 @login_required(login_url='/login')
@@ -148,7 +155,7 @@ def remove_watchlist(request, listing_id):
 
 @login_required(login_url='/login')
 def watchlist_view(request):
-    """Render watch listing for user, Wach List tab"""
+    """Render watch listing for user, Watch List tab"""
     user_watch_listing = request.user.watch_listing.all().filter(open_at=True)
     return render(request, "auctions/watchlist.html", {"user_watch_listing": user_watch_listing})
 

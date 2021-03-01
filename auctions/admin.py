@@ -20,7 +20,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 class FlagAdmin(admin.ModelAdmin):
-    list_display = ("id", "flag", "listing")
+    list_display = ("id", "flag", "listing", "user")
 
 
 admin.site.register(Listing, ListingAdmin)
