@@ -105,25 +105,30 @@ def flag_listing(request, listing_id):
     """Report button on listing"""
     listing = Listing.objects.get(pk=listing_id)
     listing_flagged = listing.flags.filter().first()
-    if listing_flagged is None:
-        default = 1
-        Flag.objects.create(flag=default, listing=listing, user=request.user)
+    matches_user = listing.owner == request.user
+    if matches_user:
+        return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
     else:
-        user_flagged = Flag.objects.filter(user=request.user, listing=listing_id).first()
-        flag_amount = listing.flags.get().flag
-        max_flag = 3
-        if flag_amount <= max_flag and user_flagged is None:
-            flag_amount += 1
-            listing.flags.update(flag=flag_amount, user=request.user)
+        if listing_flagged is None:
+            default = 1
+            Flag.objects.create(flag=default, listing=listing, user=request.user)
         else:
-            cannot_flag = True
-            return render(request, "auctions/bid.html", {
-                "cannot_flag": cannot_flag,
-                "listing": listing
-            })
-        if flag_amount >= max_flag:
-            Listing.objects.filter(pk=listing_id).update(open_at=False)
-    return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
+            user_flagged = Flag.objects.filter(user=request.user, listing=listing_id).first()
+            flag_amount = listing.flags.get().flag
+            max_flag = 3
+            if flag_amount <= max_flag and user_flagged is None:
+                flag_amount += 1
+                listing.flags.update(flag=flag_amount, user=request.user)
+            else:
+                cannot_flag = True
+                # TODO(jan): The bid form doesn't show up
+                return render(request, "auctions/bid.html", {
+                    "cannot_flag": cannot_flag,
+                    "listing": listing
+                })
+            if flag_amount >= max_flag:
+                Listing.objects.filter(pk=listing_id).update(open_at=False)
+        return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
 
 @login_required(login_url='/login')
