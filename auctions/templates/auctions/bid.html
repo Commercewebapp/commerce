@@ -57,7 +57,7 @@
     <h2>Comments</h2>
     <div class="bd-example" style="border: 1px solid rgba(0,0,0,.125)">
         {% for name in listing.comment.all %}
-            <p>{{ name.user }} -> {{ name.comment }}</p>
+            <p>{{ name.user }} -> {{ name.comment }} ({{ name.comment_at }})</p>
         {% endfor %}
     </div>
     <form action="{% url 'comment' listing.id %}" method="POST">
