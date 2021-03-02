@@ -96,7 +96,7 @@ def category_view(request):
 
 def each_category_listing(request, category_id):
     """Render category list, Category tab"""
-    listings = Listing.objects.filter(category=category_id)
+    listings = Listing.objects.filter(category=category_id, open_at=True)
     return render(request, "auctions/each_category.html", {"listings": listings})
 
 
