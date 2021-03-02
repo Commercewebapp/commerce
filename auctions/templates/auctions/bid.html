@@ -17,7 +17,8 @@
             <div class="card-body">
                 <h5 class="card-title">{{ listing.title }}</h5>
                 <p class="card-text">{{ listing.description }}</p>
-                <p class="card-text"><strong>Current Price: ${{listing.current_price}}</strong><br>
+                <p class="card-text">Category: <a href="{% url 'each_category_listing' listing.category.id %}">{{ listing.category }}</a></p>
+                <p class="card-text"><strong>Current Price: ${{ listing.current_price }}</strong><br>
                     <i>Starting Price: {{ listing.starting_price }}</i><br>
                     <i>People Bid: {{ bid_count }}</i>
                 </p>
