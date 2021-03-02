@@ -109,7 +109,7 @@ def flag_listing(request, listing_id):
         default = 1
         Flag.objects.create(flag=default, listing=listing, user=request.user)
     else:
-        user_flagged = User.objects.get(pk=request.user.id).flags_user.first()
+        user_flagged = User.objects.get(pk=request.user.id).flags_user.filter(listing=listing_id).first()
         flag_amount = listing.flags.get().flag
         max_flag = 3
         if flag_amount <= max_flag and user_flagged is None:
