@@ -17,7 +17,7 @@
             <div class="card-body">
                 <h5 class="card-title">{{ listing.title }}</h5>
                 <p class="card-text">{{ listing.description }}</p>
-                <p class="card-text"><strong>Price: ${{ listing.current_price }}</strong></p>
+                <p class="card-text"><strong>Price: ${{listing.current_price}}</strong> <i>People Bid: {{ bid_count }}</i></p>
                 {% if not owner_cant_bid %}
                     <form action="{% url 'bid' listing.id %}" method="POST">
                         {% csrf_token %}

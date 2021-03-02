@@ -20,6 +20,7 @@ class BidView(View):
         """Rendering html"""
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         matches_user = listing.owner == request.user
+        bid_count = Bid.objects.all().count()
         bid_form = BidForm(request.POST)
         comment_form = CommentForm()
         owner_cant_bid = False
@@ -33,7 +34,8 @@ class BidView(View):
             "bid_form": bid_form,
             "comment_form": comment_form,
             "matches_user": matches_user,
-            "owner_cant_bid": owner_cant_bid
+            "owner_cant_bid": owner_cant_bid,
+            "bid_count": bid_count
         })
 
     @method_decorator(login_required(login_url='/login'))
