@@ -45,10 +45,12 @@ class BidView(View):
     @method_decorator(login_required(login_url='/login'))
     def post(self, request, **kwargs):
         bid_form = BidForm(request.POST)
+        listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         if bid_form.is_valid():
             bid_amount = bid_form.cleaned_data["bid"]
-            listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
-        return self.update_bid(request, bid_amount, listing, bid_form)
+            return self.update_bid(request, bid_amount, listing, bid_form)
+        else:
+            return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
     def place_bid(self, request, bid_amount, listing, current_time):
         if bid_amount - listing.current_price() >= 1:
