@@ -1,28 +1,28 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Watch list {{ request.user.username }}</h2>
+<h2>Watch list {{ request.user.username }}</h2>
 
-    <div style="display: flex;">
-        {% for listing in user_watch_listing %}
-            <div class="card-deck" style="width: 18rem; padding: 2px;">
-                <div class="card">
-                    <img class="card-img-top" src="{{ listing.image.url }}" alt="{{ listing.title }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ listing.title }}</h5>
-                        <p class="card-text">{{ listing.description }}</p>
-                        <p class="card-text"><strong>Price: ${{ listing.current_price }}</strong></p>
-                        <p><a href="{% url 'bid' listing.id %}" class="btn btn-info">Show listing</a></p>
-                        <form action="{% url 'remove_watchlist' listing.id %}" method="POST">
-                            {% csrf_token %}
-                            <input class="btn btn-danger" type="submit" value="Remove list">
-                        </form>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner.username }}</small>
-                    </div>
-                </div>
+<div style="display: flex;">
+    {% for listing in user_watch_listing %}
+    <div class="card-deck" style="width: 18rem; padding: 2px;">
+        <div class="card">
+            <img class="card-img-top" src="{{ listing.image.url }}" alt="{{ listing.title }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ listing.title }}</h5>
+                <p class="card-text">{{ listing.description }}</p>
+                <p class="card-text"><strong>Price: ${{ listing.current_price }}</strong></p>
+                <p><a href="{% url 'bid' listing.id %}" class="btn btn-info">Show listing</a></p>
+                <form action="{% url 'remove_watchlist' listing.id %}" method="POST">
+                    {% csrf_token %}
+                    <input class="btn btn-danger" type="submit" value="Remove list">
+                </form>
             </div>
-        {% endfor %}
+            <div class="card-footer">
+                <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner.username }}</small>
+            </div>
+        </div>
     </div>
+    {% endfor %}
+</div>
 {% endblock %}

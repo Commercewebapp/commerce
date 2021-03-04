@@ -1,30 +1,30 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Closebid {{ request.user.username }}</h2>
+<h2>Closebid {{ request.user.username }}</h2>
 
-    <div style="display: flex;">
-        {% for listing in listings %}
-            <div class="card-deck" style="width: 18rem; padding: 2px;">
-                <div class="card">
-                    <img class="card-img-top" src="{{ listing.image.url }}" alt="{{ listing.title }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ listing.title }}</h5>
-                        <p class="card-text">{{ listing.description }}</p>
-                        <p class="card-text"><strong>Price: ${{ listing.current_price }}</strong></p>
-                        <p>{{ listing.winning_bid.user.username }} is the winner</p>
-                        <p>Contact:</p>
-                        <ul>
-                            <li>{{ listing.winning_bid.user.email }}</li>
-                        </ul>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner.username }}</small>
-                    </div>
-                </div>
+<div style="display: flex;">
+    {% for listing in listings %}
+    <div class="card-deck" style="width: 18rem; padding: 2px;">
+        <div class="card">
+            <img class="card-img-top" src="{{ listing.image.url }}" alt="{{ listing.title }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ listing.title }}</h5>
+                <p class="card-text">{{ listing.description }}</p>
+                <p class="card-text"><strong>Price: ${{ listing.current_price }}</strong></p>
+                <p>{{ listing.winning_bid.user.username }} is the winner</p>
+                <p>Contact:</p>
+                <ul>
+                    <li>{{ listing.winning_bid.user.email }}</li>
+                </ul>
             </div>
-        {% empty %}
-            <h1>{{ request.user.username }} have no close bid</h1>
-        {% endfor %}
+            <div class="card-footer">
+                <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner.username }}</small>
+            </div>
+        </div>
     </div>
+    {% empty %}
+    <h1>{{ request.user.username }} have no close bid</h1>
+    {% endfor %}
+</div>
 {% endblock %}

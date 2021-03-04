@@ -1,16 +1,18 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Create Listing</h2>
+<h2>Create Listing</h2>
 
-    <form method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit">
+<form method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit">
         <div>
-    <form>
-    {% if spam_word_error %}
-      <script>alert("Product not allow")</script>
-    {% endif %}
+            <form>
+                {% if spam_word_error %}
+                <script>
+                    alert("Product not allow")
+                </script>
+                {% endif %}
 {% endblock %}

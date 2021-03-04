@@ -2,74 +2,77 @@
 {% load static %}
 
 {% block body %}
-    <h1>{{ listing.title }}</h1>
+<h1>{{ listing.title }}</h1>
 
-    <div style="padding: 2px; display: flex; justify-content: center">
-      {% if cannot_flag %}
-        <script>alert("You flagged this listing already")</script>
-      {% endif %}
-      {% if not matches_user %}
-        <form action="{% url 'flag_listing' listing.id %}" method="POST">
-          {% csrf_token %}
-          <input class="btn btn-secondary" type="submit" value="Report">
-        </form>
-      {% endif %}
-        <div style="width: 18rem; border: 1px solid rgba(0,0,0,.125)">
-            <img class="card-img-top" src="{{ listing.image.url }}" alt="{{ listing.title }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ listing.title }}</h5>
-                <p class="card-text">{{ listing.description }}</p>
-                <p class="card-text">Category: <a href="{% url 'each_category_listing' listing.category.id %}">{{ listing.category }}</a></p>
-                <p class="card-text"><strong>Current Price: ${{ listing.current_price }}</strong><br>
-                    <i>Starting Price: {{ listing.starting_price }}</i><br>
-                    <i>People Bid: {{ bid_count }}</i>
-                </p>
-                {% if not owner_cant_bid %}
-                    <form action="{% url 'bid' listing.id %}" method="POST">
-                        {% csrf_token %}
-                        {{ bid_form.as_p }}
-                        {% if error_clean_bid %}
-                            <p>Can't be lower than the number of price and
-                            you must bid at least ${{listing.current_price|add:"2"}}</p>
-                        {% endif %}
-                        {% if wait_for_three_min %}
-                            <p>You can bid again after 1 minutes</p>
-                        {% endif %}
-                        <input class="btn btn-primary" type="submit" value="Bid">
-                    </form>
-                {% endif %}
-                <br>
-                <form action="{% url 'watchlist' listing.id %}" method="POST">
+<div style="padding: 2px; display: flex; justify-content: center">
+    {% if cannot_flag %}
+    <script>
+        alert("You flagged this listing already")
+    </script>
+    {% endif %}
+    {% if not matches_user %}
+    <form action="{% url 'flag_listing' listing.id %}" method="POST">
+        {% csrf_token %}
+        <input class="btn btn-secondary" type="submit" value="Report">
+    </form>
+    {% endif %}
+    <div style="width: 18rem; border: 1px solid rgba(0,0,0,.125)">
+        <img class="card-img-top" src="{{ listing.image.url }}" alt="{{ listing.title }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ listing.title }}</h5>
+            <p class="card-text">{{ listing.description }}</p>
+            <p class="card-text">Category: <a
+                    href="{% url 'each_category_listing' listing.category.id %}">{{ listing.category }}</a></p>
+            <p class="card-text"><strong>Current Price: ${{ listing.current_price }}</strong><br>
+                <i>Starting Price: {{ listing.starting_price }}</i><br>
+                <i>People Bid: {{ bid_count }}</i>
+            </p>
+            <p>{% if not owner_cant_bid %}
+                <form action="{% url 'bid' listing.id %}" method="POST">
                     {% csrf_token %}
-                    <input class="btn btn-primary" type="submit" value="Add watch list">
+                    {{ bid_form.as_p }}
+                    {% if error_clean_bid %}
+                    <p>Can't be lower than the number of price and you must bid at least
+                        ${{listing.current_price|add:"2"}}</p>
+                    {% endif %}
+                    {% if wait_for_three_min %}
+                    <p>You can bid again after 1 minutes</p>
+                    {% endif %}
+                    <input class="btn btn-primary" type="submit" value="Bid">
                 </form>
-                <br>
+                {% endif %}</p>
+            <form action="{% url 'watchlist' listing.id %}" method="POST">
+                {% csrf_token %}
+                <input class="btn btn-primary" type="submit" value="Add watch list">
+            </form>
+            <p>
                 {% if matches_user %}
-                    <form action="{% url 'close_bid' listing.id %}" method="POST">
-                        {% csrf_token %}
-                        <input class="btn btn-warning" type="submit" value="Close bid">
-                    </form>
+                <form action="{% url 'close_bid' listing.id %}" method="POST">
+                    {% csrf_token %}
+                    <input class="btn btn-warning" type="submit" value="Close bid">
+                </form>
                 {% endif %}
-            </div>
-            <div class="card-footer">
-                <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner.username }}</small>
-            </div>
+            </p>
+        </div>
+        <div class="card-footer">
+            <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner.username }}</small>
         </div>
     </div>
-    <br>
-    <h2>Comments</h2>
-    <div class="bd-example" style="border: 1px solid rgba(0,0,0,.125)">
-        {% for name in listing.comment.all %}
-            {% if name.user.username in track_user %}
-                <p>{{ name.user }}(bidder) -> {{ name.comment }} ({{ name.comment_at }})</p>
-            {% else %}
-                <p>{{ name.user }}(non-bidder) -> {{ name.comment }} ({{ name.comment_at }})</p>
-            {% endif %}
-        {% endfor %}
-    </div>
-    <form action="{% url 'comment' listing.id %}" method="POST">
-        {% csrf_token %}
-        {{ comment_form.as_p }}
-        <input type="submit">
-    </form>
- {% endblock %}
+</div>
+
+<h2>Comments</h2>
+<div class="bd-example" style="border: 1px solid rgba(0,0,0,.125)">
+    {% for name in listing.comment.all %}
+    {% if name.user.username in track_user %}
+    <p>{{ name.user }}(bidder) -> {{ name.comment }} ({{ name.comment_at }})</p>
+    {% else %}
+    <p>{{ name.user }}(non-bidder) -> {{ name.comment }} ({{ name.comment_at }})</p>
+    {% endif %}
+    {% endfor %}
+</div>
+<form action="{% url 'comment' listing.id %}" method="POST">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <input type="submit">
+</form>
+{% endblock %}
