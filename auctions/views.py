@@ -209,7 +209,7 @@ def create_listing(request):
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
             starting_price = form.cleaned_data["starting_price"]
-            if str(title) not in spam and str(description) not in spam:
+            if str(title.lower()) not in spam and str(description.lower()) not in spam:
                 Listing.objects.create(title=title, description=description,
                                        category=category, image=image,
                                        owner=request.user,
