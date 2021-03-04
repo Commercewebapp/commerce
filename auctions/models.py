@@ -11,7 +11,7 @@ class Comment(models.Model):
     comment_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return f"{self.user} ({self.comment})"
+        return f"{self.user} -> {self.comment}"
 
 
 class Category(models.Model):
