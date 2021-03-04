@@ -27,9 +27,12 @@ class BidView(View):
         track_user = []
         for user_name in listing.bids.all():
             track_user.append(user_name.user.username)
-        track_user_comment = []
         for user_name in listing.comment.all():
-            track_user_comment.append(user_name.user.username)
+            for i in range(len(track_user)):
+                if track_user[i] == user_name.user.username:
+                    bidder = True
+                else:
+                    bidder = False
         if matches_user:
             owner_cant_bid = True
         else:
@@ -42,7 +45,7 @@ class BidView(View):
             "matches_user": matches_user,
             "owner_cant_bid": owner_cant_bid,
             "bid_count": bid_count,
-            "bidder": False
+            "bidder": bidder
         })
 
     @method_decorator(login_required(login_url='/login'))
