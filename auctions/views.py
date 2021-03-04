@@ -1,16 +1,17 @@
 from datetime import datetime, timezone, timedelta
-from django.views import View
-from django.shortcuts import get_object_or_404
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+from django.views import View
 
-from .models import User, Listing, Category, Comment, Bid, Flag
 from .forms import CreateListing, BidForm, CommentForm
+from .models import User, Listing, Category, Comment, Bid, Flag
 from .spam_word import spam
 
 
@@ -71,12 +72,14 @@ class BidView(View):
         error_clean_bid = False
         wait_for_three_min = False
         if user_bid is None:
-            error_clean_bid = self.place_bid(request, bid_amount, listing, current_time)
+            error_clean_bid = self.place_bid(request, bid_amount, listing,
+                                             current_time)
         else:
             delta = current_time - user_bid.date
             can_place_bid = delta > timedelta(minutes=1)
             if can_place_bid:
-                error_clean_bid = self.place_bid(request, bid_amount, listing, current_time)
+                error_clean_bid = self.place_bid(request, bid_amount, listing,
+                                                 current_time)
             else:
                 wait_for_three_min = True
         return render(request, "auctions/bid.html", {
@@ -103,7 +106,8 @@ def category_view(request):
 def each_category_listing(request, category_id):
     """Render category list, Category tab"""
     listings = Listing.objects.filter(category=category_id, open_at=True)
-    return render(request, "auctions/each_category.html", {"listings": listings})
+    return render(request, "auctions/each_category.html",
+                  {"listings": listings})
 
 
 @login_required(login_url='/login')
@@ -117,9 +121,11 @@ def flag_listing(request, listing_id):
     else:
         if listing_flagged is None:
             default = 1
-            Flag.objects.create(flag=default, listing=listing, user=request.user)
+            Flag.objects.create(flag=default, listing=listing,
+                                user=request.user)
         else:
-            user_flagged = Flag.objects.filter(user=request.user, listing=listing_id).first()
+            user_flagged = Flag.objects.filter(user=request.user,
+                                               listing=listing_id).first()
             flag_amount = listing.flags.get().flag
             max_flag = 3
             if flag_amount <= max_flag and user_flagged is None:
@@ -174,14 +180,16 @@ def remove_watchlist(request, listing_id):
 def watchlist_view(request):
     """Render watch listing for user, Watch List tab"""
     user_watch_listing = request.user.watch_listing.all().filter(open_at=True)
-    return render(request, "auctions/watchlist.html", {"user_watch_listing": user_watch_listing})
+    return render(request, "auctions/watchlist.html",
+                  {"user_watch_listing": user_watch_listing})
 
 
 @login_required(login_url='/login')
 def close_bid(request, listing_id):
     """Close the listing, when close bid button is click"""
     if request.method == "POST":
-        Listing.objects.filter(pk=listing_id, owner=request.user).update(open_at=False)
+        Listing.objects.filter(pk=listing_id, owner=request.user).update(
+            open_at=False)
         return HttpResponseRedirect(reverse("close_bid_view"))
     return render(request, "auctions/close_bid.html")
 
@@ -197,8 +205,8 @@ def close_bid_view(request):
 def create_listing(request):
     # First time when user visit the page
     if Category.objects.exists() is False:
-        default_category = ["Programming", "Fashion", "Christmas", "Electronics",
-                            "Property", "Sport"]
+        default_category = ["Programming", "Fashion", "Christmas",
+                            "Electronics", "Property", "Sport"]
         for category in default_category:
             Category.objects.create(name=category)
     spam_word_error = False
