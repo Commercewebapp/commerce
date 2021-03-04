@@ -60,11 +60,13 @@
     <h2>Comments</h2>
     <div class="bd-example" style="border: 1px solid rgba(0,0,0,.125)">
         {% for name in listing.comment.all %}
-            {% if bidder %}
-                <p>{{ name.user }}(bidder) -> {{ name.comment }} ({{ name.comment_at }})</p>
-            {% else %}
-                <p>{{ name.user }}(non-bidder) -> {{ name.comment }} ({{ name.comment_at }})</p>
-            {% endif %}
+            {% for i in track_user %}
+                {% if i == name.user.username %}
+                    <p>{{ name.user }}(bidder) -> {{ name.comment }} ({{ name.comment_at }})</p>
+                {% else %}
+                    <p>{{ name.user }}(non-bidder) -> {{ name.comment }} ({{ name.comment_at }})</p>
+                {% endif %}
+            {% endfor %}
         {% endfor %}
     </div>
     <form action="{% url 'comment' listing.id %}" method="POST">
