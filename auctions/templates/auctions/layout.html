@@ -27,7 +27,10 @@
         <li class="nav-item">
             <a class="nav-link" href="{% url 'category_view' %}">Category</a>
         <li>
-            {% if user.is_authenticated %}
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'own_listing' %}">Own Listing</a>
+        <li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'create_listing' %}">Create Listing</a>
         <li>

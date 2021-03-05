@@ -111,6 +111,12 @@ def each_category_listing(request, category_id):
 
 
 @login_required(login_url='/login')
+def own_listing(request):
+    listings = Listing.objects.filter(owner=request.user)
+    return render(request, "auctions/own_listing.html", {"listings": listings})
+
+
+@login_required(login_url='/login')
 def flag_listing(request, listing_id):
     """Report button on listing"""
     listing = Listing.objects.get(pk=listing_id)
