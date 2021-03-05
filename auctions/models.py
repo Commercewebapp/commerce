@@ -59,11 +59,11 @@ class Bid(models.Model):
 
 
 class Flag(models.Model):
-    flag = models.IntegerField(null=True)
+    flag_count = models.IntegerField(null=True)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE,
                                 related_name="flags", null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True,
                              related_name="flags_user")
 
     def __str__(self):
-        return f"{self.listing}: {self.flag} {self.user}"
+        return f"{self.listing}: {self.flag_count} {self.user}"

@@ -126,17 +126,16 @@ def flag_listing(request, listing_id):
         return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
     else:
         if listing_flagged is None:
-            default = 1
-            Flag.objects.create(flag=default, listing=listing,
+            Flag.objects.create(flag_count=1, listing=listing,
                                 user=request.user)
         else:
             user_flagged = Flag.objects.filter(user=request.user,
                                                listing=listing_id).first()
-            flag_amount = listing.flags.get().flag
+            flag_amount = listing.flags.get().flag_count
             max_flag = 3
             if flag_amount <= max_flag and user_flagged is None:
                 flag_amount += 1
-                listing.flags.update(flag=flag_amount, user=request.user)
+                listing.flags.update(flag_count=flag_amount, user=request.user)
             else:
                 cannot_flag = True
                 # TODO(jan): The bid form doesn't show up
