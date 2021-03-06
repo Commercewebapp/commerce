@@ -103,8 +103,8 @@ def search(request):
     if Listing.objects.filter(title=str(value)).first() is not None:
         return HttpResponseRedirect(reverse("index"))
     else:
+        sub_string_listings = []
         for listing in listings:
-            sub_string_listings = []
             if value.upper() in listing.title.upper():
                 sub_string_listings.append(listing)
         return render(request, "auctions/index.html", {
