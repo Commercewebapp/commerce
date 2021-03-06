@@ -1,7 +1,18 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+{% if search %}
+<h2>Searching for {{ value }}</h2>
+{% else %}
 <h2>Active Listings</h2>
+{% endif %}
+<form action="{% url 'search' %}" method="GET">
+    <input class="search" type="text" name="q" placeholder="Search Listing">
+</form>
+
+{% for sl in search_listings %}
+{{ sl }}
+{% endfor %}
 
 <div style="display: flex; flex-wrap: wrap;">
     {% for listing in listings %}

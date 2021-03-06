@@ -97,6 +97,23 @@ def index(request):
     return render(request, "auctions/index.html", {"listings": listings})
 
 
+def search(request):
+    listings = Listing.objects.all()
+    value = request.GET.get('q', '')
+    if Listing.objects.filter(title=str(value)).first() is not None:
+        return HttpResponseRedirect(reverse("index"))
+    else:
+        for listing in listings:
+            sub_string_listings = []
+            if value.upper() in listing.title.upper():
+                sub_string_listings.append(listings)
+        return render(request, "auctions/index.html", {
+            "search_listings": sub_string_listings,
+            "search": True,
+            "value": value
+        })
+
+
 def category_view(request):
     """Category tab"""
     categories = Category.objects.all()
