@@ -10,9 +10,24 @@
     <input class="search" type="text" name="q" placeholder="Search Listing">
 </form>
 
+<div style="display: flex; flex-wrap: wrap;">
 {% for sl in search_listings %}
-{{ sl }}
+<div class="card-deck" style="width: 18rem; padding: 2px;">
+    <div class="card">
+        <img class="card-img-top" src="{{ sl.image.url }}" alt="{{ sl.title }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ sl.title }}</h5>
+            <p class="card-text">{{ sl.description }}</p>
+            <p class="card-text"><strong>Price: ${{ sl.current_price }}</strong></p>
+            <a href="{% url 'bid' sl.id %}" class="btn btn-info">Show listing</a>
+        </div>
+        <div class="card-footer">
+            <small class="text-muted">{{ sl.create_at }} by: {{ sl.owner.username }}</small>
+        </div>
+    </div>
+</div>
 {% endfor %}
+</div>
 
 <div style="display: flex; flex-wrap: wrap;">
     {% for listing in listings %}
