@@ -138,10 +138,11 @@ def flag_listing(request, listing_id):
                 listing.flags.update(flag_count=flag_amount, user=request.user)
             else:
                 cannot_flag = True
-                # TODO(jan): The bid form doesn't show up
+                bid_form = BidForm()
                 return render(request, "auctions/bid.html", {
                     "cannot_flag": cannot_flag,
-                    "listing": listing
+                    "listing": listing,
+                    "bid_form": bid_form
                 })
             if flag_amount >= max_flag:
                 Listing.objects.filter(pk=listing_id).update(open_at=False)
