@@ -106,7 +106,7 @@ def search(request):
         for listing in listings:
             sub_string_listings = []
             if value.upper() in listing.title.upper():
-                sub_string_listings.append(listings)
+                sub_string_listings.append(listing)
         return render(request, "auctions/index.html", {
             "search_listings": sub_string_listings,
             "search": True,
