@@ -2,6 +2,7 @@ from datetime import datetime, timezone, timedelta
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -148,8 +149,8 @@ def flag_listing(request, listing_id):
         user_flagged = Flag.objects.filter(user=request.user,
                                            listing=listing_id).first()
         flag_amount = listing.flags.get().flag_count
-        max_flag = 3
-        if flag_amount <= max_flag and user_flagged is None:
+        settings.max_flag = 3
+        if flag_amount <= settings.max_flag and user_flagged is None:
             flag_amount += 1
             listing.flags.update(flag_count=flag_amount, user=request.user)
         else:
@@ -160,7 +161,7 @@ def flag_listing(request, listing_id):
                 "listing": listing,
                 "bid_form": bid_form
             })
-        if flag_amount >= max_flag:
+        if flag_amount >= settings.max_flag:
             Listing.objects.filter(pk=listing_id).update(open_at=False)
     return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
