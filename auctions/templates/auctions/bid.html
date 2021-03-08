@@ -3,13 +3,12 @@
 
 {% block body %}
 <h1>{{ listing.title }}</h1>
-
+{% if cannot_flag %}
+<script>
+    alert("You flagged this listing already")
+</script>
+{% endif %}
 <div style="padding: 2px; display: flex; justify-content: center">
-    {% if cannot_flag %}
-    <script>
-        alert("You flagged this listing already")
-    </script>
-    {% endif %}
     {% if not matches_user %}
     <form action="{% url 'flag_listing' listing.id %}" method="POST">
         {% csrf_token %}
