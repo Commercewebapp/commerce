@@ -27,10 +27,10 @@ class BidView(View):
         comment_form = CommentForm()
         owner_cant_bid = False
         check_image_two = listing.image_two
-        if check_image_two != "image_two":
-            check_image_two = True
-        else:
+        if check_image_two == "image_two":
             check_image_two = False
+        else:
+            check_image_two = True
         track_user = []
         for user_name in listing.bids.all():
             track_user.append(user_name.user.username)
@@ -52,13 +52,13 @@ class BidView(View):
 
     @method_decorator(login_required(login_url='/login'))
     def post(self, request, **kwargs):
+        """Request.method == 'POST'"""
         bid_form = BidForm(request.POST)
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         if bid_form.is_valid():
             bid_amount = bid_form.cleaned_data["bid"]
             return self.update_bid(request, bid_amount, listing, bid_form)
-        else:
-            return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
+        return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
     def place_bid(self, request, bid_amount, listing, current_time):
         if bid_amount - listing.current_price() >= 1:
@@ -73,6 +73,7 @@ class BidView(View):
         return error_clean_bid
 
     def update_bid(self, request, bid_amount, listing, bid_form):
+        """When user click bid"""
         comment_form = CommentForm()
         user_bid = listing.bids.filter(user=request.user).first()
         current_time = datetime.now(timezone.utc)
@@ -105,20 +106,20 @@ def index(request):
 
 
 def search(request):
+    """Search bar on index.html(Active Listing)"""
     listings = Listing.objects.all()
     value = request.GET.get('q', '')
     if Listing.objects.filter(title=str(value)).first() is not None:
         return HttpResponseRedirect(reverse("index"))
-    else:
-        sub_string_listings = []
-        for listing in listings:
-            if value.upper() in listing.title.upper():
-                sub_string_listings.append(listing)
-        return render(request, "auctions/index.html", {
-            "search_listings": sub_string_listings,
-            "search": True,
-            "value": value
-        })
+    sub_string_listings = []
+    for listing in listings:
+        if value.upper() in listing.title.upper():
+            sub_string_listings.append(listing)
+    return render(request, "auctions/index.html", {
+        "search_listings": sub_string_listings,
+        "search": True,
+        "value": value
+    })
 
 
 def category_view(request):
@@ -136,6 +137,7 @@ def each_category_listing(request, category_id):
 
 @login_required(login_url='/login')
 def own_listing(request):
+    """The listing that user post, Own Listing tab"""
     listings = Listing.objects.filter(owner=request.user)
     return render(request, "auctions/own_listing.html", {"listings": listings})
 
@@ -148,27 +150,26 @@ def flag_listing(request, listing_id):
     matches_user = listing.owner == request.user
     if matches_user:
         return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
+    if listing_flagged is None:
+        Flag.objects.create(flag_count=1, listing=listing,
+                            user=request.user)
+    user_flagged = Flag.objects.filter(user=request.user,
+                                       listing=listing_id).first()
+    flag_amount = listing.flags.get().flag_count
+    settings.max_flag = 3
+    if flag_amount <= settings.max_flag and user_flagged is None:
+        flag_amount += 1
+        listing.flags.update(flag_count=flag_amount, user=request.user)
     else:
-        if listing_flagged is None:
-            Flag.objects.create(flag_count=1, listing=listing,
-                                user=request.user)
-        user_flagged = Flag.objects.filter(user=request.user,
-                                           listing=listing_id).first()
-        flag_amount = listing.flags.get().flag_count
-        settings.max_flag = 3
-        if flag_amount <= settings.max_flag and user_flagged is None:
-            flag_amount += 1
-            listing.flags.update(flag_count=flag_amount, user=request.user)
-        else:
-            cannot_flag = True
-            bid_form = BidForm()
-            return render(request, "auctions/bid.html", {
-                "cannot_flag": cannot_flag,
-                "listing": listing,
-                "bid_form": bid_form
-            })
-        if flag_amount >= settings.max_flag:
-            Listing.objects.filter(pk=listing_id).update(open_at=False)
+        cannot_flag = True
+        bid_form = BidForm()
+        return render(request, "auctions/bid.html", {
+            "cannot_flag": cannot_flag,
+            "listing": listing,
+            "bid_form": bid_form
+        })
+    if flag_amount >= settings.max_flag:
+        Listing.objects.filter(pk=listing_id).update(open_at=False)
     return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
 
@@ -232,6 +233,7 @@ def close_bid_view(request):
 
 @login_required(login_url='/login')
 def create_listing(request):
+    """When user create listing"""
     # First time when user visit the page
     if Category.objects.exists() is False:
         default_category = ["Programming", "Fashion", "Christmas",
