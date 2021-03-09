@@ -1,6 +1,9 @@
 # Commerce
 
-Commerce is written in Python3 with the help of Django framework
+Commerce is written in Python3 with the help of Django framework.
+
+Commerce site is for biding products and people can posting their product on
+Commerce so that other people can bid and buy your product.
 
 ## Requirements
 
