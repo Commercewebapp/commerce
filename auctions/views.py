@@ -248,14 +248,14 @@ def create_listing(request):
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
             starting_price = form.cleaned_data["starting_price"]
-            if str(title.lower()) not in spam and str(description.lower()) not in spam:
+            if str(title.lower()) in spam or str(description.lower()) in spam:
+                spam_word_error = True
+            else:
                 Listing.objects.create(title=title, description=description,
                                        category=category, image=image,
                                        owner=request.user,
                                        starting_price=starting_price)
                 return HttpResponseRedirect(reverse("index"))
-            else:
-                spam_word_error = True
     else:
         form = CreateListing()
     return render(request, "auctions/create_listing.html", {
