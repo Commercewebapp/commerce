@@ -26,6 +26,11 @@ class BidView(View):
         bid_form = BidForm(request.POST)
         comment_form = CommentForm()
         owner_cant_bid = False
+        check_image_two = listing.image_two
+        if check_image_two != "image_two":
+            check_image_two = True
+        else:
+            check_image_two = False
         track_user = []
         for user_name in listing.bids.all():
             track_user.append(user_name.user.username)
@@ -41,7 +46,8 @@ class BidView(View):
             "matches_user": matches_user,
             "owner_cant_bid": owner_cant_bid,
             "bid_count": bid_count,
-            "track_user": track_user
+            "track_user": track_user,
+            "check_image_two": check_image_two
         })
 
     @method_decorator(login_required(login_url='/login'))
