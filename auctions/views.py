@@ -102,6 +102,7 @@ class BidView(View):
 def index(request):
     """Active listing tab"""
     listings = Listing.objects.filter(open_at=True)
+    # TODO(jan): End date maybe should here
     return render(request, "auctions/index.html", {"listings": listings})
 
 
