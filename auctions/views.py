@@ -105,8 +105,9 @@ def index(request):
     return render(request, "auctions/index.html", {"listings": listings})
 
 
-def automatic_close_listing(request, listing_id):
-    if end_date == datetime.now(timezone.utc):
+def auto_close_listing(request, listing_id):
+    listing = get_object_or_404(Listing, pk=listing_id)
+    if listing.end_date == datetime.now(timezone.utc):
         Listing.objects.filter(pk=listing_id).update(open_at=False)
 
 
