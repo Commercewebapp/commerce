@@ -102,8 +102,12 @@ class BidView(View):
 def index(request):
     """Active listing tab"""
     listings = Listing.objects.filter(open_at=True)
-    # TODO(jan): End date maybe should here
     return render(request, "auctions/index.html", {"listings": listings})
+
+
+def automatic_close_listing(request, listing_id):
+    if end_date == datetime.now(timezone.utc):
+        Listing.objects.filter(pk=listing_id).update(open_at=False)
 
 
 def search(request):
