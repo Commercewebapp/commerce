@@ -40,6 +40,7 @@ class Listing(models.Model):
     winning_bid = models.ForeignKey("Bid", on_delete=models.CASCADE,
                                     related_name="won", null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+    hot = models.BooleanField(null=True, blank=True)
 
     def current_price(self):
         highest = self.bids.order_by("-bid").first()
