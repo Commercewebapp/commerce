@@ -133,6 +133,7 @@ def auto_close_listing() -> None:
 
 
 threading.Thread(target=auto_close_listing).start()
+# TODO(jan): args
 threading.Thread(target=hot_listing).start()
 
 
