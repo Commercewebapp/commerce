@@ -1,4 +1,6 @@
 from datetime import datetime, timezone, timedelta
+import threading
+import time
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -105,10 +107,18 @@ def index(request):
     return render(request, "auctions/index.html", {"listings": listings})
 
 
-def auto_close_listing(request, listing_id):
-    listing = get_object_or_404(Listing, pk=listing_id)
-    if listing.end_date == datetime.now(timezone.utc):
-        Listing.objects.filter(pk=listing_id).update(open_at=False)
+def auto_close_listing():
+    while True:
+        listings = Listing.objects.all()
+        current_date = datetime.now(timezone.utc).date()
+        for listing in listings:
+            listing_ended = listing.end_date == current_date
+            if listing_ended:
+                Listing.objects.filter(pk=listing.id).update(open_at=False)
+        time.sleep(5)
+
+
+threading.Thread(target=auto_close_listing).start()
 
 
 def search(request):
