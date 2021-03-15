@@ -115,7 +115,7 @@ def auto_close_listing():
             listing_ended = listing.end_date == current_date
             if listing_ended:
                 Listing.objects.filter(pk=listing.id).update(open_at=False)
-        time.sleep(5)
+        time.sleep(30)
 
 
 threading.Thread(target=auto_close_listing).start()
