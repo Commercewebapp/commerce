@@ -123,7 +123,7 @@ def block_ip(request):
         for i in range(len(blocked_ip)):
             if blocked_ip[i] == data_get.ip:
                 logout(request)
-                return HttpResponse("Fuck you spammer")
+                return HttpResponse("You're not allow on the site")
     return HttpResponseRedirect(reverse("index"))
 
 
@@ -136,7 +136,7 @@ def hot_listing_view(request):
         if bid_count > allow_hot_listing:
             Listing.objects.filter(pk=listing.id).update(hot=True)
     # HOT listing tab
-    listings = Listing.objects.filter(hot=True)
+    listings = Listing.objects.filter(hot=True, open_at=True)
     return render(request, "auctions/hot_listing.html", {"listings": listings})
 
 
@@ -327,7 +327,6 @@ def login_view(request):
             login(request, user)
             get_client_ip(request)
             return block_ip(request)
-            return HttpResponseRedirect(reverse("index"))
         return render(request, "auctions/login.html", {
             "message": "Invalid username and/or password."
         })
