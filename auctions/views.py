@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
@@ -115,6 +115,15 @@ def get_client_ip(request):
         ip = request.META.get('REMOTE_ADDR')
     IP.objects.create(ip=ip, user=request.user)
     return ip
+
+
+def block_ip(request):
+    blocked_ip = ['127.0.0.1']
+    for data_get in IP.objects.all():
+        for i in range(len(blocked_ip)):
+            if blocked_ip[i] == data_get.ip:
+                logout(request)
+                return HttpResponse("Fuck you spammer")
 
 
 def hot_listing_view(request):
@@ -316,6 +325,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             get_client_ip(request)
+            return block_ip(request)
             return HttpResponseRedirect(reverse("index"))
         return render(request, "auctions/login.html", {
             "message": "Invalid username and/or password."
