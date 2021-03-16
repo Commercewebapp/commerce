@@ -107,21 +107,25 @@ def index(request):
     return render(request, "auctions/index.html", {"listings": listings})
 
 
-def hot_listing(request, listing_id):
-    listing = get_object_or_404(Listing, pk=listing_id)
-    bid_count = listing.bids.all().count()
+def hot_listing():
+    """Checking for HOT listing"""
+    listings = Listing.objects.all()
     allow_hot_listing = 5
-    if bid_count > allow_hot_listing:
-        Listing.objects.filter(pk=listing.id).update(hot=True)
+    for listing in listings:
+        bid_count = listing.bids.all().count()
+        if bid_count > allow_hot_listing:
+            Listing.objects.filter(pk=listing.id).update(hot=True)
     return None
 
 
 def hot_listing_view(request):
+    """HOT listing tab"""
     listings = Listing.objects.filter(hot=True)
     return render(request, "auctions/hot_listing.html", {"listings": listings})
 
 
 def auto_close_listing() -> None:
+    """Automatic closing system for listing"""
     while True:
         listings = Listing.objects.all()
         current_date = datetime.now(timezone.utc).date()
@@ -133,7 +137,6 @@ def auto_close_listing() -> None:
 
 
 threading.Thread(target=auto_close_listing).start()
-# TODO(jan): args
 threading.Thread(target=hot_listing).start()
 
 
