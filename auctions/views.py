@@ -107,7 +107,7 @@ def index(request):
     return render(request, "auctions/index.html", {"listings": listings})
 
 
-def hot_listing() -> None:
+def hot_listing_view(request):
     """Checking for HOT listing"""
     listings = Listing.objects.all()
     allow_hot_listing = 5
@@ -115,10 +115,7 @@ def hot_listing() -> None:
         bid_count = listing.bids.all().count()
         if bid_count > allow_hot_listing:
             Listing.objects.filter(pk=listing.id).update(hot=True)
-
-
-def hot_listing_view(request):
-    """HOT listing tab"""
+    # HOT listing tab
     listings = Listing.objects.filter(hot=True)
     return render(request, "auctions/hot_listing.html", {"listings": listings})
 
@@ -136,7 +133,6 @@ def auto_close_listing() -> None:
 
 
 threading.Thread(target=auto_close_listing).start()
-threading.Thread(target=hot_listing).start()
 
 
 def search(request):

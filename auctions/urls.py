@@ -27,7 +27,5 @@ urlpatterns = [
     path("auto_close_listing", views.auto_close_listing,
          name="auto_close_listing"),
     path("hot_listing_view", views.hot_listing_view,
-         name="hot_listing_view"),
-    path("hot_listing/<int:listing_id>", views.hot_listing,
-         name="hot_listing")
+         name="hot_listing_view")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
