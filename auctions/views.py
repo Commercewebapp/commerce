@@ -107,7 +107,7 @@ def index(request):
     return render(request, "auctions/index.html", {"listings": listings})
 
 
-def hot_listing():
+def hot_listing() -> None:
     """Checking for HOT listing"""
     listings = Listing.objects.all()
     allow_hot_listing = 5
@@ -115,7 +115,6 @@ def hot_listing():
         bid_count = listing.bids.all().count()
         if bid_count > allow_hot_listing:
             Listing.objects.filter(pk=listing.id).update(hot=True)
-    return None
 
 
 def hot_listing_view(request):
