@@ -78,3 +78,13 @@ class Flag(models.Model):
 
     def __str__(self):
         return f"{self.listing}: {self.flag_count} {self.user}"
+
+
+class IP(models.Model):
+    ip = models.CharField(max_length=15)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
+                             on_delete=models.CASCADE,
+                             related_name="user_ip")
+
+    def __str__(self):
+        return f"{self.user}: {self.ip}"

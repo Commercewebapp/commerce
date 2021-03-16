@@ -14,7 +14,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 
 from .forms import CreateListing, BidForm, CommentForm
-from .models import User, Listing, Category, Comment, Bid, Flag
+from .models import User, Listing, Category, Comment, Bid, Flag, IP
 from .spam_word import spam
 
 
@@ -105,6 +105,16 @@ def index(request):
     """Active listing tab"""
     listings = Listing.objects.filter(open_at=True)
     return render(request, "auctions/index.html", {"listings": listings})
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    IP.objects.create(ip=ip, user=request.user)
+    return ip
 
 
 def hot_listing_view(request):
@@ -305,6 +315,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
+            get_client_ip(request)
             return HttpResponseRedirect(reverse("index"))
         return render(request, "auctions/login.html", {
             "message": "Invalid username and/or password."
