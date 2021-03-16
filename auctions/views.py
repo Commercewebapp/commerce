@@ -118,12 +118,13 @@ def get_client_ip(request):
 
 
 def block_ip(request):
-    blocked_ip = ['127.0.0.1']
+    blocked_ip = ['']
     for data_get in IP.objects.all():
         for i in range(len(blocked_ip)):
             if blocked_ip[i] == data_get.ip:
                 logout(request)
                 return HttpResponse("Fuck you spammer")
+    return HttpResponseRedirect(reverse("index"))
 
 
 def hot_listing_view(request):
