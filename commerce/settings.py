@@ -138,4 +138,6 @@ CRONJOBS = [
     ('*/5 * * * *', 'auctions.views.auto_close_listing')
 ]
 
+LOGIN_URL = "/login"
+
 # django_heroku.settings(locals())

@@ -14,10 +14,11 @@ from django.views import View
 from .forms import CreateListing, BidForm, CommentForm
 from .models import User, Listing, Category, Comment, Bid, Flag, IP
 from .spam_word import spam
+from commerce.settings import LOGIN_URL
 
 
 class BidView(View):
-    @method_decorator(login_required(login_url='/login'))
+    @method_decorator(login_required(login_url=LOGIN_URL))
     def get(self, request, **kwargs):
         """Rendering html"""
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
@@ -50,7 +51,7 @@ class BidView(View):
             "check_image_two": check_image_two
         })
 
-    @method_decorator(login_required(login_url='/login'))
+    @method_decorator(login_required(login_url=LOGIN_URL))
     def post(self, request, **kwargs):
         """Request.method == 'POST'"""
         bid_form = BidForm(request.POST)
@@ -108,7 +109,7 @@ def index(request):
     return render(request, "auctions/index.html", {"listings": listings})
 
 
-@login_required(login_url='/login')
+@login_required(login_url=LOGIN_URL)
 def get_client_ip(request):
     """Get IP"""
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -180,14 +181,14 @@ def each_category_listing(request, category_id):
                   {"listings": listings})
 
 
-@login_required(login_url='/login')
+@login_required(login_url=LOGIN_URL)
 def own_listing(request):
     """The listing that user post, Own Listing tab"""
     listings = Listing.objects.filter(owner=request.user)
     return render(request, "auctions/own_listing.html", {"listings": listings})
 
 
-@login_required(login_url='/login')
+@login_required(login_url=LOGIN_URL)
 def flag_listing(request, listing_id):
     """Report button on listing"""
     listing = Listing.objects.get(pk=listing_id)
@@ -218,7 +219,7 @@ def flag_listing(request, listing_id):
     return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
 
-@login_required(login_url='/login')
+@login_required(login_url=LOGIN_URL)
 def comment(request, listing_id):
     """Save comment is database, when comment button is click"""
     if request.method == "POST":
@@ -231,7 +232,7 @@ def comment(request, listing_id):
     return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
 
-@login_required(login_url='/login')
+@login_required(login_url=LOGIN_URL)
 def watchlist(request, listing_id):
     """Add on watchlist, when watch list button is click"""
     if request.method == "POST":
@@ -241,7 +242,7 @@ def watchlist(request, listing_id):
     return render(request, "auctions/watchlist.html")
 
 
-@login_required(login_url='/login')
+@login_required(login_url=LOGIN_URL)
 def remove_watchlist(request, listing_id):
     """Remove on watchlist, when remove watch list button is click"""
     if request.method == "POST":
@@ -251,7 +252,7 @@ def remove_watchlist(request, listing_id):
     return render(request, "auctions/watchlist.html")
 
 
-@login_required(login_url='/login')
+@login_required(login_url=LOGIN_URL)
 def watchlist_view(request):
     """Render watch listing for user, Watch List tab"""
     user_watch_listing = request.user.watch_listing.all().filter(open_at=True)
@@ -259,7 +260,7 @@ def watchlist_view(request):
                   {"user_watch_listing": user_watch_listing})
 
 
-@login_required(login_url='/login')
+@login_required(login_url=LOGIN_URL)
 def close_bid(request, listing_id):
     """Close the listing, when close bid button is click"""
     if request.method == "POST":
@@ -269,14 +270,14 @@ def close_bid(request, listing_id):
     return render(request, "auctions/close_bid.html")
 
 
-@login_required(login_url='/login')
+@login_required(login_url=LOGIN_URL)
 def close_bid_view(request):
     """Render listing that have been close, Close Bid tab"""
     listings = request.user.listing_set.all().filter(open_at=False)
     return render(request, "auctions/close_bid.html", {"listings": listings})
 
 
-@login_required(login_url='/login')
+@login_required(login_url=LOGIN_URL)
 def create_listing(request):
     """When user create listing"""
     # First time when user visit the page
