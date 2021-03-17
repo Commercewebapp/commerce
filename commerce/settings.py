@@ -36,6 +36,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'auctions',
+    'django_crontab',
     'debug_toolbar',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -132,5 +133,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
+
+CRONJOBS = [
+    ('*/5 * * * *', 'auctions.views.auto_close_listing')
+]
 
 # django_heroku.settings(locals())

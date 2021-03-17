@@ -1,6 +1,4 @@
 from datetime import datetime, timezone, timedelta
-import threading
-import time
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -120,7 +118,7 @@ def get_client_ip(request):
         ip = request.META.get('REMOTE_ADDR')
     IP.objects.create(ip=ip, user=request.user)
     # Block IP
-    blocked_ip = ['192.168.1.103']
+    blocked_ip = ['']
     for data_get in IP.objects.all():
         for i in range(len(blocked_ip)):
             if blocked_ip[i] == data_get.ip:
@@ -144,17 +142,12 @@ def hot_listing_view(request):
 
 def auto_close_listing() -> None:
     """Automatic closing system for listing"""
-    while True:
-        listings = Listing.objects.all()
-        current_date = datetime.now(timezone.utc).date()
-        for listing in listings:
-            listing_ended = listing.end_date == current_date
-            if listing_ended:
-                Listing.objects.filter(pk=listing.id).update(open_at=False)
-        time.sleep(30)
-
-
-threading.Thread(target=auto_close_listing).start()
+    listings = Listing.objects.all()
+    current_date = datetime.now(timezone.utc).date()
+    for listing in listings:
+        listing_ended = listing.end_date == current_date
+        if listing_ended:
+            Listing.objects.filter(pk=listing.id).update(open_at=False)
 
 
 def search(request):
