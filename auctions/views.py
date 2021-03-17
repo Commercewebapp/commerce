@@ -106,21 +106,21 @@ class BidView(View):
 def index(request):
     """Active listing tab"""
     listings = Listing.objects.filter(open_at=True)
+    get_client_ip(request)
     return render(request, "auctions/index.html", {"listings": listings})
 
 
+@login_required(login_url='/login')
 def get_client_ip(request):
+    """Get IP"""
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[0]
     else:
         ip = request.META.get('REMOTE_ADDR')
     IP.objects.create(ip=ip, user=request.user)
-    return ip
-
-
-def block_ip(request):
-    blocked_ip = ['']
+    # Block IP
+    blocked_ip = ['192.168.1.103']
     for data_get in IP.objects.all():
         for i in range(len(blocked_ip)):
             if blocked_ip[i] == data_get.ip:
@@ -327,8 +327,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            get_client_ip(request)
-            return block_ip(request)
+            return get_client_ip(request)
         return render(request, "auctions/login.html", {
             "message": "Invalid username and/or password."
         })
