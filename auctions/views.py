@@ -76,6 +76,7 @@ class BidView(View):
 
     def update_bid(self, request, bid_amount, listing, bid_form):
         """When user click bid"""
+        bid_count = listing.bids.all().count()
         comment_form = CommentForm()
         user_bid = listing.bids.filter(user=request.user).first()
         current_time = datetime.now(timezone.utc)
@@ -97,7 +98,8 @@ class BidView(View):
             "bid_form": bid_form,
             "wait_for_three_min": wait_for_three_min,
             "error_clean_bid": error_clean_bid,
-            "comment_form": comment_form
+            "comment_form": comment_form,
+            "bid_count": bid_count
         })
 
 
