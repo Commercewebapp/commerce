@@ -12,7 +12,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 
 from .forms import CreateListing, BidForm, CommentForm
-from .models import User, Listing, Category, Comment, Bid, Flag, IP
+from .models import User, Listing, Category, Comment, Bid, Flag
 from .spam_word import spam
 from commerce.settings import LOGIN_URL
 
@@ -117,14 +117,13 @@ def get_client_ip(request):
         ip = x_forwarded_for.split(',')[0]
     else:
         ip = request.META.get('REMOTE_ADDR')
-    IP.objects.create(ip=ip, user=request.user)
-    # Block IP
+    User.objects.filter(pk=request.user.id).update(ip=ip)
+    # Block IP address
     blocked_ip = ['']
-    for data_get in IP.objects.all():
-        for i in range(len(blocked_ip)):
-            if blocked_ip[i] == data_get.ip:
-                logout(request)
-                return HttpResponse("You're not allow on the site")
+    for i in range(len(blocked_ip)):
+        if request.user.ip == blocked_ip[i]:
+            logout(request)
+            return HttpResponse("You're not allow on the site")
     return HttpResponseRedirect(reverse("index"))
 
 
