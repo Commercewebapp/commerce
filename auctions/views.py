@@ -57,13 +57,14 @@ class BidView(View):
         return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
     def place_bid(self, request, bid_amount, listing, current_time):
-        if bid_amount - listing.current_price() >= 1:
+        settings.minutes = 1
+        if bid_amount - listing.current_price() >= settings.minutes:
+            error_clean_bid = False
             listing.bids.update(date=current_time)
             recent_bid = Bid.objects.create(date=current_time, listing=listing,
                                             bid=bid_amount, user=request.user)
             Listing.objects.filter(pk=self.kwargs["listing_id"]).update(
                 winning_bid=recent_bid.id)
-            error_clean_bid = False
         else:
             error_clean_bid = True
         return error_clean_bid
