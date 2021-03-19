@@ -121,7 +121,7 @@ def get_client_ip(request):
     # Block IP address
     blocked_ip = ['']
     for i in range(len(blocked_ip)):
-        if request.user.ip == blocked_ip[i]:
+        if ip == blocked_ip[i]:
             logout(request)
             return HttpResponse("You're not allow on the site")
     return HttpResponseRedirect(reverse("index"))
