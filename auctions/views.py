@@ -23,22 +23,14 @@ class BidView(View):
         """Rendering bid html"""
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         bidder = listing.bids.all()
-        matches_user = listing.owner == request.user
-        owner_cant_bid = False
-        check_image_two = False
-        if listing.image_two != "image_two":
-            check_image_two = True
-        track_user = []
-        for user_name in bidder:
-            track_user.append(user_name.user.username)
-        if matches_user:
-            owner_cant_bid = True
+        matches_user = (listing.owner == request.user)
+        check_image_two = (listing.image_two != "image_two")
+        track_user = [user_name.user.username for user_name in bidder]
         return render(request, "auctions/bid.html", {
             "listing": listing,
             "bid_form": BidForm(),
             "comment_form": CommentForm(),
             "matches_user": matches_user,
-            "owner_cant_bid": owner_cant_bid,
             "bid_count": bidder.count(),
             "track_user": track_user,
             "check_image_two": check_image_two
