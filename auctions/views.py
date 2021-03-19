@@ -20,33 +20,26 @@ from commerce.settings import LOGIN_URL
 class BidView(View):
     @method_decorator(login_required(login_url=LOGIN_URL))
     def get(self, request, **kwargs):
-        """Rendering html"""
+        """Rendering bid html"""
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
+        bidder = listing.bids.all()
         matches_user = listing.owner == request.user
-        bid_count = listing.bids.all().count()
-        bid_form = BidForm(request.POST)
-        comment_form = CommentForm()
         owner_cant_bid = False
-        check_image_two = listing.image_two
-        if check_image_two == "image_two":
-            check_image_two = False
-        else:
+        check_image_two = False
+        if listing.image_two != "image_two":
             check_image_two = True
         track_user = []
-        for user_name in listing.bids.all():
+        for user_name in bidder:
             track_user.append(user_name.user.username)
         if matches_user:
             owner_cant_bid = True
-        else:
-            bid_form = BidForm()
-            comment_form = CommentForm()
         return render(request, "auctions/bid.html", {
             "listing": listing,
-            "bid_form": bid_form,
-            "comment_form": comment_form,
+            "bid_form": BidForm(),
+            "comment_form": CommentForm(),
             "matches_user": matches_user,
             "owner_cant_bid": owner_cant_bid,
-            "bid_count": bid_count,
+            "bid_count": bidder.count(),
             "track_user": track_user,
             "check_image_two": check_image_two
         })
@@ -76,7 +69,6 @@ class BidView(View):
     def update_bid(self, request, bid_amount, listing, bid_form):
         """When user click bid"""
         bid_count = listing.bids.all().count()
-        comment_form = CommentForm()
         user_bid = listing.bids.filter(user=request.user).first()
         current_time = datetime.now(timezone.utc)
         error_clean_bid = False
@@ -97,7 +89,7 @@ class BidView(View):
             "bid_form": bid_form,
             "wait_for_three_min": wait_for_three_min,
             "error_clean_bid": error_clean_bid,
-            "comment_form": comment_form,
+            "comment_form": CommentForm(),
             "bid_count": bid_count
         })
 
