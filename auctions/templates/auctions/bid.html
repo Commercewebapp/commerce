@@ -57,7 +57,7 @@
             <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner.username }}</small>
         </div>
     </div>
-    {% if check_image_two %}
+    {% if image_two_exist %}
     <div style="width: 18rem; border: 1px solid rgba(0,0,0,.125)">
         <img class="card-img-top" src="{{ listing.image_two.url }}" alt="{{ listing.title }}">
         <img class="card-img-top" src="{{ listing.image_three.url }}" alt="{{ listing.title }}">
@@ -68,7 +68,7 @@
 <h2>Comments</h2>
 <div class="bd-example" style="border: 1px solid rgba(0,0,0,.125)">
     {% for name in listing.comment.all %}
-    {% if name.user.username in track_user %}
+    {% if name.user.username in names_of_bidder %}
     <p>{{ name.user }}(bidder) -> {{ name.comment }} ({{ name.comment_at }})</p>
     {% else %}
     <p>{{ name.user }}(non-bidder) -> {{ name.comment }} ({{ name.comment_at }})</p>

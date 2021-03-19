@@ -10,30 +10,40 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
+from commerce.settings import LOGIN_URL
 
 from .forms import CreateListing, BidForm, CommentForm
 from .models import User, Listing, Category, Comment, Bid, Flag
 from .spam_word import spam
-from commerce.settings import LOGIN_URL
 
 
 class BidView(View):
     @method_decorator(login_required(login_url=LOGIN_URL))
     def get(self, request, **kwargs):
-        """Rendering bid html"""
+        """
+        Load listing, check user is owner, check bidder and non-bidder on
+        the listing and check if image two exist.
+
+        Listing contain three images.
+        Owner can't 'bid' and 'add watch list' on own listing.
+        Image two exist is for rendering the images, if user added just one
+        image then the html will not render the black border for the image.
+        Names of bidder is for tracking who is bidder and non-bidder on the
+        listing.
+        """
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         bidder = listing.bids.all()
         matches_user = (listing.owner == request.user)
-        check_image_two = (listing.image_two != "image_two")
-        track_user = [user_name.user.username for user_name in bidder]
+        image_two_exist = (listing.image_two != "image_two")
+        names_of_bidder = [user_name.user.username for user_name in bidder]
         return render(request, "auctions/bid.html", {
             "listing": listing,
             "bid_form": BidForm(),
             "comment_form": CommentForm(),
             "matches_user": matches_user,
             "bid_count": bidder.count(),
-            "track_user": track_user,
-            "check_image_two": check_image_two
+            "names_of_bidder": names_of_bidder,
+            "image_two_exist": image_two_exist
         })
 
     @method_decorator(login_required(login_url=LOGIN_URL))
