@@ -134,8 +134,9 @@ def hot_listing_view(request):
 
 def auto_close_listing() -> None:
     """Automatic closing system for listing"""
+    current_date = datetime.now(timezone.utc).date()
     for listing in Listing.objects.all():
-        if listing.end_date == datetime.now(timezone.utc).date():
+        if listing.end_date == current_date:
             Listing.objects.filter(pk=listing.id).update(open_at=False)
 
 
