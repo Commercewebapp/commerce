@@ -21,34 +21,28 @@ class BidView(View):
     @method_decorator(login_required(login_url=LOGIN_URL))
     def get(self, request, **kwargs):
         """
-        Load listing, check user is owner, check bidder and non-bidder on
-        the listing and check if image two exist.
-
-        Listing contain three images.
-        Owner can't 'bid' and 'add watch list' on own listing.
-        Image two exist is for rendering the images, if user added just one
-        image then the html will not render the black border for the image.
-        Names of bidder is for tracking who is bidder and non-bidder on the
-        listing.
+        To use get(), you need 'listing_id' for getting individual listing
         """
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
-        bidder = listing.bids.all()
+        bids = listing.bids.all()
         matches_user = (listing.owner == request.user)
         image_two_exist = (listing.image_two != "image_two")
-        names_of_bidder = [user_name.user.username for user_name in bidder]
+        names_of_bidder = [user_name.user.username for user_name in bids]
         return render(request, "auctions/bid.html", {
             "listing": listing,
             "bid_form": BidForm(),
             "comment_form": CommentForm(),
             "matches_user": matches_user,
-            "bid_count": bidder.count(),
+            "bid_count": bids.count(),
             "names_of_bidder": names_of_bidder,
             "image_two_exist": image_two_exist
         })
 
     @method_decorator(login_required(login_url=LOGIN_URL))
     def post(self, request, **kwargs):
-        """Request.method == 'POST'"""
+        """
+        post() runs only when user submit the data to the site on bid.html
+        """
         bid_form = BidForm(request.POST)
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         if bid_form.is_valid():
@@ -57,6 +51,9 @@ class BidView(View):
         return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
     def place_bid(self, request, bid_amount, listing, current_time):
+        """
+        place_bid() update the bids to the database
+        """
         settings.minutes = 1
         if bid_amount - listing.current_price() >= settings.minutes:
             error_clean_bid = False
@@ -70,7 +67,9 @@ class BidView(View):
         return error_clean_bid
 
     def update_bid(self, request, bid_amount, listing, bid_form):
-        """When user click bid"""
+        """
+        update_bid() checks conditions of allowing bids
+        """
         bid_count = listing.bids.all().count()
         user_bid = listing.bids.filter(user=request.user).first()
         current_time = datetime.now(timezone.utc)
@@ -98,7 +97,7 @@ class BidView(View):
 
 
 def index(request):
-    """Active listing tab"""
+    """Active listing tab, render all listings that are open"""
     listings = Listing.objects.filter(open_at=True)
     get_client_ip(request)
     return render(request, "auctions/index.html", {"listings": listings})
@@ -123,36 +122,30 @@ def get_client_ip(request):
 
 
 def hot_listing_view(request):
-    """Checking for HOT listing"""
-    listings = Listing.objects.all()
-    allow_hot_listing = 5
-    for listing in listings:
-        bid_count = listing.bids.all().count()
-        if bid_count > allow_hot_listing:
+    """Qualified for HOT listing should to more than 5 bids"""
+    settings.allow_hot_listing = 5
+    for listing in Listing.objects.all():
+        if listing.bids.all().count() > settings.allow_hot_listing:
             Listing.objects.filter(pk=listing.id).update(hot=True)
-    # HOT listing tab
+    # HOT listing tab, rendering html
     listings = Listing.objects.filter(hot=True, open_at=True)
     return render(request, "auctions/hot_listing.html", {"listings": listings})
 
 
 def auto_close_listing() -> None:
     """Automatic closing system for listing"""
-    listings = Listing.objects.all()
-    current_date = datetime.now(timezone.utc).date()
-    for listing in listings:
-        listing_ended = listing.end_date == current_date
-        if listing_ended:
+    for listing in Listing.objects.all():
+        if listing.end_date == datetime.now(timezone.utc).date():
             Listing.objects.filter(pk=listing.id).update(open_at=False)
 
 
 def search(request):
     """Search bar on index.html(Active Listing)"""
-    listings = Listing.objects.all()
     value = request.GET.get('q', '')
     if Listing.objects.filter(title=str(value)).first() is not None:
         return HttpResponseRedirect(reverse("index"))
     sub_string_listings = []
-    for listing in listings:
+    for listing in Listing.objects.all():
         if value.upper() in listing.title.upper():
             sub_string_listings.append(listing)
     return render(request, "auctions/index.html", {
@@ -163,16 +156,17 @@ def search(request):
 
 
 def category_view(request):
-    """Category tab"""
-    categories = Category.objects.all()
-    return render(request, "auctions/category.html", {"categories": categories})
+    """Category tab, rendering html"""
+    return render(request, "auctions/category.html", {
+        "categories": Category.objects.all()
+    })
 
 
 def each_category_listing(request, category_id):
     """Render category list, Category tab"""
-    listings = Listing.objects.filter(category=category_id, open_at=True)
-    return render(request, "auctions/each_category.html",
-                  {"listings": listings})
+    return render(request, "auctions/each_category.html", {
+        "listings": Listing.objects.filter(category=category_id, open_at=True)
+    })
 
 
 @login_required(login_url=LOGIN_URL)
@@ -185,14 +179,11 @@ def own_listing(request):
 @login_required(login_url=LOGIN_URL)
 def flag_listing(request, listing_id):
     """Report button on listing"""
-    listing = Listing.objects.get(pk=listing_id)
-    listing_flagged = listing.flags.filter().first()
-    matches_user = listing.owner == request.user
-    if matches_user:
+    listing = get_object_or_404(Listing, pk=listing_id)
+    if listing.owner == request.user:
         return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
-    if listing_flagged is None:
-        Flag.objects.create(flag_count=1, listing=listing,
-                            user=request.user)
+    if listing.flags.filter().first() is None:
+        Flag.objects.create(flag_count=1, listing=listing, user=request.user)
     user_flagged = Flag.objects.filter(user=request.user,
                                        listing=listing_id).first()
     flag_amount = listing.flags.get().flag_count
@@ -220,7 +211,7 @@ def comment(request, listing_id):
         form = CommentForm(request.POST)
         if form.is_valid():
             clean_comment = form.cleaned_data["comment"]
-            listing = Listing.objects.get(pk=listing_id)
+            listing = get_object_or_404(Listing, pk=listing_id)
             Comment.objects.create(user=request.user, comment=clean_comment,
                                    listing=listing)
     return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
@@ -230,7 +221,7 @@ def comment(request, listing_id):
 def watchlist(request, listing_id):
     """Add on watchlist, when watch list button is click"""
     if request.method == "POST":
-        listing = Listing.objects.get(pk=listing_id)
+        listing = get_object_or_404(Listing, pk=listing_id)
         request.user.watch_listing.add(listing)
         return HttpResponseRedirect(reverse("watchlist_view"))
     return render(request, "auctions/watchlist.html")
@@ -240,7 +231,7 @@ def watchlist(request, listing_id):
 def remove_watchlist(request, listing_id):
     """Remove on watchlist, when remove watch list button is click"""
     if request.method == "POST":
-        listing = Listing.objects.get(pk=listing_id)
+        listing = get_object_or_404(Listing, pk=listing_id)
         request.user.watch_listing.remove(listing)
         return HttpResponseRedirect(reverse("watchlist_view"))
     return render(request, "auctions/watchlist.html")
@@ -250,8 +241,9 @@ def remove_watchlist(request, listing_id):
 def watchlist_view(request):
     """Render watch listing for user, Watch List tab"""
     user_watch_listing = request.user.watch_listing.all().filter(open_at=True)
-    return render(request, "auctions/watchlist.html",
-                  {"user_watch_listing": user_watch_listing})
+    return render(request, "auctions/watchlist.html", {
+        "user_watch_listing": user_watch_listing
+    })
 
 
 @login_required(login_url=LOGIN_URL)
@@ -277,7 +269,7 @@ def create_listing(request):
     # First time when user visit the page
     if Category.objects.exists() is False:
         default_category = ["Programming", "Fashion", "Christmas",
-                            "Electronics", "Property", "Sport"]
+                            "Electronics", "Property", "Sport", "Other"]
         for category in default_category:
             Category.objects.create(name=category)
     spam_word_error = False
