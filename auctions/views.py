@@ -159,7 +159,7 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     User.objects.filter(pk=request.user.id).update(ip=ip)
-    block_ip_address(request, ip)
+    return block_ip_address(request, ip)
 
 
 @login_required(login_url=LOGIN_URL)
