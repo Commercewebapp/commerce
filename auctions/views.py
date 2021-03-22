@@ -165,7 +165,7 @@ def get_client_ip(request):
 @login_required(login_url=LOGIN_URL)
 def block_ip_address(request, ip):
     # Block IP address
-    blocked_ip = ['']
+    blocked_ip = ['78.46.163.212']
     for i in range(len(blocked_ip)):
         if ip == blocked_ip[i]:
             logout(request)

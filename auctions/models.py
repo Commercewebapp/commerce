@@ -27,8 +27,8 @@ class Listing(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField()
     image = models.ImageField(upload_to="listing_images", default=None)
-    image_two = models.ImageField(upload_to="listing_images", default=None,
-                                  blank=True)
+    image_two = models.ImageField(upload_to="listing_images", blank=True,
+                                  default="image_two")
     image_three = models.ImageField(upload_to="listing_images", default=None,
                                     blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
