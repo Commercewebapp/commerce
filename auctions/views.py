@@ -50,6 +50,33 @@ class BidView(View):
             return self.update_bid(request, bid_amount, listing, bid_form)
         return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
+    def update_bid(self, request, bid_amount, listing, bid_form):
+        """
+        update_bid() checks conditions of allowing bids and render if error
+        message if bid is not allow
+        """
+        user_bid = listing.bids.filter(user=request.user).first()
+        error_clean_bid = False
+        wait_for_three_min = False
+        if user_bid is None:
+            error_clean_bid = self.place_bid(request, bid_amount, listing,
+                                             datetime.now(timezone.utc))
+        else:
+            delta = datetime.now(timezone.utc) - user_bid.date
+            if delta > timedelta(minutes=1):
+                error_clean_bid = self.place_bid(request, bid_amount, listing,
+                                                 datetime.now(timezone.utc))
+            else:
+                wait_for_three_min = True
+        return render(request, "auctions/bid.html", {
+            "listing": listing,
+            "bid_form": bid_form,
+            "wait_for_three_min": wait_for_three_min,
+            "error_clean_bid": error_clean_bid,
+            "comment_form": CommentForm(),
+            "bid_count": listing.bids.all().count()
+        })
+
     def place_bid(self, request, bid_amount, listing, current_time):
         """
         place_bid() update the bids to the database
@@ -66,59 +93,12 @@ class BidView(View):
             error_clean_bid = True
         return error_clean_bid
 
-    def update_bid(self, request, bid_amount, listing, bid_form):
-        """
-        update_bid() checks conditions of allowing bids
-        """
-        bid_count = listing.bids.all().count()
-        user_bid = listing.bids.filter(user=request.user).first()
-        current_time = datetime.now(timezone.utc)
-        error_clean_bid = False
-        wait_for_three_min = False
-        if user_bid is None:
-            error_clean_bid = self.place_bid(request, bid_amount, listing,
-                                             current_time)
-        else:
-            delta = current_time - user_bid.date
-            can_place_bid = delta > timedelta(minutes=1)
-            if can_place_bid:
-                error_clean_bid = self.place_bid(request, bid_amount, listing,
-                                                 current_time)
-            else:
-                wait_for_three_min = True
-        return render(request, "auctions/bid.html", {
-            "listing": listing,
-            "bid_form": bid_form,
-            "wait_for_three_min": wait_for_three_min,
-            "error_clean_bid": error_clean_bid,
-            "comment_form": CommentForm(),
-            "bid_count": bid_count
-        })
-
 
 def index(request):
     """Active listing tab, render all listings that are open"""
     listings = Listing.objects.filter(open_at=True)
     get_client_ip(request)
     return render(request, "auctions/index.html", {"listings": listings})
-
-
-@login_required(login_url=LOGIN_URL)
-def get_client_ip(request):
-    """Get IP"""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    User.objects.filter(pk=request.user.id).update(ip=ip)
-    # Block IP address
-    blocked_ip = ['']
-    for i in range(len(blocked_ip)):
-        if ip == blocked_ip[i]:
-            logout(request)
-            return HttpResponse("You're not allow on the site")
-    return HttpResponseRedirect(reverse("index"))
 
 
 def hot_listing_view(request):
@@ -168,6 +148,29 @@ def each_category_listing(request, category_id):
     return render(request, "auctions/each_category.html", {
         "listings": Listing.objects.filter(category=category_id, open_at=True)
     })
+
+
+@login_required(login_url=LOGIN_URL)
+def get_client_ip(request):
+    """Get IP"""
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    User.objects.filter(pk=request.user.id).update(ip=ip)
+    block_ip_address(request, ip)
+
+
+@login_required(login_url=LOGIN_URL)
+def block_ip_address(request, ip):
+    # Block IP address
+    blocked_ip = ['']
+    for i in range(len(blocked_ip)):
+        if ip == blocked_ip[i]:
+            logout(request)
+            return HttpResponse("You're not allow on the site")
+    return HttpResponseRedirect(reverse("index"))
 
 
 @login_required(login_url=LOGIN_URL)
@@ -267,6 +270,7 @@ def close_bid_view(request):
 @login_required(login_url=LOGIN_URL)
 def create_listing(request):
     """When user create listing"""
+    get_client_ip(request)
     # First time when user visit the page
     if Category.objects.exists() is False:
         default_category = ["Programming", "Fashion", "Christmas",
