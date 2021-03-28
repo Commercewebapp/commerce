@@ -223,7 +223,7 @@ def comment(request, listing_id):
 
 @login_required(login_url=LOGIN_URL)
 def watchlist(request, listing_id):
-    """Add on watchlist, when watch list button is click"""
+    """Add on watch list, when watch list button is click"""
     if request.method == "POST":
         listing = get_object_or_404(Listing, pk=listing_id)
         request.user.watch_listing.add(listing)
@@ -233,7 +233,7 @@ def watchlist(request, listing_id):
 
 @login_required(login_url=LOGIN_URL)
 def remove_watchlist(request, listing_id):
-    """Remove on watchlist, when remove watch list button is click"""
+    """Remove on watch list, when remove watch list button is click"""
     if request.method == "POST":
         listing = get_object_or_404(Listing, pk=listing_id)
         request.user.watch_listing.remove(listing)
