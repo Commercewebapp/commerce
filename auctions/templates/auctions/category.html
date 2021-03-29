@@ -3,11 +3,9 @@
 {% block body %}
 <h1>Category</h1>
 
+<ol>
 {% for category in categories %}
-<ul>
-    <h2>
-        <li><a href="{% url 'each_category_listing' category.id %}">{{ category.name }}</a></li>
-    </h2>
-</ul>
+<h3><li><a href="{% url 'each_category_listing' category.id %}">{{ category.name }}</a></li></h3>
 {% endfor %}
+</ol>
 {% endblock %}

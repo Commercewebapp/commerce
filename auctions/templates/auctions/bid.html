@@ -3,11 +3,13 @@
 
 {% block body %}
 <h1>{{ listing.title }}</h1>
+
 {% if cannot_flag %}
 <script>
     alert("You flagged this listing already")
 </script>
 {% endif %}
+
 <div style="padding: 2px; display: flex; justify-content: center">
     {% if not matches_user %}
     <form action="{% url 'flag_listing' listing.id %}" method="POST">
@@ -15,6 +17,7 @@
         <input class="btn btn-secondary" type="submit" value="Report">
     </form>
     {% endif %}
+
     <div style="width: 18rem; border: 1px solid rgba(0,0,0,.125)">
         <img class="card-img-top" src="{{ listing.image.url }}" alt="{{ listing.title }}">
         <div class="card-body">
@@ -39,11 +42,14 @@
                     {% endif %}
                     <input class="btn btn-primary" type="submit" value="Bid">
                 </form>
-                <p><form action="{% url 'watchlist' listing.id %}" method="POST">
-                    {% csrf_token %}
-                    <input class="btn btn-primary" type="submit" value="Add watch list">
-                </form></p>
-                {% endif %}</p>
+                <p>
+                    <form action="{% url 'watchlist' listing.id %}" method="POST">
+                        {% csrf_token %}
+                        <input class="btn btn-primary" type="submit" value="Add watch list">
+                    </form>
+                </p>
+                {% endif %}
+            </p>
             <p>
                 {% if matches_user %}
                 <form action="{% url 'close_bid' listing.id %}" method="POST">
@@ -57,12 +63,14 @@
             <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner.username }}</small>
         </div>
     </div>
+
     {% if image_two_exist %}
     <div style="width: 18rem; border: 1px solid rgba(0,0,0,.125)">
         <img class="card-img-top" src="{{ listing.image_two.url }}" alt="{{ listing.title }}">
         <img class="card-img-top" src="{{ listing.image_three.url }}" alt="{{ listing.title }}">
     </div>
     {% endif %}
+
 </div>
 
 <h2>Comments</h2>
@@ -75,6 +83,7 @@
     {% endif %}
     {% endfor %}
 </div>
+
 <form action="{% url 'comment' listing.id %}" method="POST">
     {% csrf_token %}
     {{ comment_form.as_p }}
