@@ -9,3 +9,8 @@ img {
 .empty-message {
     padding: 5px;
 }
+
+.form-group {
+    padding: 5px;
+    margin-bottom: 1rem;
+}
