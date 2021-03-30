@@ -24,12 +24,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 env = environ.Env()
 environ.Env.read_env()
 # SECRET_KEY = env("SECRET_KEY")
-SECRET_KEY = "ABC123"
+SECRET_KEY = "AHSsdasjdkDJH!@&#*(!@&*(#&!*(#&!*(AJKSDHJKAShdasdjkhasjkdh12@!*&"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['commercewebapp.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
