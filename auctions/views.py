@@ -27,6 +27,7 @@ class BidView(View):
         bids = listing.bids.all()
         matches_user = (listing.owner == request.user)
         image_two_exist = (listing.image_two != "image_two")
+        image_three_exist = (listing.image_three != "image_three")
         names_of_bidder = [user_name.user.username for user_name in bids]
         return render(request, "auctions/bid.html", {
             "listing": listing,
@@ -35,7 +36,8 @@ class BidView(View):
             "matches_user": matches_user,
             "bid_count": bids.count(),
             "names_of_bidder": names_of_bidder,
-            "image_two_exist": image_two_exist
+            "image_two_exist": image_two_exist,
+            "image_three_exist": image_three_exist
         })
 
     @method_decorator(login_required(login_url=LOGIN_URL))
@@ -286,12 +288,16 @@ def create_listing(request):
             description = form.cleaned_data["description"]
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
+            image_two = form.cleaned_data["image_two"]
+            image_three = form.cleaned_data["image_three"]
             starting_price = form.cleaned_data["starting_price"]
             if str(title.lower()) in spam or str(description.lower()) in spam:
                 spam_word_error = True
             else:
                 Listing.objects.create(title=title, description=description,
                                        category=category, image=image,
+                                       image_two=image_two,
+                                       image_three=image_three,
                                        owner=request.user,
                                        starting_price=starting_price)
                 return HttpResponseRedirect(reverse("index"))
