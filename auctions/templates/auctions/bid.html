@@ -65,9 +65,11 @@
     </div>
 
     {% if image_two_exist %}
-    <div style="width: 18rem; border: 1px solid rgba(0,0,0,.125)">
+    <div style="width: 18rem;">
         <img class="card-img-top" src="{{ listing.image_two.url }}" alt="{{ listing.title }}">
+        {% if image_three_exist %}
         <img class="card-img-top" src="{{ listing.image_three.url }}" alt="{{ listing.title }}">
+        {% endif %}
     </div>
     {% endif %}
 
