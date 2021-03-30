@@ -71,8 +71,6 @@
             {% if user.is_authenticated %}
             <img src="{% static 'favicon/login_icon.png' %}" width="30">
             <strong style="padding: 5px;">{{ user.username }}</strong>
-            {% else %}
-            <p>Not signed in.</p>
             {% endif %}
             {% else %}
             <li class="nav-item">
