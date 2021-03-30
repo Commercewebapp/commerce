@@ -2,9 +2,7 @@
 
 {% block body %}
 {% if search %}
-<h2>Searching for {{ value }}</h2>
-{% else %}
-<h2>Active Listings</h2>
+<h4 class="empty-message">Searching for {{ value }}</h4>
 {% endif %}
 
 <div style="display: flex; flex-wrap: wrap;">
@@ -23,6 +21,8 @@
             </div>
         </div>
     </div>
+    {% empty %}
+    <h4 class="empty-message">No one has post a listing yet.</h4>
     {% endfor %}
 </div>
 

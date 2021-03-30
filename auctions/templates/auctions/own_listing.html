@@ -1,8 +1,6 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<h2>My Listings</h2>
-
 <div style="display: flex; flex-wrap: wrap;">
     {% for listing in listings %}
     <div class="card-deck" style="width: 18rem; padding: 2px;">
@@ -19,6 +17,8 @@
             </div>
         </div>
     </div>
+    {% empty %}
+    <h4 class="empty-message">You didn't post any listing yet.</h4>
     {% endfor %}
 </div>
 {% endblock %}

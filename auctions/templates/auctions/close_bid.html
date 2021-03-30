@@ -1,8 +1,6 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<h2>Closebid {{ request.user.username }}</h2>
-
 <div style="display: flex;">
     {% for listing in listings %}
     <div class="card-deck" style="width: 18rem; padding: 2px;">
@@ -24,7 +22,7 @@
         </div>
     </div>
     {% empty %}
-    <h1>{{ request.user.username }} have no close bid</h1>
+    <h4 class="empty-message">You haven't close any of your own listing yet.</h4>
     {% endfor %}
 </div>
 {% endblock %}
