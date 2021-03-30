@@ -29,8 +29,8 @@ class Listing(models.Model):
     image = models.ImageField(upload_to="listing_images", default=None)
     image_two = models.ImageField(upload_to="listing_images", blank=True,
                                   default="image_two")
-    image_three = models.ImageField(upload_to="listing_images", default=None,
-                                    blank=True)
+    image_three = models.ImageField(upload_to="listing_images", blank=True,
+                                    default="image_three")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     create_at = models.DateTimeField(auto_now_add=True)
     open_at = models.BooleanField(null=True, default=True)
