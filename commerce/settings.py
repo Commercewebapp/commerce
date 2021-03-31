@@ -25,7 +25,7 @@ SECRET_KEY = "AHSsdasjdkDJH!@&#*(!@&*(#&!*(#&!*(AJKSDHJKAShdasdjkhasjkdh12@!*&"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['commercewebapp.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -137,8 +137,6 @@ CRONJOBS = [
 
 LOGIN_URL = "/login"
 
-django_heroku.settings(locals())
-
 AWS_ACCESS_KEY_ID = 'AKIA5IQ7IYVKL7WME3X5'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'commerce-files'
@@ -146,3 +144,5 @@ AWS_STORAGE_BUCKET_NAME = 'commerce-files'
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+django_heroku.settings(locals())
