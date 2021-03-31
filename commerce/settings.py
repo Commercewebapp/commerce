@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "AHSsdasjdkDJH!@&#*(!@&*(#&!*(#&!*(AJKSDHJKAShdasdjkhasjkdh12@!*&"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['commercewebapp.herokuapp.com', '127.0.0.1']
 
@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['commercewebapp.herokuapp.com', '127.0.0.1']
 
 INSTALLED_APPS = [
     'auctions',
+    'storages',
     'django_crontab',
     'debug_toolbar',
     'django.contrib.admin',
@@ -140,3 +141,11 @@ CRONJOBS = [
 LOGIN_URL = "/login"
 
 django_heroku.settings(locals())
+
+AWS_ACCESS_KEY_ID = 'AKIA5IQ7IYVKL7WME3X5'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'commerce-files'
+
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
