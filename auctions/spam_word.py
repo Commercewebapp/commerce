@@ -1,5 +1,6 @@
 # Credit: https://github.com/chucknorris-io/swear-words
 spam = [
+    "pr0n",
     "spam",
     "2g1c",
     "2 girls 1 cup",
