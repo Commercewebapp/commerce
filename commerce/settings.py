@@ -140,7 +140,7 @@ CRONJOBS = [
 
 LOGIN_URL = "/login"
 
-USE_S3 = True
+USE_S3 = env('USE_S3')
 if USE_S3:
     AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
