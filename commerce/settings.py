@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import environ
 import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -21,8 +20,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-env = environ.Env()
-environ.Env.read_env()
 SECRET_KEY = 'hackme'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -140,9 +137,9 @@ CRONJOBS = [
 
 LOGIN_URL = "/login"
 
-AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = 'hackme'
+AWS_SECRET_ACCESS_KEY = 'hackme'
+AWS_STORAGE_BUCKET_NAME = 'hackme'
 
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
