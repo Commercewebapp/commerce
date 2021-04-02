@@ -289,6 +289,8 @@ def create_listing(request):
             description = form.cleaned_data["description"]
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
+            image_tmp = request.FILES["image"].open()
+            open("/tmp/saved_image.jpg", "wb").write(image_tmp.read())
             image_two = form.cleaned_data["image_two"]
             image_three = form.cleaned_data["image_three"]
             starting_price = form.cleaned_data["starting_price"]
