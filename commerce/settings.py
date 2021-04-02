@@ -25,9 +25,6 @@ env = environ.Env()
 environ.Env.read_env()
 SECRET_KEY = env('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
 ALLOWED_HOSTS = ['commercewebapp.herokuapp.com', '127.0.0.1']
 
 
@@ -140,6 +137,7 @@ CRONJOBS = [
 
 LOGIN_URL = "/login"
 
+# SECURITY WARNING: don't run with debug turned on in production!
 USE_S3 = env('USE_S3')
 if USE_S3:
     AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
