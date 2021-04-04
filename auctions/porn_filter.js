@@ -4,7 +4,7 @@ const tf = require('@tensorflow/tfjs-node')
 const fs = require('fs')
 const nsfw = require('nsfwjs')
 async function fn() {
-  const pic = await fs.promises.readFile('/app/saved_image.jpg', {
+  const pic = await fs.promises.readFile('/app/auctions/saved_image.jpg', {
     responseType: 'arraybuffer',
   })
   const model = await nsfw.load()
