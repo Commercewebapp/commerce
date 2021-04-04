@@ -282,7 +282,7 @@ def porn_checker():
 
 def porn_detection(request, form, spam_word_error):
     image_tmp = request.FILES["image"].open()
-    open("/tmp/saved_image.jpg", "wb").write(image_tmp.read())
+    open("/app/saved_image.jpg", "wb").write(image_tmp.read())
     detect_porn_image = False
     if not porn_checker():
         detect_porn_image = True
