@@ -291,16 +291,20 @@ def porn_detection(request, form, spam_word_error):
         })
 
 
-@login_required(login_url=LOGIN_URL)
-def create_listing(request):
-    """When user create listing"""
-    get_client_ip(request)
-    # First time when user visit the page
+def create_category():
+    """First time when user visit the page"""
     if Category.objects.exists() is False:
         default_category = ["Programming", "Fashion", "Christmas",
                             "Electronics", "Property", "Sport", "Other"]
         for category in default_category:
             Category.objects.create(name=category)
+
+
+@login_required(login_url=LOGIN_URL)
+def create_listing(request):
+    """When user create listing"""
+    get_client_ip(request)
+    create_category()
     spam_word_error = False
     # Creating listing
     if request.method == "POST":
