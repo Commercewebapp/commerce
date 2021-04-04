@@ -281,8 +281,6 @@ def porn_checker():
 
 
 def porn_detection(request, form, spam_word_error):
-    image_tmp = request.FILES["image"].open()
-    open("./saved_image.jpg", "wb").write(image_tmp.read())
     detect_porn_image = False
     if not porn_checker():
         detect_porn_image = True
@@ -312,6 +310,8 @@ def create_listing(request):
             description = form.cleaned_data["description"]
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
+            image_tmp = request.FILES["image"].open()
+            open("./saved_image.jpg", "wb").write(image_tmp.read())
             if not porn_checker():
                 return porn_detection(request, form, spam_word_error)
             image_two = form.cleaned_data["image_two"]
