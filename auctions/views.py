@@ -287,6 +287,7 @@ def porn_checker():
         return False
 
 
+@login_required(login_url=LOGIN_URL)
 def porn_detection(request, form, spam_word_error):
     detect_porn_image = False
     if not porn_checker():
@@ -307,6 +308,16 @@ def create_category():
             Category.objects.create(name=category)
 
 
+def spam_checker(title, description):
+    return str(title.lower()) in spam or str(description.lower()) in spam
+
+
+@login_required(login_url=LOGIN_URL)
+def save_image_tmp(request):
+    image_tmp = request.FILES["image"].open()
+    open("./saved_image.jpg", "wb").write(image_tmp.read())
+
+
 @login_required(login_url=LOGIN_URL)
 def create_listing(request):
     """When user create listing"""
@@ -321,14 +332,13 @@ def create_listing(request):
             description = form.cleaned_data["description"]
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
-            image_tmp = request.FILES["image"].open()
-            open("./saved_image.jpg", "wb").write(image_tmp.read())
+            save_image_tmp(request)
             if not porn_checker():
                 return porn_detection(request, form, spam_word_error)
             image_two = form.cleaned_data["image_two"]
             image_three = form.cleaned_data["image_three"]
             starting_price = form.cleaned_data["starting_price"]
-            if str(title.lower()) in spam or str(description.lower()) in spam:
+            if spam_checker(title, description):
                 spam_word_error = True
             else:
                 Listing.objects.create(title=title, description=description,
