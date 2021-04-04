@@ -184,6 +184,25 @@ def own_listing(request):
 
 
 @login_required(login_url=LOGIN_URL)
+def flag_checker(request, flag_amount, listing, user_flagged, listing_id):
+    settings.max_flag = 3
+    if flag_amount <= settings.max_flag and user_flagged is None:
+        flag_amount += 1
+        listing.flags.update(flag_count=flag_amount, user=request.user)
+    else:
+        cannot_flag = True
+        bid_form = BidForm()
+        return render(request, "auctions/bid.html", {
+            "cannot_flag": cannot_flag,
+            "listing": listing,
+            "bid_form": bid_form
+        })
+    if flag_amount >= settings.max_flag:
+        Listing.objects.filter(pk=listing_id).update(open_at=False)
+    return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
+
+
+@login_required(login_url=LOGIN_URL)
 def flag_listing(request, listing_id):
     """Report button on listing"""
     listing = get_object_or_404(Listing, pk=listing_id)
@@ -195,20 +214,8 @@ def flag_listing(request, listing_id):
         user_flagged = Flag.objects.filter(user=request.user,
                                            listing=listing_id).first()
         flag_amount = listing.flags.get().flag_count
-        settings.max_flag = 3
-        if flag_amount <= settings.max_flag and user_flagged is None:
-            flag_amount += 1
-            listing.flags.update(flag_count=flag_amount, user=request.user)
-        else:
-            cannot_flag = True
-            bid_form = BidForm()
-            return render(request, "auctions/bid.html", {
-                "cannot_flag": cannot_flag,
-                "listing": listing,
-                "bid_form": bid_form
-            })
-        if flag_amount >= settings.max_flag:
-            Listing.objects.filter(pk=listing_id).update(open_at=False)
+        return flag_checker(request, flag_amount, listing, user_flagged,
+                            listing_id)
     return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
 
