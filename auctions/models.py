@@ -31,7 +31,8 @@ class Listing(models.Model):
                                   default="image_two")
     image_three = models.ImageField(upload_to="listing_images", blank=True,
                                     default="image_three")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,
+                                 default=None)
     create_at = models.DateTimeField(auto_now_add=True)
     open_at = models.BooleanField(null=True, default=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
