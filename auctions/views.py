@@ -1,4 +1,5 @@
 from datetime import datetime, timezone, timedelta
+import subprocess
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -270,6 +271,15 @@ def close_bid_view(request):
     return render(request, "auctions/close_bid.html", {"listings": listings})
 
 
+def porn_checker():
+    output = subprocess.check_output(["node", "auctions/porn_filter.js"])
+    output = output.rstrip()
+    if "Allow" in str(output):
+        return True
+    else:
+        return False
+
+
 @login_required(login_url=LOGIN_URL)
 def create_listing(request):
     """When user create listing"""
@@ -289,10 +299,18 @@ def create_listing(request):
             description = form.cleaned_data["description"]
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
-            image_tmp = request.FILES["image"].open()
-            open("/tmp/saved_image.jpg", "wb").write(image_tmp.read())
             image_two = form.cleaned_data["image_two"]
             image_three = form.cleaned_data["image_three"]
+            image_tmp = request.FILES["image"].open()
+            open("/tmp/saved_image.jpg", "wb").write(image_tmp.read())
+            detect_porn_image = False
+            if not porn_checker():
+                detect_porn_image = True
+                return render(request, "auctions/create_listing.html", {
+                    "form": form,
+                    "spam_word_error": spam_word_error,
+                    "detect_porn_image": detect_porn_image
+                })
             starting_price = form.cleaned_data["starting_price"]
             if str(title.lower()) in spam or str(description.lower()) in spam:
                 spam_word_error = True
