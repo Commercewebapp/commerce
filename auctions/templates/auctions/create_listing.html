@@ -7,6 +7,12 @@
 </script>
 {% endif %}
 
+{% if detect_porn_image %}
+<script>
+    alert("Porn images are not allow")
+</script>
+{% endif %}
+
 <form method="POST" enctype="multipart/form-data">
     <div class="form-group">
         {% csrf_token %}
