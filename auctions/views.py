@@ -289,7 +289,6 @@ def porn_checker():
 
 @login_required(login_url=LOGIN_URL)
 def porn_detection(request, form, spam_word_error):
-    detect_porn_image = False
     if not porn_checker():
         detect_porn_image = True
         return render(request, "auctions/create_listing.html", {
