@@ -11,6 +11,7 @@ async function fn() {
   const image = await tf.node.decodeImage(pic,3)
   const predictions = await model.classify(image)
   image.dispose()
+  // console.log(predictions)
 
   function checking() {
     for (let {className, probability} of predictions) {
