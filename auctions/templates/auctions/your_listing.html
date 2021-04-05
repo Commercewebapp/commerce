@@ -11,7 +11,9 @@
                 <p class="card-text">{{ listing.description }}</p>
                 <p class="card-text"><strong>Price: ${{ listing.current_price }}</strong></p>
                 {% if listing.open_at is False %}
-                    <p class="card-text"><strong>This [{{ listing.title }} listing] have been closed.</strong></p>
+                    <p class="card-text">
+                        <span id="red-text"><strong>This [{{ listing.title }} listing] have been closed.</strong></span>
+                    </p>
                 {% endif %}
                 <a href="{% url 'bid' listing.id %}" class="btn btn-dark">Show listing</a>
             </div>
