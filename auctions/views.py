@@ -180,7 +180,11 @@ def block_ip_address(request, ip):
 def own_listing(request):
     """The listing that user post, Own Listing tab"""
     listings = Listing.objects.filter(owner=request.user)
-    return render(request, "auctions/own_listing.html", {"listings": listings})
+    is_closed = Listing.objects.filter(open_at=False).exists()
+    return render(request, "auctions/own_listing.html", {
+        "listings": listings,
+        "is_closed": is_closed
+    })
 
 
 @login_required(login_url=LOGIN_URL)

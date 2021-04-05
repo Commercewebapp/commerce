@@ -10,6 +10,7 @@
                 <h5 class="card-title">{{ listing.title }}</h5>
                 <p class="card-text">{{ listing.description }}</p>
                 <p class="card-text"><strong>Price: ${{ listing.current_price }}</strong></p>
+                <p class="card-text"><strong>This [{{ listing.title }} listing] have been closed.</strong></p>
                 <a href="{% url 'bid' listing.id %}" class="btn btn-dark">Show listing</a>
             </div>
             <div class="card-footer">
