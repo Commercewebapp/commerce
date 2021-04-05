@@ -177,10 +177,10 @@ def block_ip_address(request, ip):
 
 
 @login_required(login_url=LOGIN_URL)
-def own_listing(request):
+def your_listing(request):
     """The listing that user post, Own Listing tab"""
     listings = Listing.objects.filter(owner=request.user)
-    return render(request, "auctions/own_listing.html", {"listings": listings})
+    return render(request, "auctions/your_listing.html", {"listings": listings})
 
 
 @login_required(login_url=LOGIN_URL)

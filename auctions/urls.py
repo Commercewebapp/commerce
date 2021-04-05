@@ -22,7 +22,7 @@ urlpatterns = [
     path("comment/<int:listing_id>", views.comment, name="comment"),
     path("watchlist_view", views.watchlist_view, name="watchlist_view"),
     path("flag/<int:listing_id>", views.flag_listing, name="flag_listing"),
-    path("own_listing", views.own_listing, name="own_listing"),
+    path("your_listing", views.your_listing, name="your_listing"),
     path("search", views.search, name="search"),
     path("auto_close_listing", views.auto_close_listing,
          name="auto_close_listing"),
