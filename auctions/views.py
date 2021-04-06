@@ -1,7 +1,11 @@
 from datetime import datetime, timezone, timedelta
-import subprocess
+from subprocess import check_output
+from sys import getsizeof
+from io import BytesIO
+from PIL import Image
 
 from django.contrib.auth import authenticate, login, logout
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.db import IntegrityError
@@ -279,7 +283,7 @@ def close_bid_view(request):
 
 
 def porn_checker():
-    output = subprocess.check_output(["node", "auctions/porn_filter.js"])
+    output = check_output(["node", "auctions/porn_filter.js"])
     output = output.rstrip()
     if "Allow" in str(output):
         return True
