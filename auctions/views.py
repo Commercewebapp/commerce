@@ -347,12 +347,14 @@ def create_listing(request):
             description = form.cleaned_data["description"]
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
-            save_image_tmp(request)
-            image = resize_image(request.FILES["image"].open())
-            if not porn_checker():
-                return porn_detection(request, form, spam_word_error)
             image_two = form.cleaned_data["image_two"]
             image_three = form.cleaned_data["image_three"]
+            image = resize_image(request.FILES["image"].open())
+            image_two = resize_image(request.FILES["image_two"].open())
+            image_three = resize_image(request.FILES["image_three"].open())
+            save_image_tmp(request)
+            if not porn_checker():
+                return porn_detection(request, form, spam_word_error)
             starting_price = form.cleaned_data["starting_price"]
             if spam_checker(title, description):
                 spam_word_error = True
