@@ -286,8 +286,7 @@ def porn_checker():
     output = output.rstrip()
     if "Allow" in str(output):
         return True
-    else:
-        return False
+    return False
 
 
 @login_required(login_url=LOGIN_URL)
