@@ -317,6 +317,18 @@ def save_image_tmp(request):
     open("./saved_image.jpg", "wb").write(image_tmp.read())
 
 
+def resize_image(image_tmp):
+    image_object = Image.open(image_tmp)
+    image_object = image_object.convert('RGB')
+    w, h = image_object.size
+    img_resize = image_object.resize((w // 2, h // 2), Image.ANTIALIAS)
+    output = BytesIO()
+    img_resize.save(output, format='JPEG', quality=85)
+    output.seek(0)
+    return InMemoryUploadedFile(output, 'ImageField', image_tmp.name,
+                                'image/jpeg', getsizeof(output), None)
+
+
 @login_required(login_url=LOGIN_URL)
 def create_listing(request):
     """When user create listing"""
@@ -332,6 +344,7 @@ def create_listing(request):
             category = form.cleaned_data["category"]
             image = form.cleaned_data["image"]
             save_image_tmp(request)
+            image = resize_image(request.FILES["image"].open())
             if not porn_checker():
                 return porn_detection(request, form, spam_word_error)
             image_two = form.cleaned_data["image_two"]
