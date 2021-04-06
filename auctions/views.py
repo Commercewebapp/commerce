@@ -325,7 +325,7 @@ def resize_image(image_tmp):
     image_object = Image.open(image_tmp)
     image_object = image_object.convert('RGB')
     w, h = image_object.size
-    img_resize = image_object.resize((w // 2, h // 2), Image.ANTIALIAS)
+    img_resize = image_object.resize((800, 800), Image.ANTIALIAS)
     output = BytesIO()
     img_resize.save(output, format='JPEG', quality=85)
     output.seek(0)
