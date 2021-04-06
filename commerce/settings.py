@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['commercewebapp.herokuapp.com', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    'auctions',
+    'auctions.apps.AuctionsConfig',
     'storages',
     'django.contrib.admin',
     'django.contrib.auth',
