@@ -331,10 +331,16 @@ def resize_image(image_tmp):
                                 'image/jpeg', getsizeof(output), None)
 
 
-def resize_all_images(request):
+def resize_all_images(request, form):
     image = resize_image(request.FILES["image"].open())
-    image_two = resize_image(request.FILES["image_two"].open())
-    image_three = resize_image(request.FILES["image_three"].open())
+    if form.cleaned_data["image_two"] != "image_two":
+        image_two = resize_image(request.FILES["image_two"].open())
+    else:
+        image_two = form.cleaned_data["image_two"]
+    if form.cleaned_data["image_three"] != "image_three":
+        image_three = resize_image(request.FILES["image_three"].open())
+    else:
+        image_three = form.cleaned_data["image_three"]
     return image, image_two, image_three
 
 
@@ -354,7 +360,7 @@ def create_listing(request):
             image = form.cleaned_data["image"]
             image_two = form.cleaned_data["image_two"]
             image_three = form.cleaned_data["image_three"]
-            image, image_two, image_three = resize_all_images(request)
+            image, image_two, image_three = resize_all_images(request, form)
             save_image_tmp(request)
             if not porn_checker():
                 return porn_detection(request, form, spam_word_error)
