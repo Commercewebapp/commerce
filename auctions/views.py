@@ -29,20 +29,24 @@ class BidView(View):
         """
         listing = get_object_or_404(Listing, pk=self.kwargs["listing_id"])
         bids = listing.bids.all()
-        matches_user = (listing.owner == request.user)
-        image_two_exist = (listing.image_two != "image_two")
-        image_three_exist = (listing.image_three != "image_three")
+        matches_user = listing.owner == request.user
+        image_two_exist = listing.image_two != "image_two"
+        image_three_exist = listing.image_three != "image_three"
         names_of_bidder = [user_name.user.username for user_name in bids]
-        return render(request, "auctions/bid.html", {
-            "listing": listing,
-            "bid_form": BidForm(),
-            "comment_form": CommentForm(),
-            "matches_user": matches_user,
-            "bid_count": bids.count(),
-            "names_of_bidder": names_of_bidder,
-            "image_two_exist": image_two_exist,
-            "image_three_exist": image_three_exist
-        })
+        return render(
+            request,
+            "auctions/bid.html",
+            {
+                "listing": listing,
+                "bid_form": BidForm(),
+                "comment_form": CommentForm(),
+                "matches_user": matches_user,
+                "bid_count": bids.count(),
+                "names_of_bidder": names_of_bidder,
+                "image_two_exist": image_two_exist,
+                "image_three_exist": image_three_exist,
+            },
+        )
 
     @method_decorator(login_required(login_url=LOGIN_URL))
     def post(self, request, **kwargs):
@@ -65,23 +69,29 @@ class BidView(View):
         error_clean_bid = False
         wait_for_three_min = False
         if user_bid is None:
-            error_clean_bid = self.place_bid(request, bid_amount, listing,
-                                             datetime.now(timezone.utc))
+            error_clean_bid = self.place_bid(
+                request, bid_amount, listing, datetime.now(timezone.utc)
+            )
         else:
             delta = datetime.now(timezone.utc) - user_bid.date
             if delta > timedelta(minutes=1):
-                error_clean_bid = self.place_bid(request, bid_amount, listing,
-                                                 datetime.now(timezone.utc))
+                error_clean_bid = self.place_bid(
+                    request, bid_amount, listing, datetime.now(timezone.utc)
+                )
             else:
                 wait_for_three_min = True
-        return render(request, "auctions/bid.html", {
-            "listing": listing,
-            "bid_form": bid_form,
-            "wait_for_three_min": wait_for_three_min,
-            "error_clean_bid": error_clean_bid,
-            "comment_form": CommentForm(),
-            "bid_count": listing.bids.all().count()
-        })
+        return render(
+            request,
+            "auctions/bid.html",
+            {
+                "listing": listing,
+                "bid_form": bid_form,
+                "wait_for_three_min": wait_for_three_min,
+                "error_clean_bid": error_clean_bid,
+                "comment_form": CommentForm(),
+                "bid_count": listing.bids.all().count(),
+            },
+        )
 
     def place_bid(self, request, bid_amount, listing, current_time):
         """
@@ -91,10 +101,15 @@ class BidView(View):
         if bid_amount - listing.current_price() >= settings.minutes:
             error_clean_bid = False
             listing.bids.update(date=current_time)
-            recent_bid = Bid.objects.create(date=current_time, listing=listing,
-                                            bid=bid_amount, user=request.user)
+            recent_bid = Bid.objects.create(
+                date=current_time,
+                listing=listing,
+                bid=bid_amount,
+                user=request.user,
+            )
             Listing.objects.filter(pk=self.kwargs["listing_id"]).update(
-                winning_bid=recent_bid.id)
+                winning_bid=recent_bid.id
+            )
         else:
             error_clean_bid = True
         return error_clean_bid
@@ -128,42 +143,54 @@ def auto_close_listing() -> None:
 
 def search(request):
     """Search bar on index.html(Active Listing)"""
-    value = request.GET.get('q', '')
+    value = request.GET.get("q", "")
     if Listing.objects.filter(title=str(value)).first() is not None:
         return HttpResponseRedirect(reverse("index"))
     sub_string_listings = []
     for listing in Listing.objects.all():
         if value.upper() in listing.title.upper():
             sub_string_listings.append(listing)
-    return render(request, "auctions/index.html", {
-        "search_listings": sub_string_listings,
-        "search": True,
-        "value": value
-    })
+    return render(
+        request,
+        "auctions/index.html",
+        {
+            "search_listings": sub_string_listings,
+            "search": True,
+            "value": value,
+        },
+    )
 
 
 def category_view(request):
     """Category tab, rendering html"""
-    return render(request, "auctions/category.html", {
-        "categories": Category.objects.all()
-    })
+    return render(
+        request,
+        "auctions/category.html",
+        {"categories": Category.objects.all()},
+    )
 
 
 def each_category_listing(request, category_id):
     """Render category list, Category tab"""
-    return render(request, "auctions/each_category.html", {
-        "listings": Listing.objects.filter(category=category_id, open_at=True)
-    })
+    return render(
+        request,
+        "auctions/each_category.html",
+        {
+            "listings": Listing.objects.filter(
+                category=category_id, open_at=True
+            )
+        },
+    )
 
 
 @login_required(login_url=LOGIN_URL)
 def get_client_ip(request):
     """Get IP"""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
+        ip = x_forwarded_for.split(",")[0]
     else:
-        ip = request.META.get('REMOTE_ADDR')
+        ip = request.META.get("REMOTE_ADDR")
     User.objects.filter(pk=request.user.id).update(ip=ip)
     return block_ip_address(request, ip)
 
@@ -171,7 +198,7 @@ def get_client_ip(request):
 @login_required(login_url=LOGIN_URL)
 def block_ip_address(request, ip):
     # Block IP address
-    blocked_ip = ['78.46.163.212']
+    blocked_ip = ["78.46.163.212"]
     for i in range(len(blocked_ip)):
         if ip == blocked_ip[i]:
             logout(request)
@@ -195,11 +222,15 @@ def flag_checker(request, flag_amount, listing, user_flagged, listing_id):
     else:
         cannot_flag = True
         bid_form = BidForm()
-        return render(request, "auctions/bid.html", {
-            "cannot_flag": cannot_flag,
-            "listing": listing,
-            "bid_form": bid_form
-        })
+        return render(
+            request,
+            "auctions/bid.html",
+            {
+                "cannot_flag": cannot_flag,
+                "listing": listing,
+                "bid_form": bid_form,
+            },
+        )
     if flag_amount >= settings.max_flag:
         Listing.objects.filter(pk=listing_id).update(open_at=False)
     return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
@@ -214,11 +245,13 @@ def flag_listing(request, listing_id):
     if listing.flags.filter().first() is None:
         Flag.objects.create(flag_count=1, listing=listing, user=request.user)
     else:
-        user_flagged = Flag.objects.filter(user=request.user,
-                                           listing=listing_id).first()
+        user_flagged = Flag.objects.filter(
+            user=request.user, listing=listing_id
+        ).first()
         flag_amount = listing.flags.get().flag_count
-        return flag_checker(request, flag_amount, listing, user_flagged,
-                            listing_id)
+        return flag_checker(
+            request, flag_amount, listing, user_flagged, listing_id
+        )
     return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
 
@@ -230,8 +263,9 @@ def comment(request, listing_id):
         if form.is_valid():
             clean_comment = form.cleaned_data["comment"]
             listing = get_object_or_404(Listing, pk=listing_id)
-            Comment.objects.create(user=request.user, comment=clean_comment,
-                                   listing=listing)
+            Comment.objects.create(
+                user=request.user, comment=clean_comment, listing=listing
+            )
     return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
 
 
@@ -259,9 +293,11 @@ def remove_watchlist(request, listing_id):
 def watchlist_view(request):
     """Render watch listing for user, Watch List tab"""
     user_watch_listing = request.user.watch_listing.all().filter(open_at=True)
-    return render(request, "auctions/watchlist.html", {
-        "user_watch_listing": user_watch_listing
-    })
+    return render(
+        request,
+        "auctions/watchlist.html",
+        {"user_watch_listing": user_watch_listing},
+    )
 
 
 @login_required(login_url=LOGIN_URL)
@@ -269,7 +305,8 @@ def close_bid(request, listing_id):
     """Close the listing, when close bid button is click"""
     if request.method == "POST":
         Listing.objects.filter(pk=listing_id, owner=request.user).update(
-            open_at=False)
+            open_at=False
+        )
         return HttpResponseRedirect(reverse("close_bid_view"))
     return render(request, "auctions/close_bid.html")
 
@@ -293,18 +330,29 @@ def porn_checker():
 def porn_detection(request, form, spam_word_error):
     if not porn_checker():
         detect_porn_image = True
-        return render(request, "auctions/create_listing.html", {
-            "form": form,
-            "spam_word_error": spam_word_error,
-            "detect_porn_image": detect_porn_image
-        })
+        return render(
+            request,
+            "auctions/create_listing.html",
+            {
+                "form": form,
+                "spam_word_error": spam_word_error,
+                "detect_porn_image": detect_porn_image,
+            },
+        )
 
 
 def create_category():
     """First time when user visit the page"""
     if Category.objects.exists() is False:
-        default_category = ["Programming", "Fashion", "Christmas",
-                            "Electronics", "Property", "Sport", "Other"]
+        default_category = [
+            "Programming",
+            "Fashion",
+            "Christmas",
+            "Electronics",
+            "Property",
+            "Sport",
+            "Other",
+        ]
         for category in default_category:
             Category.objects.create(name=category)
 
@@ -321,14 +369,20 @@ def save_image_tmp(request):
 
 def resize_image(image_tmp):
     image_object = Image.open(image_tmp)
-    image_object = image_object.convert('RGB')
+    image_object = image_object.convert("RGB")
     w, h = image_object.size
     img_resize = image_object.resize((800, 800), Image.ANTIALIAS)
     output = BytesIO()
-    img_resize.save(output, format='JPEG', quality=85)
+    img_resize.save(output, format="JPEG", quality=85)
     output.seek(0)
-    return InMemoryUploadedFile(output, 'ImageField', image_tmp.name,
-                                'image/jpeg', getsizeof(output), None)
+    return InMemoryUploadedFile(
+        output,
+        "ImageField",
+        image_tmp.name,
+        "image/jpeg",
+        getsizeof(output),
+        None,
+    )
 
 
 def resize_all_images(request, form):
@@ -368,19 +422,24 @@ def create_listing(request):
             if spam_checker(title, description):
                 spam_word_error = True
             else:
-                Listing.objects.create(title=title, description=description,
-                                       category=category, image=image,
-                                       image_two=image_two,
-                                       image_three=image_three,
-                                       owner=request.user,
-                                       starting_price=starting_price)
+                Listing.objects.create(
+                    title=title,
+                    description=description,
+                    category=category,
+                    image=image,
+                    image_two=image_two,
+                    image_three=image_three,
+                    owner=request.user,
+                    starting_price=starting_price,
+                )
                 return HttpResponseRedirect(reverse("index"))
     else:
         form = CreateListing()
-    return render(request, "auctions/create_listing.html", {
-        "form": form,
-        "spam_word_error": spam_word_error
-    })
+    return render(
+        request,
+        "auctions/create_listing.html",
+        {"form": form, "spam_word_error": spam_word_error},
+    )
 
 
 def login_view(request):
@@ -393,9 +452,11 @@ def login_view(request):
         if user is not None:
             login(request, user)
             return get_client_ip(request)
-        return render(request, "auctions/login.html", {
-            "message": "Invalid username and/or password."
-        })
+        return render(
+            request,
+            "auctions/login.html",
+            {"message": "Invalid username and/or password."},
+        )
     return render(request, "auctions/login.html")
 
 
@@ -412,21 +473,27 @@ def register(request):
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
-            return render(request, "auctions/register.html", {
-                "message": "Passwords must match."
-            })
+            return render(
+                request,
+                "auctions/register.html",
+                {"message": "Passwords must match."},
+            )
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
         except ValueError:
-            return render(request, "auctions/register.html", {
-                "message": "Fill up the form."
-            })
+            return render(
+                request,
+                "auctions/register.html",
+                {"message": "Fill up the form."},
+            )
         except IntegrityError:
-            return render(request, "auctions/register.html", {
-                "message": "Username already taken."
-            })
+            return render(
+                request,
+                "auctions/register.html",
+                {"message": "Username already taken."},
+            )
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     return render(request, "auctions/register.html")
