@@ -27,7 +27,7 @@ class Category(models.Model):
 
 class Listing(models.Model):
     title = models.CharField(max_length=64)
-    description = models.TextField()
+    description = models.TextField(max_length=120)
     image = models.ImageField(upload_to="listing_images", default=None)
     image_two = models.ImageField(
         upload_to="listing_images", blank=True, default="image_two"
