@@ -275,7 +275,7 @@ def watchlist(request, listing_id):
     if request.method == "POST":
         listing = get_object_or_404(Listing, pk=listing_id)
         request.user.watch_listing.add(listing)
-        return HttpResponseRedirect(reverse("bid", args=(listing.id,)))
+        return HttpResponseRedirect(reverse("watchlist_view"))
     return render(request, "auctions/watchlist.html")
 
 
