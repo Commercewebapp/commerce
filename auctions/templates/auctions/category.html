@@ -1,9 +1,13 @@
-{% extends "auctions/layout.html" %}
-
-{% block body %}
+{% extends "auctions/layout.html" %} {% block body %}
 <ol>
-{% for category in categories %}
-<h4 class="empty-message"><li><a href="{% url 'each_category_listing' category.id %}">{{ category.name }}</a></li></h4>
-{% endfor %}
+  {% for category in categories %}
+  <h4 class="empty-message">
+    <li>
+      <a href="{% url 'each_category_listing' category.id %}"
+        >{{ category.name }}</a
+      >
+    </li>
+  </h4>
+  {% endfor %}
 </ol>
 {% endblock %}

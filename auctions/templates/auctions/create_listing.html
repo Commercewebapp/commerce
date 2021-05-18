@@ -1,23 +1,19 @@
-{% extends "auctions/layout.html" %}
-
-{% block body %}
-{% if spam_word_error %}
+{% extends "auctions/layout.html" %} {% block body %} {% if spam_word_error %}
 <script>
-    alert("Product not allow")
+  alert("Product not allow");
 </script>
-{% endif %}
-
-{% if detect_porn_image %}
+{% endif %} {% if detect_porn_image %}
 <script>
-    alert("Porn images are not allow")
+  alert("Porn images are not allow");
 </script>
 {% endif %}
 
 <form method="POST" enctype="multipart/form-data">
-    <div class="form-group">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit">
+  <div class="form-group">
+    {% csrf_token %} {{ form.as_p }}
+    <input type="submit" />
     <div>
-<form>
-{% endblock %}
+      <form>{% endblock %}</form>
+    </div>
+  </div>
+</form>

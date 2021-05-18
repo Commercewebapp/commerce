@@ -1,45 +1,54 @@
-{% extends "auctions/layout.html" %}
-
-{% block body %}
-{% if search %}
+{% extends "auctions/layout.html" %} {% block body %} {% if search %}
 <h4 class="empty-message">Searching for {{ value }}</h4>
 {% endif %}
 
-<div style="display: flex; flex-wrap: wrap;">
-    {% for sl in search_listings %}
-    <div class="card-deck" style="width: 18rem; padding: 2px;">
-        <div class="card">
-            <img class="card-img-top" src="{{ sl.image.url }}" alt="{{ sl.title }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ sl.title }}</h5>
-                <p class="card-text">{{ sl.description }}</p>
-                <p class="card-text"><strong>Price: ${{ sl.current_price }}</strong></p>
-                <a href="{% url 'bid' sl.id %}" class="btn btn-info">Show listing</a>
-            </div>
-            <div class="card-footer">
-                <small class="text-muted">{{ sl.create_at }} by: {{ sl.owner.username }}</small>
-            </div>
-        </div>
+<div style="display: flex; flex-wrap: wrap">
+  {% for sl in search_listings %}
+  <div class="card-deck" style="width: 18rem; padding: 2px">
+    <div class="card">
+      <img class="card-img-top" src="{{ sl.image.url }}" alt="{{ sl.title }}" />
+      <div class="card-body">
+        <h5 class="card-title">{{ sl.title }}</h5>
+        <p class="card-text">{{ sl.description }}</p>
+        <p class="card-text"><strong>Price: ${{ sl.current_price }}</strong></p>
+        <a href="{% url 'bid' sl.id %}" class="btn btn-info">Show listing</a>
+      </div>
+      <div class="card-footer">
+        <small class="text-muted"
+          >{{ sl.create_at }} by: {{ sl.owner.username }}</small
+        >
+      </div>
     </div>
-    {% endfor %}
+  </div>
+  {% endfor %}
 </div>
 
-<div style="display: flex; flex-wrap: wrap;">
-    {% for listing in listings %}
-    <div class="card-deck" style="width: 18rem; padding: 2px;">
-        <div class="card">
-            <img class="card-img-top" src="{{ listing.image.url }}" alt="{{ listing.title }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ listing.title }}</h5>
-                <p class="card-text">{{ listing.description }}</p>
-                <p class="card-text"><strong>Price: ${{ listing.current_price }}</strong></p>
-                <a href="{% url 'bid' listing.id %}" class="btn btn-info">Show listing</a>
-            </div>
-            <div class="card-footer">
-                <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner.username }}</small>
-            </div>
-        </div>
+<div style="display: flex; flex-wrap: wrap">
+  {% for listing in listings %}
+  <div class="card-deck" style="width: 18rem; padding: 2px">
+    <div class="card">
+      <img
+        class="card-img-top"
+        src="{{ listing.image.url }}"
+        alt="{{ listing.title }}"
+      />
+      <div class="card-body">
+        <h5 class="card-title">{{ listing.title }}</h5>
+        <p class="card-text">{{ listing.description }}</p>
+        <p class="card-text">
+          <strong>Price: ${{ listing.current_price }}</strong>
+        </p>
+        <a href="{% url 'bid' listing.id %}" class="btn btn-info"
+          >Show listing</a
+        >
+      </div>
+      <div class="card-footer">
+        <small class="text-muted"
+          >{{ listing.create_at }} by: {{ listing.owner.username }}</small
+        >
+      </div>
     </div>
-    {% endfor %}
+  </div>
+  {% endfor %}
 </div>
 {% endblock %}

@@ -1,29 +1,41 @@
-{% extends "auctions/layout.html" %}
-
-{% block body %}
-<div style="display: flex; flex-wrap: wrap;">
-    {% for listing in listings %}
-    <div class="card-deck" style="width: 18rem; padding: 2px;">
-        <div class="card">
-            <img class="card-img-top" src="{{ listing.image.url }}" alt="{{ listing.title }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ listing.title }}</h5>
-                <p class="card-text">{{ listing.description }}</p>
-                <p class="card-text"><strong>Price: ${{ listing.current_price }}</strong></p>
-                {% if listing.open_at is False %}
-                    <p class="card-text">
-                        <span id="red-text"><strong>This [{{ listing.title }} listing] have been closed.</strong></span>
-                    </p>
-                {% endif %}
-                <a href="{% url 'bid' listing.id %}" class="btn btn-dark">Show listing</a>
-            </div>
-            <div class="card-footer">
-                <small class="text-muted">{{ listing.create_at }} by: {{ listing.owner.username }}</small>
-            </div>
-        </div>
+{% extends "auctions/layout.html" %} {% block body %}
+<div style="display: flex; flex-wrap: wrap">
+  {% for listing in listings %}
+  <div class="card-deck" style="width: 18rem; padding: 2px">
+    <div class="card">
+      <img
+        class="card-img-top"
+        src="{{ listing.image.url }}"
+        alt="{{ listing.title }}"
+      />
+      <div class="card-body">
+        <h5 class="card-title">{{ listing.title }}</h5>
+        <p class="card-text">{{ listing.description }}</p>
+        <p class="card-text">
+          <strong>Price: ${{ listing.current_price }}</strong>
+        </p>
+        {% if listing.open_at is False %}
+        <p class="card-text">
+          <span id="red-text"
+            ><strong
+              >This [{{ listing.title }} listing] have been closed.</strong
+            ></span
+          >
+        </p>
+        {% endif %}
+        <a href="{% url 'bid' listing.id %}" class="btn btn-dark"
+          >Show listing</a
+        >
+      </div>
+      <div class="card-footer">
+        <small class="text-muted"
+          >{{ listing.create_at }} by: {{ listing.owner.username }}</small
+        >
+      </div>
     </div>
-    {% empty %}
-    <h4 class="empty-message">You didn't post any listing yet.</h4>
-    {% endfor %}
+  </div>
+  {% empty %}
+  <h4 class="empty-message">You didn't post any listing yet.</h4>
+  {% endfor %}
 </div>
 {% endblock %}

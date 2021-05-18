@@ -2,92 +2,137 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>{% block title %}Auctions{% endblock %}</title>
-    <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
-    <link rel="shortcut icon" type="image/png" href="{% static 'favicon/jan.png' %}" />
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
-    </script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
-    </script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-</head>
+    <link href="{% static 'auctions/styles.css' %}" rel="stylesheet" />
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="{% static 'favicon/jan.png' %}"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<body>
+  <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'index' %}">Active Listing <span
-                                class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Category
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{% url 'category_view' %}">All category</a>
-                            <div class="dropdown-divider"></div>
-                            {% for category in categories %}
-                            <a class="dropdown-item"
-                                href="{% url 'each_category_listing' category.id %}">{{ category.name }}</a>
-                            {% endfor %}
-                        </div>
-                    </li>
-                    {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'hot_listing_view' %}">Hot Listing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'your_listing' %}">Your Listing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'create_listing' %}">Create Listing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'watchlist_view' %}">Watch List</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'close_bid_view' %}">Close Bid</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
-                    </li>
-                </ul>
-                <form class="form-inline my-2 my-lg-0" action="{% url 'search' %}" method="GET">
-                    <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
-                {% if user.is_authenticated %}
-                <div>
-                    <img src="{% static 'favicon/login_icon.png' %}" width="30">
-                    <strong id="sign-in">{{ user.username }}</strong>
-                </div>
-                {% endif %}
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Log In</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">Register</a>
-                </li>
-                {% endif %}
-            </div>
-        </nav>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'index' %}"
+                >Active Listing <span class="sr-only">(current)</span></a
+              >
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Category
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="{% url 'category_view' %}"
+                  >All category</a
+                >
+                <div class="dropdown-divider"></div>
+                {% for category in categories %}
+                <a
+                  class="dropdown-item"
+                  href="{% url 'each_category_listing' category.id %}"
+                  >{{ category.name }}</a
+                >
+                {% endfor %}
+              </div>
+            </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'hot_listing_view' %}"
+                >Hot Listing</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'your_listing' %}"
+                >Your Listing</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'create_listing' %}"
+                >Create Listing</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'watchlist_view' %}"
+                >Watch List</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'close_bid_view' %}"
+                >Close Bid</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+            </li>
+          </ul>
+          <form
+            class="form-inline my-2 my-lg-0"
+            action="{% url 'search' %}"
+            method="GET"
+          >
+            <input
+              class="form-control mr-sm-2"
+              type="search"
+              name="q"
+              placeholder="Search"
+              aria-label="Search"
+            />
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+              Search
+            </button>
+          </form>
+          {% if user.is_authenticated %}
+          <div>
+            <img src="{% static 'favicon/login_icon.png' %}" width="30" />
+            <strong id="sign-in">{{ user.username }}</strong>
+          </div>
+          {% endif %} {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Log In</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'register' %}">Register</a>
+          </li>
+          {% endif %}
+        </div>
+      </nav>
     </header>
-    {% block body %}
-    {% endblock %}
-</body>
-
+    {% block body %} {% endblock %}
+  </body>
 </html>

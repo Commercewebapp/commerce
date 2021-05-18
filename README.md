@@ -11,17 +11,17 @@ Commerce so that other people can bid and buy your product.
 
 Prerequisites:
 
-* [Python][Python-download]
-* [Django][Django-download]
+- [Python][python-download]
+- [Django][django-download]
 
 Instructions:
 
-1. Run:
+1.  Run:
 
         $ pip3 install -r requirements.txt
         $ python3 manage.py makemigrations auctions
         $ python3 manage.py migrate
         $ python3 manage.py runserver
 
-[Django-download]: https://www.djangoproject.com/download/
-[Python-download]: https://www.python.org/downloads/
+[django-download]: https://www.djangoproject.com/download/
+[python-download]: https://www.python.org/downloads/

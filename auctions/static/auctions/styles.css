@@ -1,20 +1,20 @@
 body {
-    background: #EAF2F5 !important;
+  background: #eaf2f5 !important;
 }
 
 img {
-    padding: 5px;
+  padding: 5px;
 }
 
 .empty-message {
-    padding: 5px;
+  padding: 5px;
 }
 
 .form-group {
-    padding: 5px;
-    margin-bottom: 1rem;
+  padding: 5px;
+  margin-bottom: 1rem;
 }
 
 #red-text {
-    color: #ED0A41;
+  color: #ed0a41;
 }
