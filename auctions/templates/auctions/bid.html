@@ -1,5 +1,5 @@
-{% extends "auctions/layout.html" %} {% load static %} {% block body %} {% if
-cannot_flag %}
+{% extends "auctions/layout.html" %} {% load static %} {% block body %}
+{% if cannot_flag %}
 <script>
   alert("You flagged this listing already");
 </script>
@@ -86,8 +86,8 @@ cannot_flag %}
 
 <h2>Comments</h2>
 <div class="bd-example" style="border: 1px solid rgba(0, 0, 0, 0.125)">
-  {% for name in listing.comment.all %} {% if name.user.username in
-  names_of_bidder %}
+  {% for name in listing.comment.all %}
+  {% if name.user.username in names_of_bidder %}
   <p>{{ name.user }}(bidder) -> {{ name.comment }} ({{ name.comment_at }})</p>
   {% else %}
   <p>
