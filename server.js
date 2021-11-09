@@ -7,7 +7,7 @@ const port = 8000;
 
 app.use(fileUpload());
 
-const server = app.listen(port, () => {
+const server = app.listen(process.env.PORT, () => {
   console.log(`Listening at -> http://localhost:${server.address().port}`);
 });
 
