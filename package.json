@@ -1,7 +1,7 @@
 {
   "scripts": {
     "precompress": "{{ npm install axios }}",
-    "start": "node server.js",
+    "start": "node server.js"
   },
   "engine": {
     "node": "14.16.0",
