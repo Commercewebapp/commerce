@@ -7,3 +7,4 @@ django-filter===2.4.0
 django-storages===1.11.1
 boto3===1.17.40
 django-environ===0.4.5
+requests==2.26.0
