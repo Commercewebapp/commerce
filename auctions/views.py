@@ -4,6 +4,9 @@ from sys import getsizeof
 from io import BytesIO
 from PIL import Image
 
+import requests
+import os
+
 from django.contrib.auth import authenticate, login, logout
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth.decorators import login_required
@@ -318,17 +321,25 @@ def close_bid_view(request):
     return render(request, "auctions/close_bid.html", {"listings": listings})
 
 
-def porn_checker():
-    output = check_output(["node", "auctions/porn_filter.js"])
-    output = output.rstrip()
-    if "Allow" in str(output):
-        return True
-    return False
+def porn_checker(request):
+    save_image_tmp(request)
 
+    url = "http://localhost:8001/upload"
+    with open("./saved.png", "rb") as img:
+        name_img = os.path.basename("./saved.png")
+        files = {
+            "sampleFile": (name_img, img, "image/png", {"Expires": "0"}),
+        }
+        with requests.Session() as s:
+            r = s.post(url, files=files)
+            if r.text == "Allow":
+                return True
+            else:
+                return False
 
 @login_required(login_url=LOGIN_URL)
 def porn_detection(request, form, spam_word_error):
-    if not porn_checker():
+    if not porn_checker(request):
         detect_porn_image = True
         return render(
             request,
@@ -364,7 +375,7 @@ def spam_checker(title, description):
 @login_required(login_url=LOGIN_URL)
 def save_image_tmp(request):
     image_tmp = request.FILES["image"].open()
-    open("./saved_image.jpg", "wb").write(image_tmp.read())
+    open("./saved.png", "wb").write(image_tmp.read())
 
 
 def resize_image(image_tmp):
@@ -415,8 +426,7 @@ def create_listing(request):
             image_two = form.cleaned_data["image_two"]
             image_three = form.cleaned_data["image_three"]
             image, image_two, image_three = resize_all_images(request, form)
-            save_image_tmp(request)
-            if not porn_checker():
+            if not porn_checker(request):
                 return porn_detection(request, form, spam_word_error)
             starting_price = form.cleaned_data["starting_price"]
             if spam_checker(title, description):

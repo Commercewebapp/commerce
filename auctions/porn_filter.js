@@ -3,6 +3,7 @@ const axios = require("axios");
 const tf = require("@tensorflow/tfjs-node");
 const fs = require("fs");
 const nsfw = require("nsfwjs");
+
 async function fn() {
   const pic = await fs.promises.readFile("./saved_image.jpg", {
     responseType: "arraybuffer",
@@ -30,4 +31,5 @@ async function fn() {
   const result = checking();
   console.log(result);
 }
+
 fn();
