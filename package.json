@@ -11,7 +11,7 @@
     "@tensorflow/tfjs-node": "^3.6.1",
     "axios": "^0.21.1",
     "fs": "0.0.1-security",
-    "nsfwjs": "^2.2.0"
+    "nsfwjs": "^2.2.0",
     "express-fileupload": "^1.2.1",
     "express": "^4.17.1"
   }
