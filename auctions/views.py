@@ -324,7 +324,7 @@ def close_bid_view(request):
 def porn_checker(request):
     save_image_tmp(request)
 
-    url = "http://localhost:8001/upload"
+    url = "https://commercewebapi.herokuapp.com/upload"
     with open("./saved.png", "rb") as img:
         name_img = os.path.basename("./saved.png")
         files = {
