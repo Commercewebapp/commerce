@@ -1,12 +1,9 @@
 build:
   docker:
     web: Dockerfile
-    filter: commercewebapi/Dockerfile
 
 run:
-  web: python manage.py runserver
-  filter: npm start
+  web: docker-compose up
 
 release:
   image: web
-  image: filter

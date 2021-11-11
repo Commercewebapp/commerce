@@ -9,7 +9,7 @@ const port = 8001;
 app.use(fileUpload());
 
 // TODO(jan): Production should be process.env.PORT cus of Heroku
-const server = app.listen(process.env.PORT, () => {
+const server = app.listen(port, () => {
   console.log(`Listening at -> http://localhost:${server.address().port}`);
 });
 
