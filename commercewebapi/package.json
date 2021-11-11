@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "node server.js",
+    "worker": "node server.js",
     "dev": "nodemon server.js"
   },
   "name": "porn_filter_web_application",
