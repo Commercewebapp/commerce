@@ -140,7 +140,7 @@ CRONJOBS = [("*/5 * * * *", "auctions.views.auto_close_listing")]
 
 LOGIN_URL = "/login"
 
-DEBUG = int(os.environ.get('DEBUG', default=0))
+# DEBUG = int(os.environ.get('DEBUG', default=0))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 USE_S3 = env("USE_S3") == "True"
@@ -152,10 +152,10 @@ if USE_S3:
     AWS_S3_FILE_OVERWRITE = False
     AWS_DEFAULT_ACL = None
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-    # DEBUG = False
+    DEBUG = False
 else:
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")
     STATIC_URL = "/static/"
-    # DEBUG = True
+    DEBUG = True
 
 django_heroku.settings(locals())
