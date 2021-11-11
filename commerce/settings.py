@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import environ
 import django_heroku
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,9 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 env = environ.Env()
 environ.Env.read_env()
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = os.environ.get('SECRET_KEY', default='foo')
 
-ALLOWED_HOSTS = ["commercewebapp.herokuapp.com", "127.0.0.1"]
+ALLOWED_HOSTS = ["commercewebapp.herokuapp.com", "127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -85,10 +86,12 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-        'HOST': 'db',
-        'PORT': 5432
     }
 }
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
+db_from_env = dj_database_url.config(default=DATABASE_URL, conn_max_age=500, ssl_require=True)
+DATABASES['default'].update(db_from_env)
 
 AUTH_USER_MODEL = "auctions.User"
 
@@ -137,6 +140,8 @@ CRONJOBS = [("*/5 * * * *", "auctions.views.auto_close_listing")]
 
 LOGIN_URL = "/login"
 
+DEBUG = int(os.environ.get('DEBUG', default=0))
+
 # SECURITY WARNING: don't run with debug turned on in production!
 USE_S3 = env("USE_S3") == "True"
 if USE_S3:
@@ -147,10 +152,10 @@ if USE_S3:
     AWS_S3_FILE_OVERWRITE = False
     AWS_DEFAULT_ACL = None
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-    DEBUG = False
+    # DEBUG = False
 else:
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")
     STATIC_URL = "/static/"
-    DEBUG = True
+    # DEBUG = True
 
 django_heroku.settings(locals())
