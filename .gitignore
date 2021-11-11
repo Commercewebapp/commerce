@@ -1,3 +1,8 @@
 .env
+package-lock.json
+todo
 staticfiles
 media
+node_modules
+saved.png
+ENV
