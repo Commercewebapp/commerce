@@ -3,7 +3,7 @@ build:
     web: Dockerfile
 
 run:
-  web: gunicorn hello_django.wsgi:application --bind 0.0.0.0:$PORT
+  web: gunicorn commerce.wsgi --bind 0.0.0.0:$PORT
 release:
   image: web
   command:
