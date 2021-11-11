@@ -5,6 +5,16 @@ services:
     image: nouchka/sqlite3
     volumes:
       - ./db.sqlite3:/code
+
+  filter:
+    image: node
+    volumes:
+      - ./commercewebapi:/usr/share/app/
+    working_dir: /usr/share/app/
+    command: node server.js
+    ports:
+      - "8001:8001"
+
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
@@ -15,12 +25,3 @@ services:
     depends_on:
       - db
       - filter
-
-  filter:
-    image: node
-    volumes:
-      - ./commercewebapi:/usr/share/app/
-    working_dir: /usr/share/app/
-    command: node server.js
-    ports:
-      - "8001:8001"
