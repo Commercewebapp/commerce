@@ -3,7 +3,4 @@ build:
     web: Dockerfile
 
 run:
-  web: docker-compose up
-
-release:
-  image: web
+  web: python manage.py runserver
