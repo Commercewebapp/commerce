@@ -1,2 +1,2 @@
-worker: npm start
+web: npm start
 web: gunicorn commerce.wsgi
