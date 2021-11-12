@@ -3,4 +3,3 @@ package-lock.json
 __pycache__
 *.pyc
 env/
-db.sqlite3
