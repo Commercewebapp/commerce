@@ -17,7 +17,6 @@ RUN apk update \
 RUN apk add --update --no-cache --virtual .tmp gcc libc-dev linux-headers
 RUN apk add --no-cache jpeg-dev zlib-dev
 
-
 # install dependencies
 COPY ./requirements.txt .
 RUN python -m pip install --upgrade pip
